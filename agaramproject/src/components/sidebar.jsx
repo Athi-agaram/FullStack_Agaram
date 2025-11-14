@@ -407,7 +407,6 @@ export default function Sidebar({ masterTab, setMasterTab }) {
     return savedKey || "dashboard"; // default dashboard
   });
 
-  // ✅ Sync activeKey with masterTab
   useEffect(() => {
     if (!masterTab) {
       setActiveKey("dashboard");

@@ -56,3 +56,4 @@ export const getTeams = async () => {
     return [];
   }
 };
+

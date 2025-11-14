@@ -781,6 +781,7 @@ export default function ProductTab({ user }) {
         team_name: row.team_name,
         employee_id: row.employee_id || user.id,
         sale_month: row.sale_month || CURRENT_MONTH,
+        customer:row.customer
       });
       setIsEdit(true);
       setEditId(row.id);
@@ -793,6 +794,7 @@ export default function ProductTab({ user }) {
         team_name: user.team_name,
         employee_id: user.id,
         sale_month: CURRENT_MONTH,
+        customer:""
       });
       setIsEdit(false);
       setEditId(null);
@@ -813,7 +815,7 @@ export default function ProductTab({ user }) {
       if (isEdit) await updateProduct(editId, payload);
       else await addProduct(payload);
       setOpen(false);
-      await loadProducts(); // ✅ await ensures smooth refresh
+      await loadProducts(); 
     } catch (err) {
       console.error("Error saving product:", err);
       alert("Save failed");
@@ -835,13 +837,15 @@ export default function ProductTab({ user }) {
   // ---------------- COLUMNS ----------------
   const columns = [
     { field: "sno", headerName: "S.No", width: 90 },
-    { field: "id", headerName: "ID", width: 110 ,renderCell: (params) => `P${params.value}`},
-    { field: "name", headerName: "Product", width: 160 },
+    { field: "id", headerName: "ID", width: 90 ,renderCell: (params) => `P${params.value}`},
+    { field: "name", headerName: "Product", width: 170 },
     { field: "quantity", headerName: "Quantity", width: 120 },
-    { field: "price", headerName: "Price", width: 150 },
-    { field: "team_name", headerName: "Team", width: 163 },
-    { field: "progress", headerName: "Progress", width: 190 },
-    { field: "sale_month", headerName: "Month", width: 120 },
+    { field: "price", headerName: "Price", width: 110 },
+    { field: "team_name", headerName: "Team", width: 123 },
+    { field: "progress", headerName: "Progress", width: 140 },
+    { field: "sale_month", headerName: "Month", width: 110 },
+    { field: "customer", headerName: "Customer", width: 150 },  
+
     {
       field: "actions",
       headerName: "Actions",
@@ -976,6 +980,14 @@ export default function ProductTab({ user }) {
               </MenuItem>
             ))}
           </Select>
+            <TextField
+            label="Customer"
+            name="customer"
+            type="Text"
+            value={form.customer || ""}
+            onChange={handleChange}
+          />
+          
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
