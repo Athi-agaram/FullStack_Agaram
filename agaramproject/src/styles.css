@@ -1,0 +1,73 @@
+.login-page {
+  width: 100%;
+  min-height: 100vh;
+  background: url('https://wallpapercave.com/wp/wp9764093.jpg') no-repeat center;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.home-page {
+  width: 100%;
+  min-height: 100vh;
+  background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.glass-card {
+  background: rgba(236, 220, 220, 0.15);
+  border-radius: 15px;
+  padding: 40px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  color: white;
+  box-sizing: border-box;
+}
+
+.glass-card input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.glass-card button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 20px;
+  font-size: 1rem;
+}
+
+.glass-card button:hover {
+  background: rgba(61, 54, 82, 0.4);
+}
+
+@media (max-width: 500px) {
+  .glass-card {
+    padding: 30px 20px;
+  }
+
+  .glass-card input, .glass-card button {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+}
