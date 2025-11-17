@@ -944,7 +944,7 @@ export default function RevenueDashboard({ user }) {
     <Box sx={{ width: "100%", flex: 1, overflow: "hidden" }}>
       <TableContainer component={Paper} sx={{ borderRadius: 1, boxShadow: 0 }}>
         <Table>
-          <TableHead sx={{ backgroundColor: "#f5f5f5", height: "28px" }}>
+          <TableHead sx={{ backgroundColor: "#e4e4e4ff", height: "28px" }}>
             <TableRow>
               {[
                 { id: "id", label: "ID" },
@@ -988,7 +988,12 @@ export default function RevenueDashboard({ user }) {
                     <TableCell>{r.month}</TableCell>
                     <TableCell align="right">₹{r.total_revenue.toLocaleString()}</TableCell>
                     <TableCell align="right">{r.num_sales}</TableCell>
-                    <TableCell align="right">₹{r.avg_revenue.toFixed(2)}</TableCell>
+                    <TableCell align="right"> 
+                       ₹{Number(r.avg_revenue).toLocaleString("en-IN", {
+                        minimumFractionDigits: 0,
+                         maximumFractionDigits: 0
+                      })}
+                      </TableCell>
                     <TableCell
                       align="right"
                       sx={{ color: r.growth > 0 ? "green" : r.growth < 0 ? "red" : "text.primary" }}

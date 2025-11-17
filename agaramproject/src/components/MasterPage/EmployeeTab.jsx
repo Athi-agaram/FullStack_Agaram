@@ -178,7 +178,7 @@ const handleDelete = async (row) => {
 
   // ---------------- UI ----------------
   return (
-    <Box sx={{ height: "474px", width: "100%" }}>
+    <Box sx={{ height: "473px", width: "100%" }}>
       <DataGrid
         rows={rows}
         columns={columns}

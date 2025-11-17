@@ -496,7 +496,7 @@ export default function LoginPage() {
       } catch (err) {
         console.error("Error checking username:", err);
       }
-    }, 300);
+    }, 30);
     return () => clearTimeout(delayDebounce);
   }, [formData.username]);
 
@@ -539,7 +539,7 @@ export default function LoginPage() {
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          filter: "brightness(0.85)", // optional dimming for contrast
+          filter: "brightness(0.60)", // optional dimming for contrast
         }}
       />
 
@@ -577,32 +577,54 @@ export default function LoginPage() {
             <Typography
               variant="h5"
               fontWeight="bold"
-              sx={{ mb: 3, color: "#1d1561" }}
+              sx={{ mb: 3, color: "#121146ff" }}
             >
               Login
             </Typography>
 
             <form onSubmit={handleSubmit}>
-              <TextField
-                fullWidth
-                label="Username"
-                value={formData.username}
-                onChange={e =>
-                  setFormData(prev => ({ ...prev, username: e.target.value }))
-                }
-                margin="normal"
-                sx={{
-  bgcolor: "rgba(255, 255, 255, 0.45)",        // semi-transparent background
-  borderRadius: 1,
-  boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1)", // subtle inner shadow
-  transition: "all 0.3s ease-in-out",        // smooth hover transition
-  "&:hover": {
-    bgcolor: "rgba(255,255,255,0.45)",       // brighten a bit on hover
-    boxShadow: "inset 0 4px 8px rgba(0,0,0,0.15)", // deeper inner shadow
+<TextField
+  fullWidth
+  label="Username"
+  value={formData.username}
+  onChange={e =>
+    setFormData(prev => ({ ...prev, username: e.target.value }))
   }
-}}
+  margin="normal"
+                sx={{
+    bgcolor: "rgba(255, 255, 255, 0.45)",
+    border: "transparent",
+    boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1)",
+    transition: "all 0.3s ease-in-out",
 
-              />
+    "& .MuiInputLabel-shrink": {
+      color: "#2c2c2cff !important",
+      bgcolor: "rgba(255, 255, 255, 0.45)",
+      fontSize: "18px",
+      borderRadius: "5px !important",
+      paddingLeft: "4px",
+      paddingRight: "4px",
+    },
+
+    "&:hover": {
+      bgcolor: "rgba(255,255,255,0.45)",
+      boxShadow: "inset 0 4px 8px rgba(255, 255, 255, 0.15)",
+    },
+
+    "& .MuiOutlinedInput-root": {
+      "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: "transparent !important",
+      },
+      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: "transparent",
+        borderWidth: 0,
+      },
+    },
+  }}
+/>
+
+
+
 
 
               {usernameExists === false && (
@@ -622,16 +644,35 @@ export default function LoginPage() {
                 }
                 margin="normal"
                 sx={{
-  mb: 0,
-  bgcolor: "rgba(255, 255, 255, 0.45)",        // semi-transparent background
-  borderRadius: 1,
-  boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1)", // subtle inner shadow
-  transition: "all 0.3s ease-in-out",        // smooth hover transition
-  "&:hover": {
-    bgcolor: "rgba(255,255,255,0.45)",       // brighten a bit on hover
-    boxShadow: "inset 0 4px 8px rgba(0,0,0,0.15)", // deeper inner shadow
-  }
-}}
+    bgcolor: "rgba(255, 255, 255, 0.45)",
+    borderRadius: "none !important",
+    boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1)",
+    transition: "all 0.3s ease-in-out",
+
+    "& .MuiInputLabel-shrink": {
+      color: "#464646ff !important",
+      bgcolor: "rgba(255, 255, 255, 0.45)",
+      fontSize: "18px",
+      borderRadius: "5px !important",
+      paddingLeft: "4px",
+      paddingRight: "4px",
+    },
+
+    "&:hover": {
+      bgcolor: "rgba(255,255,255,0.45)",
+      boxShadow: "inset 0 4px 8px rgba(0,0,0,0.15)",
+    },
+
+    "& .MuiOutlinedInput-root": {
+      "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: "transparent",
+      },
+      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: "transparent",
+        borderWidth: 0,
+      },
+    },
+  }}
 
               />
 

@@ -334,11 +334,12 @@ export default function Dashboard() {
 
     const companyRevenue = products.reduce((sum,p) => sum + Number(p.price) * Number(p.quantity), 0);
     const companySales = products.reduce((sum,p) => sum + Number(p.quantity), 0);
-    const companyAvg = companySales ? (companyRevenue / companySales).toFixed(2) : 0;
+    const companyAvg = companySales ? companyRevenue / companySales : 0;
+
 
     const teamRevenue = teamProducts.reduce((sum,p) => sum + Number(p.price) * Number(p.quantity), 0);
     const teamSales = teamProducts.reduce((sum,p) => sum + Number(p.quantity), 0);
-    const teamAvg = teamSales ? (teamRevenue / teamSales).toFixed(2) : 0;
+    const teamAvg = teamSales ? teamRevenue / teamSales : 0;
 
     const topTeam = user.role === "ADMIN" ? (() => {
       const map = {}; 
@@ -417,24 +418,48 @@ export default function Dashboard() {
           {/* Summary Cards */}
           <Grid container spacing={3} sx={{ mb: 3 }}>
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ borderLeft: "5px solid #1976d2" }}>
-                <CardContent>
-                  <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 'bold' }}>Total Revenue</Typography>
-                  <Typography variant="h6" sx={{fontWeight: 'bold'}}>Company: ₹{summary.companyRevenue?.toLocaleString()}</Typography>
-                  <Typography variant="h6" sx={{fontWeight:"600px"}}>Team: ₹{summary.teamRevenue?.toLocaleString()}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+  <Card sx={{ borderLeft: "5px solid #1976d2" ,height:"127px",alignContent:"center"}}>
+    <CardContent>
+      <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 'bold' }}>
+        Total Revenue
+      </Typography>
 
-            <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ borderLeft: "5px solid #0288d1" }}>
-                <CardContent>
-                  <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 'bold' }}>Average Revenue</Typography>
-                  <Typography variant="h6" sx={{fontWeight: 'bold'}}>Company: ₹{summary.companyAvg}</Typography>
-                  <Typography variant="h6" sx={{fontWeight:"600px"}}>Team: ₹{summary.teamAvg}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+      {/* Always show company revenue */}
+      <Typography variant="h6" sx={{ fontWeight: 'bold',color:"#092d52ff" }}>
+         Company: ₹{summary.companyRevenue?.toLocaleString()}
+      </Typography>
+
+      {/* Show team revenue only for non-admin users */}
+      {user.role !== "ADMIN" && (
+        <Typography variant="h6" sx={{ color: "#092d52ff", fontWeight: '600px' }}>
+          Team: ₹{summary.teamRevenue?.toLocaleString()}
+        </Typography>
+      )}
+    </CardContent>
+  </Card>
+</Grid>
+
+ <Grid item xs={12} sm={6} md={3}>
+  <Card sx={{ borderLeft: "5px solid #0288d1" ,height:"127px",alignContent:"center",width:"215px"}}>
+    <CardContent>
+      <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 'bold' }}>
+        Average Revenue
+      </Typography>
+
+      {/* Always show company avg */}
+      <Typography variant="h6" sx={{ fontWeight: 'bold' ,color:"#092d52ff"}}>
+  Company: ₹{summary.companyAvg.toLocaleString("en-IN", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+      </Typography>
+
+      {/* Show team avg only for non-admin */}
+      {user.role !== "ADMIN" && (
+        <Typography variant="h6" sx={{ color: "#092d52ff", fontWeight: '600px' }}>
+    Team: ₹{summary.teamAvg.toLocaleString("en-IN", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+        </Typography>
+      )}
+    </CardContent>
+  </Card>
+</Grid>
 
             {user.role === "ADMIN" && (
               <Grid item xs={12} sm={6} md={2}>
@@ -456,14 +481,12 @@ export default function Dashboard() {
 </Card>
 </Grid>
 )}
-
-
             {(user.role === "MANAGER" || user.role === "EMPLOYEE") && (
               <Grid item xs={12} sm={6} md={2}>
-                <Card sx={{ borderLeft: "5px solid #c62828" ,height:"127px",alignContent:"center"}}>
+                <Card sx={{ borderLeft: "5px solid #c62828" ,height:"127px",alignContent:"center",width:"150px"}}>
                   <CardContent>
                     <Typography variant="subtitle2" color="text.secondary"sx={{ fontWeight: 'bold' }}>Top Customer</Typography>
-                    <Typography variant="h6" sx={{fontWeight: 'bold'}}>{summary.topCustomer}</Typography>
+                    <Typography variant="h6" sx={{fontWeight: 'bold',color:"#092d52ff"}}>{summary.topCustomer}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
@@ -473,7 +496,7 @@ export default function Dashboard() {
               <Card sx={{ borderLeft: "5px solid #2e7d32" ,height:"127px",alignContent:"center",width:"150px"}}>
                 <CardContent>
                   <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 'bold' }}>Total Sales</Typography>
-                  <Typography variant="h6" sx={{fontWeight: 'bold'}}>{summary.teamSales}</Typography>
+                  <Typography variant="h6" sx={{fontWeight: 'bold',color:"#092d52ff"}}>{summary.teamSales}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -483,7 +506,7 @@ export default function Dashboard() {
                 <Card sx={{ borderLeft: "5px solid #6a1b9a",height:"127px",alignContent:"center" }}>
                   <CardContent>
                     <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 'bold' }}>Top Product</Typography>
-                    <Typography variant="h6" sx={{fontWeight: 'bold'}}>{summary.topProduct}</Typography>
+                    <Typography variant="h6" sx={{fontWeight: 'bold',color:"#092d52ff"}}>{summary.topProduct}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
@@ -494,7 +517,7 @@ export default function Dashboard() {
                 <Card sx={{ borderLeft: "5px solid #6a1b9a",height:"127px",alignContent:"center" }}>
                   <CardContent>
                     <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 'bold' }}>Team Members</Typography>
-                    <Typography variant="h6" sx={{fontWeight: 'bold'}}>{summary.totalPeople}</Typography>
+                    <Typography variant="h6" sx={{fontWeight: 'bold',color:"#092d52ff"}}>{summary.totalPeople}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
@@ -545,7 +568,7 @@ export default function Dashboard() {
             </Grid>
 
             <Grid item xs={12}>
-              <Card sx={{ p: 2, width: "100%", height: 300,width:"370px" }}>
+              <Card sx={{ p: 2,  height: 300,width:"370px" }}>
                 <Typography variant="subtitle1" sx={{ mb: 2 }}>
                   <b>{user.role === "ADMIN" ? "Employee Role Distribution" : "Customer Distribution"}</b>
                 </Typography>
