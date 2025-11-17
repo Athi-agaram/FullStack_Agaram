@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/agaramproject/static/css/main.6063c591.css",
+    "main.js": "/agaramproject/static/js/main.30806f50.js",
+    "static/js/453.be3ed9a6.chunk.js": "/agaramproject/static/js/453.be3ed9a6.chunk.js",
+    "index.html": "/agaramproject/index.html",
+    "main.6063c591.css.map": "/agaramproject/static/css/main.6063c591.css.map",
+    "main.30806f50.js.map": "/agaramproject/static/js/main.30806f50.js.map",
+    "453.be3ed9a6.chunk.js.map": "/agaramproject/static/js/453.be3ed9a6.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6063c591.css",
+    "static/js/main.30806f50.js"
+  ]
+}

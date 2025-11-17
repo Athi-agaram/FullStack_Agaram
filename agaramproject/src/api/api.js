@@ -1,10 +1,12 @@
 import axios from "axios";
 
-// Axios instance
+
+
 const API = axios.create({
-  baseURL: "http://localhost:8098/api",
+  baseURL: `${window.location.origin}/agaram-project-backend`,
   timeout: 10000,
 });
+
 
 // ==================== USERS ====================
 export const loginUser = (payload) => API.post("/users/login", payload);
