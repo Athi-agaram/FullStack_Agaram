@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/material";
-import { changeUserPassword } from "../api/api"; // your API call
+import { changeUserPassword } from "../../api/api";
 
 export default function ChangePasswordPage({ user, closeDialog }) {
   const [passwordData, setPasswordData] = useState({

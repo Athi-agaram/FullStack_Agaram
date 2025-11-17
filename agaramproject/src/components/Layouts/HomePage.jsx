@@ -41,10 +41,10 @@
 
 import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import Sidebar from "../components/sidebar";
-import MasterPage from "../components/MasterPage/MasterPage";
-import Dashboard from "../components/DashboardPage/Dashboard";
-import TopBar, { topBarHeight, drawerWidthCollapsed } from "../components/topbar";
+import Sidebar from "./sidebar";
+import MasterPage from "../../Pages/MasterPage/MasterPage";
+import Dashboard from "../../Pages/DashboardPage/Dashboard";
+import TopBar , { topBarHeight, drawerWidthCollapsed} from "./topbar";
 
 export default function HomePage() {
   const [masterTab, setMasterTab] = useState(null);

@@ -467,7 +467,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { loginUser, checkUsernameExists } from "../api/api";
+import { loginUser, checkUsernameExists } from "../../api/api";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ username: "", password: "" });

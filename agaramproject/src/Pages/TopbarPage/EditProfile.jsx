@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/material";
-import { editUserProfile } from "../api/api"; // your API call
+import { editUserProfile } from "../../api/api"; // your API call
 
 export default function EditProfilePage({ user,closeDialog }) {
   const [editData, setEditData] = useState({

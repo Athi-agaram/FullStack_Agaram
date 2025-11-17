@@ -243,7 +243,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { registerUser } from "../api/api";
+import { registerUser } from "../../api/api";
 import {
   Box,
   Paper,

@@ -141,8 +141,8 @@ import ExpandCircleDownOutlinedIcon from "@mui/icons-material/ExpandCircleDownOu
 import PermIdentitySharpIcon from "@mui/icons-material/PermIdentitySharp";
 import KeySharpIcon from "@mui/icons-material/KeySharp";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
-import EditProfilePage from "../Pages/EditProfile";
-import ChangePasswordPage from "../Pages/ChangePassword";
+import EditProfilePage from "../../Pages/TopbarPage/EditProfile";
+import ChangePasswordPage from "../../Pages/TopbarPage/ChangePassword";
 import { useNavigate } from "react-router-dom";
 
 const topBarHeight = 60;
