@@ -6,8 +6,8 @@ import RegisterPage from "./Pages/RegisterPage/RegisterPage";
 
 function App() {
   return (
-    <Router>
-      <Routes>
+    <Router basename="/Agaramfrontend">
+      <Routes >
         <Route path="/" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/home/*" element={<HomePage />} />

@@ -491,6 +491,7 @@ export default function LoginPage() {
     }
     const delayDebounce = setTimeout(async () => {
       try {
+        
         const res = await checkUsernameExists(formData.username.trim());
         setUsernameExists(res.data);
       } catch (err) {

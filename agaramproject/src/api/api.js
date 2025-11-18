@@ -3,9 +3,13 @@ import axios from "axios";
 
 
 const API = axios.create({
-  baseURL: `${window.location.origin}/agaram-project-backend`,
-  timeout: 10000,
+  baseURL: `${window.location.origin}/agaram-project-backend/api`,
+
 });
+
+// const API = axios.create({
+//   baseURL: "http://localhost:8098/api",
+// });
 
 
 // ==================== USERS ====================
@@ -13,6 +17,7 @@ export const loginUser = (payload) => API.post("/users/login", payload);
 export const registerUser = (payload) => API.post("/users/register", payload);
 export const getAllUsers = () => API.get("/users/all");
 export const getTeamUsers = (teamName) => API.get(`/users/team/${teamName}`);
+
 export const updateEmployee = (id, payload, currentUser) =>
   API.put(`/users/update/${id}?currentUser=${encodeURIComponent(currentUser)}`, payload);
 export const deleteUser = (id, currentUser) =>
@@ -51,6 +56,7 @@ export const getRevenueDashboard = () => API.get("/master/revenue/dashboard");
 // ==================== TEAMS ====================
 export const getTeams = async () => {
   try {
+      console.log("Base URL:", `${window.location.origin}/agaram-project-backend/api`);
     const res = await API.get("/master/teams");
     return res.data;
   } catch (error) {
