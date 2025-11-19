@@ -534,7 +534,7 @@ export default function LoginPage() {
       {/* Background Image */}
       <Box
         component="img"
-        src="https://scontent.fmaa3-2.fna.fbcdn.net/v/t39.30808-6/482029405_9293251904057799_4287303386032315694_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_ohc=HQoY1MdNwHgQ7kNvwGy3XG-&_nc_oc=AdmMk_EKAw-EULB6gcDwm27RMExc7OBQDOvxkxqOeDpvuSwUVzHMP-GKdv4C--0ckpQ&_nc_zt=23&_nc_ht=scontent.fmaa3-2.fna&_nc_gid=2iiZ7abYdGzwuvvgRaNHFg&oh=00_AfhftGLUjtdtOYA_mNSocLAptTBdLNqReemwcO1jSaLdNg&oe=691B4FEA"
+        src="https://static.vecteezy.com/system/resources/previews/000/549/810/original/vector-abstract-technology-background-technology-digital-world-of-business-information-futuristic-blue-virtual-graphic-interface.jpg"
         alt="Background"
         sx={{
           width: "100%",

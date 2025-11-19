@@ -1,50 +1,10 @@
-// import React from "react";
-// import { Box } from "@mui/material";
-// import Dashboard from "../components/DashboardPage/Dashboard";
-// import Sidebar from "../components/sidebar";
-// import MasterPage from "../components/MasterPage/MasterPage";
-// import { Routes, Route, Navigate } from "react-router-dom";
-
-// export default function HomePage() {
-//   return (
-//     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-//       <Sidebar />
-//       <Box component="main" sx={{ flex: 1, ml: "72px", bgcolor: "#f6f8fb" }}>
-//         <Routes>
-//           <Route path="/" element={<Dashboard />} />
-//           <Route path="/master" element={<MasterPage />} />
-//           <Route path="*" element={<Navigate to="/" replace />} />
-//         </Routes>
-//       </Box>
-//     </Box>
-//   );
-// }
-
-
-// import React, { useState } from "react";
-// import { Box } from "@mui/material";
-// import Dashboard from "../components/DashboardPage/Dashboard";
-// import Sidebar from "../components/sidebar";
-// import MasterPage from "../components/MasterPage/MasterPage";
-
-// export default function HomePage() {
-//   // ✅ Default: Dashboard (null means no master tab selected)
-//   const [masterTab, setMasterTab] = useState(null);
-
-//   return (
-//     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-//       <Sidebar setMasterTab={setMasterTab} />
-//       <Box
-//         component="main"
-//         sx={{
-
-
 import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import Sidebar from "./sidebar";
 import MasterPage from "../../Pages/MasterPage/MasterPage";
 import Dashboard from "../../Pages/DashboardPage/Dashboard";
 import TopBar , { topBarHeight, drawerWidthCollapsed} from "./topbar";
+import EcommercePage from "../../Pages/Ecommerce/EcommercePage";
 
 export default function HomePage() {
   const [masterTab, setMasterTab] = useState(null);
@@ -60,10 +20,12 @@ export default function HomePage() {
   return (
     <Box sx={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       
-      {/* Sidebar */}
-      <Sidebar setMasterTab={setMasterTab} />
+      {/* Sidebar - fixed position */}
+      <Box sx={{ position: "fixed", left: 0, top: 0, bottom: 0, width: drawerWidthCollapsed, zIndex: 11 }}>
+        <Sidebar setMasterTab={setMasterTab} />
+      </Box>
 
-      {/* TopBar FIXED */}
+      {/* TopBar - fixed, aligned with sidebar */}
       <Box
         sx={{
           position: "fixed",
@@ -79,11 +41,11 @@ export default function HomePage() {
         <TopBar user={user} setMasterTab={setMasterTab} />
       </Box>
 
-      {/* Main Content */}
+      {/* Main Content - no gap */}
       <Box
         sx={{
           flex: 1,
-          ml: `${drawerWidthCollapsed}px`,
+          ml: `${drawerWidthCollapsed}px`, // keeps content next to sidebar
           mt: `${topBarHeight}px`,
           height: `calc(100vh - ${topBarHeight}px)`,
           overflowY: "auto",
@@ -91,7 +53,13 @@ export default function HomePage() {
           p: 2,
         }}
       >
-        {masterTab ? <MasterPage selectedTab={masterTab} /> : <Dashboard />}
+        {masterTab ? (
+          masterTab.startsWith("store")
+            ? <EcommercePage selectedStoreTab={masterTab} />
+            : <MasterPage selectedTab={masterTab} />
+        ) : (
+          <Dashboard />
+        )}
       </Box>
     </Box>
   );

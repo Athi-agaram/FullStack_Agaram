@@ -1,0 +1,1176 @@
+[
+  {
+    "id": "201",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/moisturizer.jpg",
+    "name": "Hydrating Facial Moisturizer",
+    "rating": {
+      "stars": 4.7,
+      "count": 120
+    },
+    "priceCents": 2000,
+    "category": "Beauty & Personal Care",
+    "subCategory": "Skincare",
+    "keywords": [
+      "moisturizer",
+      "hydration",
+      "skincare",
+      "beauty"
+    ],
+    "description": "This Hydrating Facial Moisturizer is expertly formulated to deeply nourish and hydrate your skin, providing lasting moisture and a smooth, radiant complexion. Ideal for daily use."
+  },
+  {
+    "id": "202",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/shampoo.jpg",
+    "name": "Anti-Dandruff Shampoo",
+    "rating": {
+      "stars": 4.5,
+      "count": 85
+    },
+    "priceCents": 1500,
+    "category": "Beauty & Personal Care",
+    "subCategory": "Hair Care",
+    "keywords": [
+      "shampoo",
+      "hair care",
+      "anti-dandruff",
+      "cleanse"
+    ],
+    "description": "Our Anti-Dandruff Shampoo effectively combats flakes and itchiness, promoting a healthy scalp. Infused with soothing ingredients, it cleanses your hair without stripping natural oils."
+  },
+  {
+    "id": "203",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/foundation.jpg",
+    "name": "Matte Liquid Foundation",
+    "rating": {
+      "stars": 4.6,
+      "count": 98
+    },
+    "priceCents": 2200,
+    "category": "Beauty & Personal Care",
+    "subCategory": "Makeup",
+    "keywords": [
+      "foundation",
+      "makeup",
+      "beauty",
+      "matte"
+    ],
+    "description": "This Matte Liquid Foundation offers a flawless finish with long-lasting wear. Lightweight and breathable, it blends seamlessly into the skin, providing even coverage and a natural look."
+  },
+  {
+    "id": "204",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/perfume.jpg",
+    "name": "Eau de Parfum - Floral Scent",
+    "rating": {
+      "stars": 4.8,
+      "count": 160
+    },
+    "priceCents": 3500,
+    "category": "Beauty & Personal Care",
+    "subCategory": "Fragrances",
+    "keywords": [
+      "perfume",
+      "fragrance",
+      "scent",
+      "floral"
+    ],
+    "description": "Experience the essence of blooming florals with our Eau de Parfum. This captivating scent envelops you in elegance, making it perfect for any occasion, leaving a lasting impression."
+  },
+  {
+    "id": "205",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/shaving-kit.jpg",
+    "name": "Men's Shaving Kit",
+    "rating": {
+      "stars": 4.4,
+      "count": 70
+    },
+    "priceCents": 1800,
+    "category": "Beauty & Personal Care",
+    "subCategory": "Grooming",
+    "keywords": [
+      "shaving kit",
+      "grooming",
+      "men",
+      "razor"
+    ],
+    "description": "This Men's Shaving Kit includes everything needed for a close, comfortable shave. Featuring a premium razor and soothing gel, it ensures a smooth experience with every use."
+  },
+  {
+    "id": "206",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/body-wash.jpg",
+    "name": "Nourishing Body Wash",
+    "rating": {
+      "stars": 4.7,
+      "count": 140
+    },
+    "priceCents": 1300,
+    "category": "Beauty & Personal Care",
+    "subCategory": "Bath & Body",
+    "keywords": [
+      "body wash",
+      "bath",
+      "care",
+      "nourishing"
+    ],
+    "description": "Our Nourishing Body Wash gently cleanses while replenishing moisture, leaving your skin feeling soft and revitalized. Infused with natural ingredients for a refreshing bathing experience."
+  },
+  {
+    "id": "207",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/nail-polish.jpg",
+    "name": "Glossy Nail Polish",
+    "rating": {
+      "stars": 4.5,
+      "count": 65
+    },
+    "priceCents": 800,
+    "category": "Beauty & Personal Care",
+    "subCategory": "Nail Care",
+    "keywords": [
+      "nail polish",
+      "nail care",
+      "beauty",
+      "glossy"
+    ],
+    "description": "Achieve stunning nails with our Glossy Nail Polish. This vibrant formula provides high shine and long-lasting wear, perfect for expressing your personal style with every application."
+  },
+  {
+    "id": "208",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/conditioner.jpg",
+    "name": "Moisturizing Conditioner",
+    "rating": {
+      "stars": 4.6,
+      "count": 110
+    },
+    "priceCents": 1700,
+    "category": "Beauty & Personal Care",
+    "subCategory": "Hair Care",
+    "keywords": [
+      "conditioner",
+      "hair care",
+      "moisturizing",
+      "smooth"
+    ],
+    "description": "Our Moisturizing Conditioner deeply hydrates and detangles hair, leaving it soft, shiny, and manageable. Perfect for all hair types, it helps restore natural moisture balance."
+  },
+  {
+    "id": "209",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/razor.jpg",
+    "name": "Triple Blade Razor",
+    "rating": {
+      "stars": 4.3,
+      "count": 55
+    },
+    "priceCents": 1000,
+    "category": "Beauty & Personal Care",
+    "subCategory": "Men's Grooming Products",
+    "keywords": [
+      "razor",
+      "grooming",
+      "men",
+      "shaving"
+    ],
+    "description": "The Triple Blade Razor delivers an exceptionally close shave with minimal irritation. Its ergonomic design provides comfort and control, making it a must-have for every grooming routine."
+  },
+  {
+    "id": "210",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/vitamin-supplement.jpg",
+    "name": "Vitamin C Supplement",
+    "rating": {
+      "stars": 4.7,
+      "count": 200
+    },
+    "priceCents": 3000,
+    "category": "Beauty & Personal Care",
+    "subCategory": "Health & Wellness Products",
+    "keywords": [
+      "vitamin c",
+      "supplement",
+      "wellness",
+      "health"
+    ],
+    "description": "Boost your health with our Vitamin C Supplement. Designed to support immune function and overall wellness, these easy-to-take tablets provide essential nutrients for your daily needs."
+  },
+  {
+    "id": "211",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/wireless-headphones.jpg",
+    "name": "Wireless Bluetooth Headphones",
+    "rating": {
+      "stars": 4.7,
+      "count": 230
+    },
+    "priceCents": 7999,
+    "category": "Electronics & Gadgets",
+    "subCategory": "Audio",
+    "keywords": [
+      "headphones",
+      "bluetooth",
+      "audio",
+      "electronics"
+    ],
+    "description": "Experience superior sound quality with these wireless Bluetooth headphones, designed for comfort and portability for everyday use."
+  },
+  {
+    "id": "212",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/smartphone.jpg",
+    "name": "Smartphone - 128GB",
+    "rating": {
+      "stars": 4.6,
+      "count": 320
+    },
+    "priceCents": 45000,
+    "category": "Electronics & Gadgets",
+    "subCategory": "Mobile Phones",
+    "keywords": [
+      "smartphone",
+      "mobile",
+      "gadgets"
+    ],
+    "description": "Stay connected with this high-performance smartphone featuring 128GB storage, perfect for apps, photos, and multimedia."
+  },
+  {
+    "id": "213",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/4k-tv.jpg",
+    "name": "55-Inch 4K Ultra HD TV",
+    "rating": {
+      "stars": 4.8,
+      "count": 190
+    },
+    "priceCents": 90000,
+    "category": "Electronics & Gadgets",
+    "subCategory": "Televisions",
+    "keywords": [
+      "television",
+      "4K",
+      "electronics",
+      "gadgets"
+    ],
+    "description": "Enjoy breathtaking visuals with this 55-inch 4K Ultra HD TV, delivering stunning detail and vibrant colors for your favorite shows."
+  },
+  {
+    "id": "214",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/laptop.jpg",
+    "name": "Gaming Laptop - 16GB RAM, 512GB SSD",
+    "rating": {
+      "stars": 4.9,
+      "count": 210
+    },
+    "priceCents": 120000,
+    "category": "Electronics & Gadgets",
+    "subCategory": "Computers",
+    "keywords": [
+      "laptop",
+      "gaming",
+      "computers",
+      "electronics"
+    ],
+    "description": "Unleash your gaming potential with this powerful gaming laptop featuring 16GB RAM and 512GB SSD for speed and performance."
+  },
+  {
+    "id": "215",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/smartwatch.jpg",
+    "name": "Smartwatch - Fitness Tracker",
+    "rating": {
+      "stars": 4.5,
+      "count": 130
+    },
+    "priceCents": 15000,
+    "category": "Electronics & Gadgets",
+    "subCategory": "Wearables",
+    "keywords": [
+      "smartwatch",
+      "fitness",
+      "wearables",
+      "electronics"
+    ],
+    "description": "Monitor your health and stay connected with this feature-rich smartwatch, perfect for tracking fitness and receiving notifications."
+  },
+  {
+    "id": "216",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/tablet.jpg",
+    "name": "10.1-Inch Android Tablet",
+    "rating": {
+      "stars": 4.3,
+      "count": 95
+    },
+    "priceCents": 20000,
+    "category": "Electronics & Gadgets",
+    "subCategory": "Tablets",
+    "keywords": [
+      "tablet",
+      "android",
+      "gadgets",
+      "electronics"
+    ],
+    "description": "Enjoy your favorite apps and media on this sleek 10.1-inch Android tablet, offering portability and a vibrant display for on-the-go."
+  },
+  {
+    "id": "217",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/bluetooth-speaker.jpg",
+    "name": "Portable Bluetooth Speaker",
+    "rating": {
+      "stars": 4.7,
+      "count": 180
+    },
+    "priceCents": 5000,
+    "category": "Electronics & Gadgets",
+    "subCategory": "Audio",
+    "keywords": [
+      "bluetooth",
+      "speaker",
+      "audio",
+      "gadgets"
+    ],
+    "description": "Take your music anywhere with this portable Bluetooth speaker, delivering powerful sound in a compact design, perfect for outdoor use."
+  },
+  {
+    "id": "218",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/dslr-camera.jpg",
+    "name": "DSLR Camera - 24MP",
+    "rating": {
+      "stars": 4.8,
+      "count": 115
+    },
+    "priceCents": 85000,
+    "category": "Electronics & Gadgets",
+    "subCategory": "Cameras",
+    "keywords": [
+      "camera",
+      "dslr",
+      "gadgets",
+      "electronics"
+    ],
+    "description": "Capture stunning photos and videos with this 24MP DSLR camera, offering professional-quality imaging and advanced features for creatives."
+  },
+  {
+    "id": "219",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/usb-drive.jpg",
+    "name": "USB Drive - 64GB",
+    "rating": {
+      "stars": 4.2,
+      "count": 75
+    },
+    "priceCents": 1200,
+    "category": "Electronics & Gadgets",
+    "subCategory": "Storage",
+    "keywords": [
+      "usb",
+      "storage",
+      "gadgets",
+      "electronics"
+    ],
+    "description": "Store and transfer your files easily with this 64GB USB drive, offering ample space and portability for your data needs."
+  },
+  {
+    "id": "220",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/action-camera.jpg",
+    "name": "4K Action Camera",
+    "rating": {
+      "stars": 4.6,
+      "count": 90
+    },
+    "priceCents": 18000,
+    "category": "Electronics & Gadgets",
+    "subCategory": "Cameras",
+    "keywords": [
+      "action camera",
+      "4K",
+      "gadgets",
+      "electronics"
+    ],
+    "description": "Record your adventures in stunning detail with this 4K action camera, built to withstand tough conditions and capture high-quality footage."
+  },
+  {
+    "id": "221",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/denim-jacket.jpg",
+    "name": "Men's Denim Jacket",
+    "rating": {
+      "stars": 4.5,
+      "count": 150
+    },
+    "priceCents": 3500,
+    "category": "Fashion & Apparel",
+    "subCategory": "Men's Clothing",
+    "keywords": [
+      "denim jacket",
+      "men's fashion",
+      "clothing",
+      "outerwear"
+    ],
+    "description": "This stylish Men's Denim Jacket is perfect for any casual occasion. Crafted from high-quality denim, it features a classic fit, button closure, and timeless design that complements various outfits."
+  },
+  {
+    "id": "222",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/maxi-dress.jpg",
+    "name": "Women's Floral Maxi Dress",
+    "rating": {
+      "stars": 4.8,
+      "count": 95
+    },
+    "priceCents": 4200,
+    "category": "Fashion & Apparel",
+    "subCategory": "Women's Clothing",
+    "keywords": [
+      "floral dress",
+      "women's fashion",
+      "clothing",
+      "dress"
+    ],
+    "description": "Embrace elegance with this Women's Floral Maxi Dress, designed with a flattering silhouette and vibrant floral patterns. Perfect for sunny days and special occasions, it's a must-have addition to your wardrobe."
+  },
+  {
+    "id": "223",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/sneakers.jpg",
+    "name": "Unisex Casual Sneakers",
+    "rating": {
+      "stars": 4.7,
+      "count": 210
+    },
+    "priceCents": 5500,
+    "category": "Fashion & Apparel",
+    "subCategory": "Footwear",
+    "keywords": [
+      "sneakers",
+      "footwear",
+      "shoes",
+      "casual"
+    ],
+    "description": "These Unisex Casual Sneakers blend comfort and style effortlessly. With a lightweight design and cushioned sole, they're perfect for everyday wear, making them a versatile choice for any outfit."
+  },
+  {
+    "id": "224",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/leather-bag.jpg",
+    "name": "Leather Tote Bag",
+    "rating": {
+      "stars": 4.6,
+      "count": 130
+    },
+    "priceCents": 6000,
+    "category": "Fashion & Apparel",
+    "subCategory": "Accessories",
+    "keywords": [
+      "leather bag",
+      "tote",
+      "accessories",
+      "fashion"
+    ],
+    "description": "Elevate your style with this chic Leather Tote Bag, featuring a spacious interior and elegant design. Crafted from premium leather, it's perfect for carrying your essentials while looking effortlessly stylish."
+  },
+  {
+    "id": "225",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/sunglasses.jpg",
+    "name": "Polarized Sunglasses",
+    "rating": {
+      "stars": 4.4,
+      "count": 90
+    },
+    "priceCents": 2500,
+    "category": "Fashion & Apparel",
+    "subCategory": "Accessories",
+    "keywords": [
+      "sunglasses",
+      "polarized",
+      "accessories",
+      "fashion"
+    ],
+    "description": "Protect your eyes in style with these Polarized Sunglasses. Designed to reduce glare and enhance visual clarity, they offer both comfort and sophistication for all your outdoor adventures."
+  },
+  {
+    "id": "226",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/formal-shirt.jpg",
+    "name": "Men's Formal Shirt",
+    "rating": {
+      "stars": 4.3,
+      "count": 85
+    },
+    "priceCents": 3100,
+    "category": "Fashion & Apparel",
+    "subCategory": "Men's Clothing",
+    "keywords": [
+      "formal shirt",
+      "men's fashion",
+      "clothing",
+      "shirt"
+    ],
+    "description": "This Men's Formal Shirt combines elegance with comfort. Tailored to perfection, it features a classic collar and a crisp finish, making it the ideal choice for business meetings or formal occasions."
+  },
+  {
+    "id": "227",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/heels.jpg",
+    "name": "Women's High Heels",
+    "rating": {
+      "stars": 4.6,
+      "count": 105
+    },
+    "priceCents": 4500,
+    "category": "Fashion & Apparel",
+    "subCategory": "Footwear",
+    "keywords": [
+      "heels",
+      "women's footwear",
+      "fashion",
+      "shoes"
+    ],
+    "description": "Step into sophistication with these Women's High Heels, featuring a sleek design and comfortable fit. Perfect for parties, weddings, or a night out, they will elevate any outfit with a touch of glamour."
+  },
+  {
+    "id": "228",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/t-shirt.jpg",
+    "name": "Graphic Print T-Shirt",
+    "rating": {
+      "stars": 4.5,
+      "count": 200
+    },
+    "priceCents": 1800,
+    "category": "Fashion & Apparel",
+    "subCategory": "Men's Clothing",
+    "keywords": [
+      "t-shirt",
+      "graphic print",
+      "men's fashion",
+      "clothing"
+    ],
+    "description": "Express yourself with this Graphic Print T-Shirt, featuring vibrant colors and unique designs. Made from soft cotton, it offers a relaxed fit, making it perfect for casual outings or lounging at home."
+  },
+  {
+    "id": "229",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/handbag.jpg",
+    "name": "Women's Designer Handbag",
+    "rating": {
+      "stars": 4.9,
+      "count": 150
+    },
+    "priceCents": 7500,
+    "category": "Fashion & Apparel",
+    "subCategory": "Accessories",
+    "keywords": [
+      "handbag",
+      "designer",
+      "fashion",
+      "accessories"
+    ],
+    "description": "Make a statement with this Women's Designer Handbag, crafted from luxurious materials and featuring exquisite detailing. It's spacious enough for daily essentials while adding elegance to your ensemble."
+  },
+  {
+    "id": "230",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/slippers.jpg",
+    "name": "Comfortable Flip-Flops",
+    "rating": {
+      "stars": 4.2,
+      "count": 70
+    },
+    "priceCents": 1200,
+    "category": "Fashion & Apparel",
+    "subCategory": "Footwear",
+    "keywords": [
+      "flip-flops",
+      "slippers",
+      "footwear",
+      "casual"
+    ],
+    "description": "Enjoy ultimate comfort with these Comfortable Flip-Flops. Designed for casual wear, they feature soft straps and cushioned soles, making them perfect for the beach, pool, or everyday relaxation."
+  },
+  {
+    "id": "231",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/sofa.jpg",
+    "name": "Modern Leather Sofa",
+    "rating": {
+      "stars": 4.8,
+      "count": 220
+    },
+    "priceCents": 120000,
+    "category": "Home & Kitchen",
+    "subCategory": "Furniture",
+    "keywords": [
+      "sofa",
+      "furniture",
+      "living room",
+      "home decor"
+    ],
+    "description": "A stylish modern leather sofa that enhances the elegance of your living room while providing utmost comfort for relaxation and entertaining guests."
+  },
+  {
+    "id": "232",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/refrigerator.jpg",
+    "name": "Stainless Steel Refrigerator",
+    "rating": {
+      "stars": 4.6,
+      "count": 150
+    },
+    "priceCents": 95000,
+    "category": "Home & Kitchen",
+    "subCategory": "Kitchen Appliances",
+    "keywords": [
+      "refrigerator",
+      "appliance",
+      "kitchen",
+      "stainless steel"
+    ],
+    "description": "This sleek stainless steel refrigerator features ample storage space, energy efficiency, and modern technology, making it perfect for keeping your food fresh."
+  },
+  {
+    "id": "233",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/vacuum-cleaner.jpg",
+    "name": "Cordless Vacuum Cleaner",
+    "rating": {
+      "stars": 4.4,
+      "count": 180
+    },
+    "priceCents": 18000,
+    "category": "Home & Kitchen",
+    "subCategory": "Home Appliances",
+    "keywords": [
+      "vacuum cleaner",
+      "cordless",
+      "cleaning",
+      "home"
+    ],
+    "description": "Enjoy effortless cleaning with this cordless vacuum cleaner, designed for convenience and efficiency, easily reaching corners and tight spaces without any cords."
+  },
+  {
+    "id": "234",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/cookware.jpg",
+    "name": "Non-Stick Cookware Set",
+    "rating": {
+      "stars": 4.7,
+      "count": 95
+    },
+    "priceCents": 25000,
+    "category": "Home & Kitchen",
+    "subCategory": "Cookware & Bakeware",
+    "keywords": [
+      "cookware",
+      "non-stick",
+      "kitchen",
+      "bakeware"
+    ],
+    "description": "This non-stick cookware set is perfect for easy cooking and cleaning, ensuring your meals come out delicious without sticking, making meal prep a breeze."
+  },
+  {
+    "id": "235",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/dinnerware.jpg",
+    "name": "Porcelain Dinnerware Set",
+    "rating": {
+      "stars": 4.9,
+      "count": 70
+    },
+    "priceCents": 16000,
+    "category": "Home & Kitchen",
+    "subCategory": "Dinnerware & Serveware",
+    "keywords": [
+      "dinnerware",
+      "porcelain",
+      "kitchen",
+      "tableware"
+    ],
+    "description": "Elevate your dining experience with this exquisite porcelain dinnerware set, perfect for both everyday meals and special occasions, combining elegance and functionality."
+  },
+  {
+    "id": "236",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/mattress.jpg",
+    "name": "Memory Foam Mattress",
+    "rating": {
+      "stars": 4.8,
+      "count": 140
+    },
+    "priceCents": 75000,
+    "category": "Home & Kitchen",
+    "subCategory": "Bedding",
+    "keywords": [
+      "mattress",
+      "memory foam",
+      "bedding",
+      "sleep"
+    ],
+    "description": "Experience superior comfort with our memory foam mattress, designed to contour to your body and provide excellent support for a restful night’s sleep."
+  },
+  {
+    "id": "237",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/table-lamp.jpg",
+    "name": "Contemporary Table Lamp",
+    "rating": {
+      "stars": 4.5,
+      "count": 85
+    },
+    "priceCents": 5000,
+    "category": "Home & Kitchen",
+    "subCategory": "Lighting",
+    "keywords": [
+      "lamp",
+      "lighting",
+      "home decor",
+      "table lamp"
+    ],
+    "description": "Brighten your space with this contemporary table lamp, combining modern design and functionality, perfect for reading or creating a cozy atmosphere in any room."
+  },
+  {
+    "id": "238",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/rug.jpg",
+    "name": "Hand-Woven Area Rug",
+    "rating": {
+      "stars": 4.6,
+      "count": 110
+    },
+    "priceCents": 20000,
+    "category": "Home & Kitchen",
+    "subCategory": "Home Decor",
+    "keywords": [
+      "rug",
+      "home decor",
+      "woven",
+      "area rug"
+    ],
+    "description": "This hand-woven area rug adds warmth and style to your home decor, featuring intricate designs that enhance any living space while providing comfort underfoot."
+  },
+  {
+    "id": "239",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/storage-boxes.jpg",
+    "name": "Plastic Storage Boxes - Set of 4",
+    "rating": {
+      "stars": 4.3,
+      "count": 55
+    },
+    "priceCents": 8000,
+    "category": "Home & Kitchen",
+    "subCategory": "Storage & Organization",
+    "keywords": [
+      "storage",
+      "organization",
+      "home",
+      "plastic boxes"
+    ],
+    "description": "Keep your home organized with this set of 4 plastic storage boxes, perfect for decluttering any space and storing items securely while maintaining easy accessibility."
+  },
+  {
+    "id": "240",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/cleaning-supplies.jpg",
+    "name": "Eco-Friendly Cleaning Supplies Kit",
+    "rating": {
+      "stars": 4.8,
+      "count": 120
+    },
+    "priceCents": 10000,
+    "category": "Home & Kitchen",
+    "subCategory": "Cleaning Supplies",
+    "keywords": [
+      "cleaning supplies",
+      "eco-friendly",
+      "home",
+      "cleaning kit"
+    ],
+    "description": "This eco-friendly cleaning supplies kit features sustainable products that effectively clean your home while being safe for the environment and your family."
+  },
+  {
+    "id": "241",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/treadmill.jpg",
+    "name": "Foldable Electric Treadmill",
+    "rating": {
+      "stars": 4.7,
+      "count": 320
+    },
+    "priceCents": 350000,
+    "category": "Health & Fitness",
+    "subCategory": "Fitness Equipment",
+    "keywords": [
+      "treadmill",
+      "fitness",
+      "exercise",
+      "home gym"
+    ],
+    "description": "This Foldable Electric Treadmill offers a convenient way to maintain fitness at home. With various speed settings and a compact design, it's perfect for beginners and seasoned athletes."
+  },
+  {
+    "id": "242",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/dumbbells.jpg",
+    "name": "Adjustable Dumbbell Set - 20kg",
+    "rating": {
+      "stars": 4.5,
+      "count": 260
+    },
+    "priceCents": 60000,
+    "category": "Health & Fitness",
+    "subCategory": "Fitness Equipment",
+    "keywords": [
+      "dumbbells",
+      "weights",
+      "fitness",
+      "strength training"
+    ],
+    "description": "The Adjustable Dumbbell Set allows for a customizable weight training experience. With a total weight of 20kg, it's perfect for strength training and versatile enough for various workouts."
+  },
+  {
+    "id": "243",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/protein-powder.jpg",
+    "name": "Whey Protein Powder - 2kg",
+    "rating": {
+      "stars": 4.6,
+      "count": 180
+    },
+    "priceCents": 35000,
+    "category": "Health & Fitness",
+    "subCategory": "Sports Nutrition",
+    "keywords": [
+      "protein",
+      "nutrition",
+      "supplement",
+      "sports"
+    ],
+    "description": "This Whey Protein Powder provides an excellent source of protein for muscle recovery and growth. The 2kg package is ideal for athletes and fitness enthusiasts aiming for optimal nutrition."
+  },
+  {
+    "id": "244",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/blood-pressure-monitor.jpg",
+    "name": "Digital Blood Pressure Monitor",
+    "rating": {
+      "stars": 4.8,
+      "count": 210
+    },
+    "priceCents": 22000,
+    "category": "Health & Fitness",
+    "subCategory": "Health Monitors",
+    "keywords": [
+      "blood pressure",
+      "monitor",
+      "health",
+      "medical"
+    ],
+    "description": "Stay on top of your health with this Digital Blood Pressure Monitor. Easy to use and highly accurate, it helps you track your blood pressure at home with clear digital readings."
+  },
+  {
+    "id": "245",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/first-aid-kit.jpg",
+    "name": "Compact First Aid Kit",
+    "rating": {
+      "stars": 4.9,
+      "count": 150
+    },
+    "priceCents": 12000,
+    "category": "Health & Fitness",
+    "subCategory": "First Aid",
+    "keywords": [
+      "first aid",
+      "kit",
+      "medical",
+      "emergency"
+    ],
+    "description": "This Compact First Aid Kit is essential for home, travel, or emergency situations. Packed with necessary supplies, it ensures you're prepared for minor injuries and emergencies."
+  },
+  {
+    "id": "246",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/hand-sanitizer.jpg",
+    "name": "Alcohol-Based Hand Sanitizer - 500ml",
+    "rating": {
+      "stars": 4.5,
+      "count": 90
+    },
+    "priceCents": 800,
+    "category": "Health & Fitness",
+    "subCategory": "Personal Health",
+    "keywords": [
+      "hand sanitizer",
+      "personal health",
+      "hygiene",
+      "sanitizer"
+    ],
+    "description": "Keep your hands clean and germ-free with this Alcohol-Based Hand Sanitizer. The 500ml bottle is perfect for personal use at home or on the go, providing effective sanitization."
+  },
+  {
+    "id": "247",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/gloves.jpg",
+    "name": "Workout Gloves - Pair",
+    "rating": {
+      "stars": 4.4,
+      "count": 100
+    },
+    "priceCents": 3000,
+    "category": "Health & Fitness",
+    "subCategory": "Sports Gear & Accessories",
+    "keywords": [
+      "gloves",
+      "workout",
+      "sports",
+      "fitness"
+    ],
+    "description": "Enhance your workout experience with these comfortable Workout Gloves. Designed to provide grip and protection, they are perfect for lifting weights or performing rigorous exercises."
+  },
+  {
+    "id": "248",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/thermometer.jpg",
+    "name": "Infrared Digital Thermometer",
+    "rating": {
+      "stars": 4.7,
+      "count": 120
+    },
+    "priceCents": 15000,
+    "category": "Health & Fitness",
+    "subCategory": "Health Monitors",
+    "keywords": [
+      "thermometer",
+      "digital",
+      "health",
+      "infrared"
+    ],
+    "description": "This Infrared Digital Thermometer allows for quick and accurate temperature readings. Perfect for home health monitoring, it provides fast results without physical contact."
+  },
+  {
+    "id": "249",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/yoga-mat.jpg",
+    "name": "Non-Slip Yoga Mat",
+    "rating": {
+      "stars": 4.6,
+      "count": 200
+    },
+    "priceCents": 5000,
+    "category": "Health & Fitness",
+    "subCategory": "Yoga & Meditation Supplies",
+    "keywords": [
+      "yoga mat",
+      "fitness",
+      "yoga",
+      "exercise"
+    ],
+    "description": "The Non-Slip Yoga Mat is designed for stability and comfort during yoga sessions. Its durable material ensures a safe practice, making it ideal for all skill levels and styles."
+  },
+  {
+    "id": "250",
+    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/knee-pads.jpg",
+    "name": "Adjustable Knee Pads",
+    "rating": {
+      "stars": 4.3,
+      "count": 70
+    },
+    "priceCents": 4000,
+    "category": "Health & Fitness",
+    "subCategory": "Sports Gear & Accessories",
+    "keywords": [
+      "knee pads",
+      "sports",
+      "gear",
+      "fitness"
+    ],
+    "description": "These Adjustable Knee Pads provide comfort and support during workouts. Perfect for protecting your knees during intense activities, they are essential for athletes and fitness lovers."
+  },
+  {
+  "id": "251",
+  "image": "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/d18e94cf0a2f46049c43cdd6bb1061ed_9366/Linear_Crew_Socks_3_Pairs_Kids_Blue_IQ4042_01_standard.jpg",
+  "name": "Sports Socks (5 pack)",
+  "rating": { "stars": 4.2, "count": 60 },
+  "priceCents": 1200,
+  "category": "Fashion & Apparel",
+  "subCategory": "Accessories",
+  "keywords": ["socks", "sports", "footwear"],
+  "description": "Comfortable and breathable sports socks available in a pack of 5, perfect for workouts or daily wear."
+},
+{
+  "id": "252",
+  "image": "https://asset.conrad.com/media10/isa/160267/c1/-/en/002190593PI00/image.jpg",
+  "name": "E-book Reader",
+  "rating": { "stars": 4.6, "count": 120 },
+  "priceCents": 55000,
+  "category": "Electronics & Gadgets",
+  "subCategory": "Wearables",
+  "keywords": ["ebook", "reader", "digital", "books"],
+  "description": "Lightweight e-book reader with high-resolution display, long battery life, and adjustable brightness for comfortable reading."
+},
+{
+  "id": "253",
+  "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/usb-drive.jpg",
+  "name": "USB Flash Drive 128GB",
+  "rating": { "stars": 4.4, "count": 90 },
+  "priceCents": 1500,
+  "category": "Electronics & Gadgets",
+  "subCategory": "Storage",
+  "keywords": ["usb", "storage", "flash drive"],
+  "description": "Portable and fast 128GB USB flash drive for convenient storage and transfer of files, photos, and videos."
+},
+{
+  "id": "254",
+  "image": "https://m.media-amazon.com/images/I/81h7UbdSGZL._SL1500_.jpg",
+  "name": "Ceramic Mug Set",
+  "rating": { "stars": 4.5, "count": 110 },
+  "priceCents": 2500,
+  "category": "Home & Kitchen",
+  "subCategory": "Dinnerware",
+  "keywords": ["mug", "ceramic", "kitchen"],
+  "description": "Beautiful ceramic mug set ideal for coffee or tea. Durable, microwave-safe, and perfect for daily use."
+},
+{
+  "id": "255",
+  "image": "https://rukminim1.flixcart.com/image/1664/1664/electric-cooker/q/w/d/pigeon-joy-favourite-original-imaes3ynkgegxsyn.jpeg?q=90",
+  "name": "Rice Cooker 1.8L",
+  "rating": { "stars": 4.3, "count": 95 },
+  "priceCents": 32000,
+  "category": "Home & Kitchen",
+  "subCategory": "Kitchen Appliances",
+  "keywords": ["rice cooker", "kitchen", "appliance"],
+  "description": "1.8L rice cooker with automatic shutoff feature, designed for perfect and effortless cooking every time."
+},
+{
+  "id": "256",
+  "image": "https://www.milton.in/cdn/shop/files/Mini_Spin_Mop_5.jpg?v=1736933795&width=810",
+  "name": "Floor Cleaning Mop",
+  "rating": { "stars": 4.1, "count": 70 },
+  "priceCents": 1800,
+  "category": "Home & Kitchen",
+  "subCategory": "Cleaning Supplies",
+  "keywords": ["mop", "cleaning", "floor"],
+  "description": "Durable floor cleaning mop with high-absorption microfiber head, ideal for daily home cleaning."
+},
+{
+  "id": "257",
+  "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/smartwatch.jpg",
+  "name": "Smartwatch",
+  "rating": { "stars": 4.5, "count": 180 },
+  "priceCents": 45000,
+  "category": "Electronics & Gadgets",
+  "subCategory": "Wearables",
+  "keywords": ["smartwatch", "wearable", "fitness"],
+  "description": "Feature-rich smartwatch with heart-rate monitoring, step tracking, and smart notifications."
+},
+{
+  "id": "258",
+  "image": "https://i5.walmartimages.com/asr/58f37284-0eb7-48c0-abf6-647ad4ff0c32.c7975492a1b0a1070027dade6645a54e.jpeg",
+  "name": "Electric Toothbrush",
+  "rating": { "stars": 4.4, "count": 150 },
+  "priceCents": 3500,
+  "category": "Beauty & Personal Care",
+  "subCategory": "Oral Care",
+  "keywords": ["toothbrush", "electric", "oral care"],
+  "description": "Rechargeable electric toothbrush providing deep cleaning, multiple brushing modes, and long battery life."
+},
+{
+  "id": "259",
+  "image": "https://i5.walmartimages.com/asr/2c0055e8-8dea-4bb7-a08f-0b903fe2488c.094e9c43810b5aa65022354921a3b9ef.jpeg",
+  "name": "Air Fryer (3L)",
+  "rating": { "stars": 4.7, "count": 240 },
+  "priceCents": 60000,
+  "category": "Home & Kitchen",
+  "subCategory": "Kitchen Appliances",
+  "keywords": ["air fryer", "appliance", "kitchen"],
+  "description": "Healthy 3L air fryer designed for oil-free cooking. Perfect for fries, chicken, snacks, and more."
+},
+{
+  "id": "260",
+  "image": "https://www.milton.in/cdn/shop/files/51ylXAfgrpL._SL1500.jpg?v=1740550419&width=1946",
+  "name": "Stainless Steel Bottle",
+  "rating": { "stars": 4.6, "count": 130 },
+  "priceCents": 1200,
+  "category": "Home & Kitchen",
+  "subCategory": "Drinkware",
+  "keywords": ["water bottle", "steel", "drinkware"],
+  "description": "Durable stainless steel bottle designed to keep beverages hot or cold for hours. Perfect for travel or daily use."
+},
+
+  
+  {
+    "id": "261",
+    "image": "https://tse2.mm.bing.net/th/id/OIP.i1uZZ8MDNKEyI_-98OmsSgHaFP?rs=1&pid=ImgDetMain&o=7&rm=3",
+    "name": "Nike Air Max 90",
+    "rating": { "stars": 4.8, "count": 320 },
+    "priceCents": 129999,
+    "category": "Shoes",
+    "subCategory": "Footwear",
+    "keywords": ["nike", "air max", "sneakers"],
+    "description": "Classic Nike Air Max 90 with responsive cushioning and stylish profile."
+  },
+  {
+    "id": "262",
+    "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/28620cc17458499e90faadb700ec8c75_9366/Ultraboost_22_Shoes_Black_GX3060_01_standard.jpg",
+    "name": "Adidas Ultraboost 22",
+    "rating": { "stars": 4.7, "count": 290 },
+    "priceCents": 149999,
+    "category": "Shoes",
+    "subCategory": "Footwear",
+    "keywords": ["adidas", "ultraboost", "running"],
+    "description": "Designed for comfort and performance with Boost cushioning."
+  },
+  {
+    "id": "263",
+    "image": "https://tse2.mm.bing.net/th/id/OIP.KATeaFeZU-ZbOIyUcPPP2wHaE8?rs=1&pid=ImgDetMain&o=7&rm=3",
+    "name": "Puma RS-X Reinvention",
+    "rating": { "stars": 4.5, "count": 180 },
+    "priceCents": 89999,
+    "category": "Shoes",
+    "subCategory": "Footwear",
+    "keywords": ["puma", "rs-x", "sneakers"],
+    "description": "Chunky retro design with premium cushioning and street style."
+  },
+  {
+    "id": "264",
+    "image": "https://www.skechers.in/on/demandware.static/-/Sites-skechers_india/default/dwb14bb1e2/images/large/216275-1.jpg",
+    "name": "Skechers GoWalk 6",
+    "rating": { "stars": 4.4, "count": 140 },
+    "priceCents": 59999,
+    "category": "Shoes",
+    "subCategory": "Footwear",
+    "keywords": ["skechers", "walking", "comfort"],
+    "description": "Lightweight slip-on walking shoes with high rebound cushioning."
+  },
+  {
+    "id": "265",
+    "image": "https://tse4.mm.bing.net/th/id/OIP.VemowAJYzCNQGMBT40ygawHaFP?rs=1&pid=ImgDetMain&o=7&rm=3",
+    "name": "New Balance 574 Classic",
+    "rating": { "stars": 4.6, "count": 210 },
+    "priceCents": 69999,
+    "category": "Shoes",
+    "subCategory": "Footwear",
+    "keywords": ["new balance", "574", "sneakers"],
+    "description": "Timeless comfort, durable cushioning, and iconic NB retro style."
+  },
+  {
+    "id": "266",
+    "image": "https://reebok.bynder.com/transform/d34b4388-b01e-485a-b600-8d28e2d7f385/100008494_FLT_eCom-tif?width:1200,height:630,format=png",
+    "name": "Reebok Classic Leather",
+    "rating": { "stars": 4.3, "count": 160 },
+    "priceCents": 64999,
+    "category": "Shoes",
+    "subCategory": "Footwear",
+    "keywords": ["reebok", "classic", "leather"],
+    "description": "Premium leather sneakers with a vintage athletic look."
+  },
+  {
+    "id": "267",
+    "image": "https://sneakernews.com/wp-content/uploads/2019/03/air-jordan-1-low-nike-sb-9.jpg?w=1140",
+    "name": "Air Jordan 1 Low",
+    "rating": { "stars": 4.9, "count": 540 },
+    "priceCents": 159999,
+    "category": "Shoes",
+    "subCategory": "Footwear",
+    "keywords": ["jordan", "air jordan 1", "basketball"],
+    "description": "Iconic Jordan design upgraded with low-cut versatility."
+  },
+  {
+    "id": "268",
+    "image": "https://www.aishcart.in/4218-thickbox_default/woodland-wayfarer-grey-hiking-boots.jpg",
+    "name": "Woodland Leather Trekking Boots",
+    "rating": { "stars": 4.4, "count": 130 },
+    "priceCents": 49999,
+    "category": "Shoes",
+    "subCategory": "Footwear",
+    "keywords": ["woodland", "boots", "trekking"],
+    "description": "Rugged boots designed for outdoor durability and comfort."
+  },
+  {
+    "id": "269",
+    "image": "https://m.media-amazon.com/images/I/71f03HwmuWL._UL1500_.jpg",
+    "name": "Red Tape Sports Running Shoe",
+    "rating": { "stars": 4.1, "count": 90 },
+    "priceCents": 26999,
+    "category": "Shoes",
+    "subCategory": "Footwear",
+    "keywords": ["red tape", "running", "sports"],
+    "description": "Breathable and lightweight shoes ideal for daily fitness."
+  },
+  {
+    "id": "270",
+    "image": "https://shopon.pk/images/detailed/178/883-4103-_1.jpg",
+    "name": "Bata Comfit Sneakers",
+    "rating": { "stars": 4.0, "count": 70 },
+    "priceCents": 19999,
+    "category": "Shoes",
+    "subCategory": "Footwear",
+    "keywords": ["bata", "comfit", "casual"],
+    "description": "Soft cushioning with premium comfort for everyday wear."
+  }
+
+
+
+]
