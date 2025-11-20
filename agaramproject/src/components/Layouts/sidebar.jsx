@@ -50,12 +50,7 @@ export default function Sidebar({ masterTab, setMasterTab }) {
     {
   key: "store",
   icon: <ShoppingCartIcon />,
-  subTabs: [
-    { key: "store-categories", label: "Categories" },
-    { key: "store-products", label: "Products" },
-    { key: "store-cart", label: "Cart" },
-    { key: "store-orders", label: "Orders" }
-  ]
+
 }
 
   ];

@@ -74,7 +74,7 @@ export default function MasterPage({ selectedTab }) {
 
   if (user.role !== "ADMIN" && !user.authorized) {
     return (
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: 2 }}>
         <Typography variant="h4" align="center" mt={25}>
           You have logged in!<br />
           Wait until the Administrator provides authorization.
@@ -85,7 +85,7 @@ export default function MasterPage({ selectedTab }) {
 
   return (
  
-      <Paper sx={{ mt: -1.5, p: 0,ml:0,border:"none",boxShadow:"none" ,bgcolor:"#f9fafc"}}>
+      <Paper sx={{ mt: -1.5, p: 2,ml:0,border:"none",boxShadow:"none" ,bgcolor:"#f9fafc"}}>
         <Tabs
           value={tab}
           onChange={(e, v) => setTab(v)}

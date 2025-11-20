@@ -35,7 +35,7 @@ export default function HomePage() {
           height: topBarHeight,
           zIndex: 10,
           bgcolor: "white",
-          boxShadow: 1,
+          boxShadow: 0,
         }}
       >
         <TopBar user={user} setMasterTab={setMasterTab} />
@@ -50,7 +50,7 @@ export default function HomePage() {
           height: `calc(100vh - ${topBarHeight}px)`,
           overflowY: "auto",
           bgcolor: "#f9fafc",
-          p: 2,
+          p: 0,
         }}
       >
         {masterTab ? (

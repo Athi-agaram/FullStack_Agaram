@@ -14,6 +14,7 @@ import {
   Rating,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { addToCartApi } from "../../../api/api";
 import productsData from "./products.json";
 
@@ -28,16 +29,20 @@ const mapCategory = (cat = "") => {
   return c.trim();
 };
 
-export default function ProductGrid({ initialProducts = [] }) {
+export default function ProductGrid({
+  initialProducts = [],
+  cartItems,
+  setCartItems,
+  wishlistItems,
+  setWishlistItems,
+}) {
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortType, setSortType] = useState("none");
 
-  // ==================== Normalize Products ====================
   const normalizeProducts = (arr) =>
     arr.map((p) => ({
       id: Number(p.id),
@@ -47,8 +52,14 @@ export default function ProductGrid({ initialProducts = [] }) {
       brand: p.brand || p.subCategory || p.category || "N/A",
       category: mapCategory(p.category),
       keywords: p.keywords || [],
-      rating: p.rating?.stars !== undefined ? Number(p.rating.stars) : Math.floor(Math.random() * 5) + 1,
-      reviews: p.rating?.count !== undefined ? Number(p.rating.count) : Math.floor(Math.random() * 200) + 1,
+      rating:
+        p.rating?.stars !== undefined
+          ? Number(p.rating.stars)
+          : Math.floor(Math.random() * 5) + 1,
+      reviews:
+        p.rating?.count !== undefined
+          ? Number(p.rating.count)
+          : Math.floor(Math.random() * 200) + 1,
     }));
 
   useEffect(() => {
@@ -88,6 +99,13 @@ export default function ProductGrid({ initialProducts = [] }) {
     setFiltered(list);
   }, [search, selectedCategory, sortType, products]);
 
+  const addToWishlist = (p) => {
+    if (!wishlistItems.find((x) => x.id === p.id)) {
+      setWishlistItems([...wishlistItems, p]);
+      alert("Added to wishlist!");
+    }
+  };
+
   const handleAdd = async (product) => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
@@ -102,6 +120,10 @@ export default function ProductGrid({ initialProducts = [] }) {
         qty: 1,
       });
 
+      if (!cartItems.find((x) => x.id === product.id)) {
+        setCartItems([...cartItems, { ...product, qty: 1 }]);
+      }
+
       alert("Added to cart!");
     } catch (err) {
       console.error("Add to cart error:", err);
@@ -110,7 +132,7 @@ export default function ProductGrid({ initialProducts = [] }) {
   };
 
   return (
-    <Box>
+    <Box sx={{ height: "100%", overflow: "visible" }}>
       {/* FILTER BAR */}
       <Paper
         elevation={0}
@@ -120,7 +142,7 @@ export default function ProductGrid({ initialProducts = [] }) {
           display: "flex",
           flexWrap: "wrap",
           gap: 2,
-          bgcolor: "#f7f9fc",
+          bgcolor: "#fff",
           alignItems: "center",
         }}
       >
@@ -130,12 +152,8 @@ export default function ProductGrid({ initialProducts = [] }) {
           onChange={(e) => setSearch(e.target.value)}
           sx={{
             flex: 1,
-            minWidth: 250,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "25px",
-              backgroundColor: "#fff",
-              height: 42,
-            },
+            minWidth: 300,
+            "& .MuiOutlinedInput-root": { borderRadius: "25px", backgroundColor: "#fff", height: 50 },
           }}
           InputProps={{
             startAdornment: (
@@ -150,7 +168,7 @@ export default function ProductGrid({ initialProducts = [] }) {
           label="Category"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          sx={{ width: 200 }}
+          sx={{ width: 200, bgcolor: "#fff" }}
         >
           {categoryList.map((c) => (
             <MenuItem key={c} value={c}>
@@ -163,7 +181,7 @@ export default function ProductGrid({ initialProducts = [] }) {
           label="Sort"
           value={sortType}
           onChange={(e) => setSortType(e.target.value)}
-          sx={{ width: 200 }}
+          sx={{ width: 200, bgcolor: "#fff" }}
         >
           <MenuItem value="none">None</MenuItem>
           <MenuItem value="low-high">Price: Low → High</MenuItem>
@@ -176,7 +194,9 @@ export default function ProductGrid({ initialProducts = [] }) {
         sx={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-          gap: 3,
+          gap: 1,
+          margin: 1,
+          bgcolor: "#fff",
         }}
       >
         {loading
@@ -201,71 +221,44 @@ export default function ProductGrid({ initialProducts = [] }) {
                   justifyContent: "space-between",
                   boxShadow: "0px 3px 8px rgba(0,0,0,0.12)",
                   transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                  "&:hover": {
-                    transform: "translateY(-4px)",
-                    boxShadow: "0px 12px 24px rgba(0,0,0,0.18)",
-                  },
+                  "&:hover": { transform: "translateY(-4px)", boxShadow: "0px 12px 24px rgba(0,0,0,0.18)" },
                 }}
               >
-                <CardMedia
-                  component="img"
-                  image={p.image}
-                  alt={p.name}
-                  sx={{
-                    height: 180,
-                    objectFit: "contain",
-                    bgcolor: "#fdfdfd",
-                  }}
-                />
+                <CardMedia component="img" image={p.image} alt={p.name} sx={{ height: 180, objectFit: "contain", bgcolor: "#fdfdfd" }} />
                 <CardContent sx={{ textAlign: "center" }}>
-                  <Typography fontWeight="bold" noWrap>
-                    {p.name}
-                  </Typography>
-
-                  {/* Rating */}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      gap: 0.5,
-                      mt: 0.5,
-                    }}
-                  >
-                    <Rating
-                      name={`rating-${p.id}`}
-                      value={p.rating} // now a number
-                      precision={0.1} // shows 4.6 stars properly
-                      readOnly
-                      size="small"
-                    />
-                    <Typography variant="body2" color="text.secondary">
-                      ({p.reviews})
-                    </Typography>
+                  <Typography fontWeight="bold" noWrap>{p.name}</Typography>
+                  <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 0.5, mt: 0.5 }}>
+                    <Rating name={`rating-${p.id}`} value={p.rating} precision={0.1} readOnly size="small" />
+                    <Typography variant="body2" color="text.secondary">({p.reviews})</Typography>
                   </Box>
+                  <Typography sx={{ color: "green", fontWeight: 600, mt: 0.5 }}>₹{p.price}</Typography>
+                  <Typography variant="body2" color="text.secondary" noWrap>{p.brand}</Typography>
 
-                  <Typography sx={{ color: "green", fontWeight: 600, mt: 0.5 }}>
-                    ₹{p.price}
-                  </Typography>
-
-                  <Typography variant="body2" color="text.secondary" noWrap>
-                    {p.brand}
-                  </Typography>
-
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    sx={{
-                      mt: 1,
-                      borderRadius: 2,
-                      textTransform: "none",
-                      backgroundColor: "#1976d2",
-                      "&:hover": { backgroundColor: "#1565c0" },
-                    }}
-                    onClick={() => handleAdd(p)}
-                  >
-                    Add to Cart
-                  </Button>
+                  <Box sx={{ display: "flex", alignItems: "center", mt: 1, gap: 1 }}>
+                    <Button
+                      variant="outlined"
+                      sx={{ minWidth: 50, width: 50, height: 45, p: 0, borderRadius: 2 }}
+                      onClick={() => addToWishlist(p)}
+                    >
+                      <FavoriteBorderIcon sx={{ fontSize: 26 }} />
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        flex: 1,
+                        height: 45,
+                        borderRadius: 2,
+                        fontWeight: "bold",
+                        fontSize: 16,
+                        textTransform: "none",
+                        backgroundColor: "#1976d2",
+                        "&:hover": { backgroundColor: "#1565c0" },
+                      }}
+                      onClick={() => handleAdd(p)}
+                    >
+                      Add to Cart
+                    </Button>
+                  </Box>
                 </CardContent>
               </Card>
             ))}
