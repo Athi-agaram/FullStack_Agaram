@@ -1432,3 +1432,9 @@
 2025-11-20T19:04:00.595+05:30 DEBUG 19072 --- [http-nio-8098-exec-8] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [UPDATE cart SET qty = qty + ? WHERE user_id = ? AND product_id = ?]
 2025-11-20T19:04:03.184+05:30 DEBUG 19072 --- [http-nio-8098-exec-10] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL update
 2025-11-20T19:04:03.184+05:30 DEBUG 19072 --- [http-nio-8098-exec-10] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [UPDATE cart SET qty = qty + ? WHERE user_id = ? AND product_id = ?]
+2025-11-20T19:07:55.239+05:30  INFO 19072 --- [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 33 class path changes (0 additions, 1 deletion, 32 modifications)
+2025-11-20T19:07:55.250+05:30  INFO 19072 --- [Thread-14] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-20T19:07:55.269+05:30  INFO 19072 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-11-20T19:07:55.278+05:30  INFO 19072 --- [Thread-14] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-20T19:07:55.281+05:30  INFO 19072 --- [Thread-14] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown initiated...
+2025-11-20T19:07:55.292+05:30  INFO 19072 --- [Thread-14] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown completed.
