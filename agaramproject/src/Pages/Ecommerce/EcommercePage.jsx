@@ -30,6 +30,7 @@ import productsData from "./components/products.json";
 
 const drawerWidth = 220;
 
+/* ---- Drawer Styles ---- */
 const openedMixin = (theme) => ({
   width: drawerWidth,
   transition: theme.transitions.create("width", {
@@ -48,32 +49,40 @@ const closedMixin = (theme) => ({
   overflowX: "hidden",
 });
 
+/* ---- FIXED: Drawer stays sticky & matches topbar ---- */
 const Drawer = styled("div")(({ theme, open }) => ({
-  height: "100vh",
+  height: "100%",                   // FIXED
   whiteSpace: "nowrap",
   flexShrink: 0,
+  position: "sticky",
+  top: 0,
   background: "#f5f8ff",
   borderRight: "1px solid #d4ddf0",
-  margin: 0,
-  padding: 0,
-  overflowY: "hidden",
+  overflow: "hidden",
+  display: "flex",
+  flexDirection: "column",
   ...(open ? openedMixin(theme) : closedMixin(theme)),
 }));
 
-export default function EcommercePage({ topOffset = 56 }) {
+export default function EcommercePage() {
   const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState(0); // 0: Categories, 1: Products, 2: Cart, 3: Orders, 4: Wishlist
+  const [tab, setTab] = useState(0);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
-  // Initialize cart & wishlist with unique cart_id
   const [cartItems, setCartItems] = useState(() => {
     const stored = JSON.parse(localStorage.getItem("cart")) || [];
-    return stored.map(item => ({ ...item, cart_id: item.cart_id || Date.now() + Math.random() }));
+    return stored.map((item) => ({
+      ...item,
+      cart_id: item.cart_id || crypto.randomUUID(),
+    }));
   });
 
   const [wishlistItems, setWishlistItems] = useState(() => {
     const stored = JSON.parse(localStorage.getItem("wishlist")) || [];
-    return stored.map(item => ({ ...item, cart_id: item.cart_id || Date.now() + Math.random() }));
+    return stored.map((item) => ({
+      ...item,
+      cart_id: item.cart_id || crypto.randomUUID(),
+    }));
   });
 
   const drawerItems = [
@@ -94,7 +103,6 @@ export default function EcommercePage({ topOffset = 56 }) {
     return c.trim();
   };
 
-  // Sync localStorage when cart/wishlist changes
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
@@ -104,10 +112,16 @@ export default function EcommercePage({ topOffset = 56 }) {
   }, [wishlistItems]);
 
   return (
-    <Box sx={{ height: "100vh", display: "flex", m: 0, p: 0 }}>
+    <Box
+      sx={{
+        height: "100vh",
+        display: "flex",
+        overflow: "hidden",
+      }}
+    >
       <CssBaseline />
 
-      {/* Drawer */}
+      {/* ---- SIDEBAR ---- */}
       <Drawer open={open}>
         <Box
           sx={{
@@ -116,6 +130,10 @@ export default function EcommercePage({ topOffset = 56 }) {
             alignItems: "center",
             justifyContent: open ? "flex-end" : "center",
             borderBottom: "1px solid #d4ddf0",
+            position: "sticky",
+            top: 0,
+            background: "#f5f8ff",
+            zIndex: 10,
           }}
         >
           <IconButton onClick={() => setOpen(!open)} sx={{ color: "#1e2a47" }}>
@@ -123,30 +141,33 @@ export default function EcommercePage({ topOffset = 56 }) {
           </IconButton>
         </Box>
 
-        <List sx={{ height: "100%", p: 0 }}>
+        <List sx={{ overflowY: "auto", flex: 1 }}>
           {drawerItems.map((item) => (
-            <ListItem key={item.label} disablePadding sx={{ display: "block" }}>
+            <ListItem key={item.label} disablePadding>
               <ListItemButton
                 selected={tab === item.tab}
                 onClick={() => setTab(item.tab)}
                 sx={{
                   justifyContent: open ? "flex-start" : "center",
                   px: open ? 2 : 1,
-                  my: "4px",
+                  my: 0.5,
+                  mx: open ? 1 : 0,
                   borderRadius: "8px",
-                  marginX: open ? "8px" : "0px",
                   transition: "0.25s",
                   "&:hover": { backgroundColor: "#EEF4FF" },
-                  "&.Mui-selected": { backgroundColor: "#DBE7FF", fontWeight: 700 },
+                  "&.Mui-selected": {
+                    backgroundColor: "#DBE7FF",
+                    fontWeight: 700,
+                  },
                 }}
               >
                 <ListItemIcon
                   sx={{
                     minWidth: "auto",
-                    display: "flex",
-                    justifyContent: "center",
                     width: open ? 28 : "100%",
                     mr: open ? 2 : 0,
+                    display: "flex",
+                    justifyContent: "center",
                   }}
                 >
                   {item.icon}
@@ -162,24 +183,31 @@ export default function EcommercePage({ topOffset = 56 }) {
         </List>
       </Drawer>
 
-      {/* MAIN CONTENT */}
-      <Box sx={{ flex: 1, position: "relative", bgcolor: "#ffffffff", pt: 0 }}>
-        {/* STORE TOPBAR */}
+      {/* ---- RIGHT SIDE ---- */}
+      <Box
+        sx={{
+          flex: 1,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        }}
+      >
+        {/* ---- TOPBAR (STICKY FIXED) ---- */}
         <Box
           sx={{
             height: 56,
-            position: "sticky",
-            top: 0,
-            zIndex: 5,
-            background: "rgba(255, 255, 255, 0.15)",
-            backdropFilter: "blur(22px) saturate(180%)",
-            WebkitBackdropFilter: "blur(22px) saturate(180%)",
-            borderBottom: "1px solid rgba(255, 255, 255, 0.35)",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+            borderBottom: "1px solid rgba(255,255,255,0.35)",
+            boxShadow: "0px 4px 20px rgba(0,0,0,0.1)",
+            background: "rgba(255,255,255,0.15)",
+            backdropFilter: "blur(22px)",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
             px: 2,
+            position: "sticky",
+            top: 0,
+            zIndex: 20,
           }}
         >
           <Typography
@@ -208,14 +236,12 @@ export default function EcommercePage({ topOffset = 56 }) {
           </Box>
         </Box>
 
-        {/* CONTENT BELOW STORE TOPBAR */}
+        {/* ---- SCROLLABLE MAIN CONTENT ---- */}
         <Box
           sx={{
-            mt: 0,
-            height: `calc(100vh - ${topOffset}px)`,
+            flex: 1,
             overflowY: "auto",
-            p: 0,
-            background: "rgba(255,255,255,0.0)",
+            position: "relative",
           }}
         >
           {tab === 0 && (
@@ -233,7 +259,9 @@ export default function EcommercePage({ topOffset = 56 }) {
 
           {tab === 1 && (
             <ProductGrid
-              initialProducts={filteredProducts.length > 0 ? filteredProducts : productsData}
+              initialProducts={
+                filteredProducts.length > 0 ? filteredProducts : productsData
+              }
               cartItems={cartItems}
               setCartItems={setCartItems}
               wishlistItems={wishlistItems}

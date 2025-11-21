@@ -17,7 +17,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { addToCartApi } from "../../../api/api";
 import productsData from "./products.json";
-
+import FavoriteIcon from "@mui/icons-material/Favorite"; // add this impor
 const mapCategory = (cat = "") => {
   const c = cat.toLowerCase();
   if (c.includes("electronics")) return "electronics";
@@ -106,30 +106,40 @@ export default function ProductGrid({
     }
   };
 
-  const handleAdd = async (product) => {
-    try {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (!user?.id) {
-        alert("Please login");
-        return;
-      }
-
-      await addToCartApi({
-        userId: Number(user.id),
-        productId: Number(product.id),
-        qty: 1,
-      });
-
-      if (!cartItems.find((x) => x.id === product.id)) {
-        setCartItems([...cartItems, { ...product, qty: 1 }]);
-      }
-
-      alert("Added to cart!");
-    } catch (err) {
-      console.error("Add to cart error:", err);
-      alert("Error adding to cart");
+const handleAdd = async (product) => {
+  try {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user?.id) {
+      alert("Please login");
+      return;
     }
-  };
+
+    await addToCartApi({
+      userId: Number(user.id),
+      productId: Number(product.id),
+      qty: 1,
+    });
+
+    setCartItems((prevCart) => {
+      const existing = prevCart.find((x) => x.id === product.id);
+      if (existing) {
+        // Increment quantity
+        return prevCart.map((x) =>
+          x.id === product.id ? { ...x, qty: x.qty + 1 } : x
+        );
+      } else {
+        // Add new item
+        return [...prevCart, { ...product, qty: 1 }];
+      }
+    });
+
+    alert("Added to cart!");
+  } catch (err) {
+    console.error("Add to cart error:", err);
+    alert("Error adding to cart");
+  }
+};
+
 
   return (
     <Box sx={{ height: "100%", overflow: "visible" }}>
@@ -138,6 +148,7 @@ export default function ProductGrid({
         elevation={0}
         sx={{
           p: 2,
+          position: "sticky",
           mb: 3,
           display: "flex",
           flexWrap: "wrap",
@@ -235,13 +246,17 @@ export default function ProductGrid({
                   <Typography variant="body2" color="text.secondary" noWrap>{p.brand}</Typography>
 
                   <Box sx={{ display: "flex", alignItems: "center", mt: 1, gap: 1 }}>
-                    <Button
-                      variant="outlined"
-                      sx={{ minWidth: 50, width: 50, height: 45, p: 0, borderRadius: 2 }}
-                      onClick={() => addToWishlist(p)}
-                    >
-                      <FavoriteBorderIcon sx={{ fontSize: 26 }} />
-                    </Button>
+<Button
+  variant="outlined"
+  sx={{ minWidth: 50, width: 50, height: 45, p: 0, borderRadius: 2 }}
+  onClick={() => addToWishlist(p)}
+>
+  {wishlistItems.find((x) => x.id === p.id) ? (
+    <FavoriteIcon sx={{ fontSize: 26, color: "red" }} />
+  ) : (
+    <FavoriteBorderIcon sx={{ fontSize: 26 }} />
+  )}
+</Button>
                     <Button
                       variant="contained"
                       sx={{

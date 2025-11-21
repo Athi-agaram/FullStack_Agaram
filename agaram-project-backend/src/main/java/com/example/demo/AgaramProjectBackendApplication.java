@@ -6,7 +6,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.example.demo")
 public class AgaramProjectBackendApplication extends SpringBootServletInitializer{
 
 	@Override

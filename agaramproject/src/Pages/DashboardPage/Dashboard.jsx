@@ -130,7 +130,7 @@ export default function Dashboard() {
   if (user.role !== "ADMIN" && !user.authorized) return <Box p={3}><Typography variant="h4" align="center" mt={25}>Wait for admin authorization</Typography></Box>;
 
   return (
-    <Box sx={{ p: 3, backgroundColor: "#f9fafc" }}>
+    <Box sx={{ p: 5.5, backgroundColor: "#f9fafc" }}>
       {loading ? (
         <Box display="flex" justifyContent="center" alignItems="center" height={300}>
           <CircularProgress />

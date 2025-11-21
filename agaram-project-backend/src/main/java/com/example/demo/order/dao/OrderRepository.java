@@ -7,8 +7,10 @@ public interface OrderRepository {
     int createOrder(int userId, double totalAmount);
     int insertOrderItem(int orderId, int productId, int qty, double price);
     List<Map<String, Object>> findOrdersByUserId(int userId);
+    List<Map<String, Object>> findAllOrders(); // Admin can view all orders
     List<Map<String, Object>> findOrderItemsByOrderId(int orderId);
     List<Map<String, Object>> findCartByUserId(int userId);
-    int decrementProductStockIfAvailable(int productId, int qty);
-    int clearCartByUserId(int userId);
+    int decrementStock(int productId, int qty);
+    int clearCart(int userId);
+    int updateStatus(int orderId, String status);
 }

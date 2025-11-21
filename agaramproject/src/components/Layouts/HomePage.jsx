@@ -18,14 +18,23 @@ export default function HomePage() {
   }, []);
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      
-      {/* Sidebar - fixed position */}
-      <Box sx={{ position: "fixed", left: 0, top: 0, bottom: 0, width: drawerWidthCollapsed, zIndex: 11 }}>
+    <Box sx={{ display: "flex", height: "100%", overflow: "hidden" }}>
+
+      {/* Sidebar */}
+      <Box
+        sx={{
+          position: "fixed",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: drawerWidthCollapsed,
+          zIndex: 11,
+        }}
+      >
         <Sidebar setMasterTab={setMasterTab} />
       </Box>
 
-      {/* TopBar - fixed, aligned with sidebar */}
+      {/* TopBar */}
       <Box
         sx={{
           position: "fixed",
@@ -35,22 +44,20 @@ export default function HomePage() {
           height: topBarHeight,
           zIndex: 10,
           bgcolor: "white",
-          boxShadow: 0,
         }}
       >
         <TopBar user={user} setMasterTab={setMasterTab} />
       </Box>
 
-      {/* Main Content - no gap */}
+      {/* Main Content */}
       <Box
         sx={{
           flex: 1,
-          ml: `${drawerWidthCollapsed}px`, // keeps content next to sidebar
+          ml: `${drawerWidthCollapsed}px`,
           mt: `${topBarHeight}px`,
           height: `calc(100vh - ${topBarHeight}px)`,
-          overflowY: "auto",
+          overflow: "hidden",   // ⬅ FIX (prevent double scroll)
           bgcolor: "#f9fafc",
-          p: 0,
         }}
       >
         {masterTab ? (
