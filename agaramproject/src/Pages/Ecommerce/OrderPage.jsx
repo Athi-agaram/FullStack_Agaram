@@ -178,7 +178,7 @@ export default function OrdersPage() {
         placeholder={isAdmin ? "Search by Order ID or Username..." : "Search by Order ID..."}
         value={searchQuery}
         onChange={handleSearch}
-        sx={{ mb: 3 }}
+        sx={{ mb: 3,backgroundColor:"#fff" }}
       />
 
       {filteredOrders.length === 0 ? (

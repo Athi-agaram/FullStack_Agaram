@@ -7043,3 +7043,12 @@ Identify and stop the process that's listening on port 8098 or configure this ap
 2025-11-24T18:44:59.887+05:30  INFO 5608 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8098 (http) with context path '/'
 2025-11-24T18:44:59.896+05:30  INFO 5608 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Started AgaramProjectBackendApplication in 1.778 seconds (process running for 6909.946)
 2025-11-24T18:44:59.899+05:30  INFO 5608 --- [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-11-24T18:48:51.858+05:30  INFO 5608 --- [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-11-24T18:48:51.860+05:30  INFO 5608 --- [Thread-7] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-24T18:48:51.864+05:30  INFO 5608 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-11-24T18:48:51.867+05:30  INFO 5608 --- [Thread-7] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-24T18:48:51.869+05:30  INFO 5608 --- [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2025-11-24T18:48:51.871+05:30  INFO 5608 --- [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2025-11-24T18:48:51.983+05:30  INFO 5608 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Starting AgaramProjectBackendApplication using Java 21.0.8 with PID 5608 (C:\Users\athira\Downloads\fullstack_Agaram\agaram-project-backend\target\classes started by athira in C:\Users\athira\Downloads\fullstack_Agaram\agaram-project-backend)
+2025-11-24T18:48:51.983+05:30 DEBUG 5608 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Running with Spring Boot v3.5.7, Spring v6.2.12
+2025-11-24T18:48:51.983+05:30  INFO 5608 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : No active profile set, falling back to 1 default profile: "default"
