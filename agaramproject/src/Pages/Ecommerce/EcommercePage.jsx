@@ -11,6 +11,7 @@ import {
   ListItemText,
   CssBaseline,
 } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -19,18 +20,16 @@ import CategoryIcon from "@mui/icons-material/Category";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 
-import { styled } from "@mui/material/styles";
-
 import CategoriesPage from "./CategoriesPage";
 import ProductGrid from "./components/ProductGrid";
 import CartPage from "./CartPage";
 import OrdersPage from "./OrderPage";
 import WishlistPage from "./WishListPage";
 import productsData from "./components/products.json";
+import { getWishlistApi, getCartApi } from "../../api/api";
 
 const drawerWidth = 220;
 
-/* ---- Drawer Styles ---- */
 const openedMixin = (theme) => ({
   width: drawerWidth,
   transition: theme.transitions.create("width", {
@@ -49,9 +48,8 @@ const closedMixin = (theme) => ({
   overflowX: "hidden",
 });
 
-/* ---- FIXED: Drawer stays sticky & matches topbar ---- */
 const Drawer = styled("div")(({ theme, open }) => ({
-  height: "100%",                   // FIXED
+  height: "100%",
   whiteSpace: "nowrap",
   flexShrink: 0,
   position: "sticky",
@@ -68,22 +66,55 @@ export default function EcommercePage() {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState(0);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [user, setUser] = useState(null);
 
-  const [cartItems, setCartItems] = useState(() => {
-    const stored = JSON.parse(localStorage.getItem("cart")) || [];
-    return stored.map((item) => ({
-      ...item,
-      cart_id: item.cart_id || crypto.randomUUID(),
-    }));
-  });
+  // Cart items from API
+  const [cartItems, setCartItems] = useState([]);
+  
+  // Saved for later items from API (used in CartPage)
+  const [savedForLater, setSavedForLater] = useState([]);
 
-  const [wishlistItems, setWishlistItems] = useState(() => {
-    const stored = JSON.parse(localStorage.getItem("wishlist")) || [];
-    return stored.map((item) => ({
-      ...item,
-      cart_id: item.cart_id || crypto.randomUUID(),
-    }));
-  });
+  // Wishlist items - managed centrally
+  const [wishlistItems, setWishlistItems] = useState([]);
+
+  // Load user on mount
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setUser(storedUser);
+  }, []);
+
+  // Load wishlist and cart when user is available
+  useEffect(() => {
+    const loadData = async () => {
+      if (user?.id) {
+        try {
+          // Load wishlist
+          const wishlistRes = await getWishlistApi(user.id);
+          if (wishlistRes.data && Array.isArray(wishlistRes.data)) {
+            const wishlistProducts = wishlistRes.data.map(item => ({
+              id: item.product_id,
+              wishlist_id: item.id,
+              name: item.product_name,
+              product_name: item.product_name,
+              image: item.image,
+              price: item.product_price,
+              product_price: item.product_price,
+            }));
+            setWishlistItems(wishlistProducts);
+          }
+
+          // Load cart
+          const cartRes = await getCartApi(user.id);
+          if (cartRes.data && Array.isArray(cartRes.data)) {
+            setCartItems(cartRes.data);
+          }
+        } catch (err) {
+          console.error("Error loading data:", err);
+        }
+      }
+    };
+    loadData();
+  }, [user]);
 
   const drawerItems = [
     { label: "Categories", tab: 0, icon: <CategoryIcon /> },
@@ -91,37 +122,10 @@ export default function EcommercePage() {
     { label: "Orders", tab: 3, icon: <AssignmentIcon /> },
   ];
 
-  const mapCategory = (cat = "") => {
-    const c = cat.toLowerCase();
-    if (c.includes("electronics")) return "electronics";
-    if (c.includes("fashion")) return "fashion";
-    if (c.includes("shoe")) return "shoes";
-    if (c.includes("beauty") || c.includes("skincare") || c.includes("personal"))
-      return "makeup and skincare";
-    if (c.includes("home") || c.includes("kitchen")) return "home and furniture";
-    if (c.includes("health") || c.includes("fitness")) return "food and grocery";
-    return c.trim();
-  };
-
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  useEffect(() => {
-    localStorage.setItem("wishlist", JSON.stringify(wishlistItems));
-  }, [wishlistItems]);
-
   return (
-    <Box
-      sx={{
-        height: "100vh",
-        display: "flex",
-        overflow: "hidden",
-      }}
-    >
+    <Box sx={{ height: "90vh", display: "flex", overflow: "hidden" }}>
       <CssBaseline />
-
-      {/* ---- SIDEBAR ---- */}
+      {/* Sidebar */}
       <Drawer open={open}>
         <Box
           sx={{
@@ -183,23 +187,15 @@ export default function EcommercePage() {
         </List>
       </Drawer>
 
-      {/* ---- RIGHT SIDE ---- */}
-      <Box
-        sx={{
-          flex: 1,
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-        }}
-      >
-        {/* ---- TOPBAR (STICKY FIXED) ---- */}
+      {/* Right Side */}
+      <Box sx={{ flex: 1, height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        {/* Topbar */}
         <Box
           sx={{
             height: 56,
             borderBottom: "1px solid rgba(255,255,255,0.35)",
             boxShadow: "0px 4px 20px rgba(0,0,0,0.1)",
-            background: "rgba(255,255,255,0.15)",
+            background: "rgba(213, 230, 241, 0.18)",
             backdropFilter: "blur(22px)",
             display: "flex",
             justifyContent: "space-between",
@@ -207,11 +203,11 @@ export default function EcommercePage() {
             px: 2,
             position: "sticky",
             top: 0,
-            zIndex: 20,
+            zIndex: 5,
           }}
         >
           <Typography
-            variant="h6"
+            variant="h5"
             sx={{ fontWeight: 700, color: "#1e2a47", cursor: "pointer" }}
             onClick={() => {
               setTab(0);
@@ -236,36 +232,29 @@ export default function EcommercePage() {
           </Box>
         </Box>
 
-        {/* ---- SCROLLABLE MAIN CONTENT ---- */}
-        <Box
-          sx={{
-            flex: 1,
-            overflowY: "auto",
-            position: "relative",
-          }}
-        >
+        {/* Main Content */}
+        <Box sx={{ flex: 1, overflowY: "auto", position: "relative" }}>
           {tab === 0 && (
             <CategoriesPage
               onCategorySelect={(cat) => {
-                const key = mapCategory(cat.key);
+                const key = cat.key.toLowerCase();
                 const filtered = productsData.filter(
-                  (p) => mapCategory(p.category) === key
+                  (p) => p.category.toLowerCase() === key
                 );
                 setFilteredProducts(filtered);
+                setTab(1);
               }}
-              onSwitchToProductsTab={() => setTab(1)}
             />
           )}
 
           {tab === 1 && (
             <ProductGrid
-              initialProducts={
-                filteredProducts.length > 0 ? filteredProducts : productsData
-              }
+              initialProducts={filteredProducts.length > 0 ? filteredProducts : productsData}
               cartItems={cartItems}
               setCartItems={setCartItems}
               wishlistItems={wishlistItems}
               setWishlistItems={setWishlistItems}
+              userId={user?.id}
             />
           )}
 
@@ -274,8 +263,8 @@ export default function EcommercePage() {
               setTab={setTab}
               cartItems={cartItems}
               setCartItems={setCartItems}
-              wishlistItems={wishlistItems}
-              setWishlistItems={setWishlistItems}
+              savedForLater={savedForLater}
+              setSavedForLater={setSavedForLater}
             />
           )}
 
@@ -283,6 +272,7 @@ export default function EcommercePage() {
 
           {tab === 4 && (
             <WishlistPage
+              userId={user?.id}
               wishlistItems={wishlistItems}
               setWishlistItems={setWishlistItems}
               cartItems={cartItems}

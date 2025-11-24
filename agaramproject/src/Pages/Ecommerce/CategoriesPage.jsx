@@ -27,7 +27,7 @@ const mapCategory = (cat = "") => {
   ];
 
   return (
-    <Box sx={{ px: { xs: 2, md: 4 }, py: 5, bgcolor: "#f9fafc"
+    <Box sx={{ px: { xs: 2, md: 4 }, py: 5, bgcolor: "#e1e7f3ff"
  }}>
 <Grid
   container

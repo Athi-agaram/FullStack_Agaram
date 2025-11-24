@@ -60,7 +60,7 @@ export default function Sidebar({ masterTab, setMasterTab }) {
       variant="permanent"
       anchor="left"
       PaperProps={{
-        sx: { width: 72, bgcolor: "#0d47a1", color: "white", overflow: "visible" },
+        sx: { width: 72, bgcolor: "#002d6bff", color: "white", overflow: "visible" },
       }}
     >
       <List sx={{ mt: 2 }}>

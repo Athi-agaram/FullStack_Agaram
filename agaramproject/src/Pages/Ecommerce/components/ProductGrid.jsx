@@ -15,9 +15,10 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { addToCartApi } from "../../../api/api";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import { addToCartApi, addWishlistApi, removeWishlistApi } from "../../../api/api";
 import productsData from "./products.json";
-import FavoriteIcon from "@mui/icons-material/Favorite"; // add this impor
+
 const mapCategory = (cat = "") => {
   const c = cat.toLowerCase();
   if (c.includes("electronics")) return "electronics";
@@ -35,6 +36,7 @@ export default function ProductGrid({
   setCartItems,
   wishlistItems,
   setWishlistItems,
+  userId,
 }) {
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -52,16 +54,11 @@ export default function ProductGrid({
       brand: p.brand || p.subCategory || p.category || "N/A",
       category: mapCategory(p.category),
       keywords: p.keywords || [],
-      rating:
-        p.rating?.stars !== undefined
-          ? Number(p.rating.stars)
-          : Math.floor(Math.random() * 5) + 1,
-      reviews:
-        p.rating?.count !== undefined
-          ? Number(p.rating.count)
-          : Math.floor(Math.random() * 200) + 1,
+      rating: p.rating?.stars !== undefined ? Number(p.rating.stars) : Math.floor(Math.random() * 5) + 1,
+      reviews: p.rating?.count !== undefined ? Number(p.rating.count) : Math.floor(Math.random() * 200) + 1,
     }));
 
+  // Load products
   useEffect(() => {
     setLoading(true);
     const list =
@@ -70,13 +67,13 @@ export default function ProductGrid({
         : normalizeProducts(productsData);
     setProducts(list);
     setFiltered(list);
-
     const timer = setTimeout(() => setLoading(false), 800);
     return () => clearTimeout(timer);
   }, [initialProducts]);
 
   const categoryList = ["all", ...new Set(products.map((p) => p.category))];
 
+  // Filtering / sorting
   useEffect(() => {
     let list = [...products];
     const s = search.toLowerCase();
@@ -99,50 +96,64 @@ export default function ProductGrid({
     setFiltered(list);
   }, [search, selectedCategory, sortType, products]);
 
-  const addToWishlist = (p) => {
-    if (!wishlistItems.find((x) => x.id === p.id)) {
-      setWishlistItems([...wishlistItems, p]);
-      alert("Added to wishlist!");
+  // Toggle wishlist (synced with backend)
+  const toggleWishlist = async (product) => {
+    try {
+      if (!userId) {
+        alert("Please login");
+        return;
+      }
+
+      const existing = wishlistItems.find((x) => x.id === product.id);
+      
+      if (existing) {
+        // Remove from wishlist
+        await removeWishlistApi(userId, existing.wishlist_id);
+        setWishlistItems(wishlistItems.filter((x) => x.id !== product.id));
+      } else {
+        // Add to wishlist
+        const res = await addWishlistApi(userId, product.id, 1);
+        const newWishlistItem = {
+          id: product.id,
+          wishlist_id: res.data?.id,
+          name: product.name,
+          product_name: product.name,
+          image: product.image,
+          price: product.price,
+          product_price: product.price,
+        };
+        setWishlistItems([...wishlistItems, newWishlistItem]);
+      }
+    } catch (err) {
+      console.error("Wishlist error:", err);
+      alert("Error updating wishlist");
     }
   };
 
-const handleAdd = async (product) => {
-  try {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user?.id) {
-      alert("Please login");
-      return;
-    }
-
-    await addToCartApi({
-      userId: Number(user.id),
-      productId: Number(product.id),
-      qty: 1,
-    });
-
-    setCartItems((prevCart) => {
-      const existing = prevCart.find((x) => x.id === product.id);
-      if (existing) {
-        // Increment quantity
-        return prevCart.map((x) =>
-          x.id === product.id ? { ...x, qty: x.qty + 1 } : x
-        );
-      } else {
-        // Add new item
-        return [...prevCart, { ...product, qty: 1 }];
+  // Add to cart
+  const handleAddToCart = async (product) => {
+    try {
+      if (!userId) {
+        alert("Please login");
+        return;
       }
-    });
 
-    alert("Added to cart!");
-  } catch (err) {
-    console.error("Add to cart error:", err);
-    alert("Error adding to cart");
-  }
-};
+      await addToCartApi({ userId, productId: product.id, qty: 1 });
 
+      // Fetch updated cart
+      const updatedCartRes = await fetch(`http://localhost:8098/api/cart/${userId}`);
+      const updatedCart = await updatedCartRes.json();
+      setCartItems(updatedCart);
+
+      alert("Added to cart!");
+    } catch (err) {
+      console.error("Add to cart error:", err);
+      alert("Error adding to cart");
+    }
+  };
 
   return (
-    <Box sx={{ height: "100%", overflow: "visible" }}>
+    <Box sx={{ height: "100%", overflow: "visible" ,bgcolor:"#e1e7f3ff"}}>
       {/* FILTER BAR */}
       <Paper
         elevation={0}
@@ -153,7 +164,7 @@ const handleAdd = async (product) => {
           display: "flex",
           flexWrap: "wrap",
           gap: 2,
-          bgcolor: "#fff",
+          bgcolor: "#e1e7f3ff",
           alignItems: "center",
         }}
       >
@@ -164,7 +175,11 @@ const handleAdd = async (product) => {
           sx={{
             flex: 1,
             minWidth: 300,
-            "& .MuiOutlinedInput-root": { borderRadius: "25px", backgroundColor: "#fff", height: 50 },
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "25px",
+              backgroundColor: "#fff",
+              height: 50,
+            },
           }}
           InputProps={{
             startAdornment: (
@@ -207,7 +222,7 @@ const handleAdd = async (product) => {
           gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
           gap: 1,
           margin: 1,
-          bgcolor: "#fff",
+          bgcolor: "#e1e7f3ff",
         }}
       >
         {loading
@@ -232,31 +247,61 @@ const handleAdd = async (product) => {
                   justifyContent: "space-between",
                   boxShadow: "0px 3px 8px rgba(0,0,0,0.12)",
                   transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                  "&:hover": { transform: "translateY(-4px)", boxShadow: "0px 12px 24px rgba(0,0,0,0.18)" },
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    boxShadow: "0px 12px 24px rgba(0,0,0,0.18)",
+                  },
                 }}
               >
-                <CardMedia component="img" image={p.image} alt={p.name} sx={{ height: 180, objectFit: "contain", bgcolor: "#fdfdfd" }} />
+                <CardMedia
+                  component="img"
+                  image={p.image}
+                  alt={p.name}
+                  sx={{ height: 150, objectFit: "contain", bgcolor: "#fdfdfd",pt:2 }}
+                />
                 <CardContent sx={{ textAlign: "center" }}>
-                  <Typography fontWeight="bold" noWrap>{p.name}</Typography>
-                  <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 0.5, mt: 0.5 }}>
-                    <Rating name={`rating-${p.id}`} value={p.rating} precision={0.1} readOnly size="small" />
-                    <Typography variant="body2" color="text.secondary">({p.reviews})</Typography>
+                  <Typography fontWeight="bold" noWrap>
+                    {p.name}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: 0.5,
+                      mt: 1,
+                    }}
+                  >
+                    <Rating
+                      name={`rating-${p.id}`}
+                      value={p.rating}
+                      precision={0.1}
+                      readOnly
+                      size="small"
+                    />
+                    <Typography variant="body2" color="text.secondary">
+                      ({p.reviews})
+                    </Typography>
                   </Box>
-                  <Typography sx={{ color: "green", fontWeight: 600, mt: 0.5 }}>₹{p.price}</Typography>
-                  <Typography variant="body2" color="text.secondary" noWrap>{p.brand}</Typography>
+                  <Typography sx={{ color: "green", fontWeight: 600, mt: 0.5 }}>
+                    ₹{p.price}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" noWrap>
+                    {p.brand}
+                  </Typography>
 
                   <Box sx={{ display: "flex", alignItems: "center", mt: 1, gap: 1 }}>
-<Button
-  variant="outlined"
-  sx={{ minWidth: 50, width: 50, height: 45, p: 0, borderRadius: 2 }}
-  onClick={() => addToWishlist(p)}
->
-  {wishlistItems.find((x) => x.id === p.id) ? (
-    <FavoriteIcon sx={{ fontSize: 26, color: "red" }} />
-  ) : (
-    <FavoriteBorderIcon sx={{ fontSize: 26 }} />
-  )}
-</Button>
+                    <Button
+                      variant="outlined"
+                      sx={{ minWidth: 50, width: 50, height: 50, p: 0, borderRadius: 2,border:"none" }}
+                      onClick={() => toggleWishlist(p)}
+                    >
+                      {wishlistItems.find((x) => x.id === p.id) ? (
+                        <FavoriteIcon sx={{ fontSize: 35, color: "blue" }} />
+                      ) : (
+                        <FavoriteBorderIcon sx={{ fontSize: 35 }} />
+                      )}
+                    </Button>
                     <Button
                       variant="contained"
                       sx={{
@@ -269,7 +314,7 @@ const handleAdd = async (product) => {
                         backgroundColor: "#1976d2",
                         "&:hover": { backgroundColor: "#1565c0" },
                       }}
-                      onClick={() => handleAdd(p)}
+                      onClick={() => handleAddToCart(p)}
                     >
                       Add to Cart
                     </Button>

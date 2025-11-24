@@ -3,7 +3,6 @@ package com.example.demo.controller;
 import com.example.demo.cart.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
 
@@ -16,74 +15,57 @@ public class CartController {
     private CartService service;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Object> getCart(@PathVariable int userId) {
-        try {
-            return ResponseEntity.ok(service.getCart(userId));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("success", false, "error", e.getMessage()));
-        }
+    public ResponseEntity<?> getCart(@PathVariable int userId) {
+        return ResponseEntity.ok(service.getCart(userId));
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Object> addToCart(@RequestBody Map<String, Object> body) {
-        if (body.get("userId") == null || body.get("productId") == null || body.get("qty") == null) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Missing required fields: userId, productId, qty"));
-        }
-
+    public ResponseEntity<?> addToCart(@RequestBody Map<String, Object> body) {
         try {
             int userId = Integer.parseInt(body.get("userId").toString());
             int productId = Integer.parseInt(body.get("productId").toString());
             int qty = Integer.parseInt(body.get("qty").toString());
+
             service.addToCart(userId, productId, qty);
+
             return ResponseEntity.ok(Map.of("success", true));
+
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("success", false, "error", "Failed to add item to cart: " + e.getMessage()));
+            return ResponseEntity.status(400).body(Map.of("success", false, "error", e.getMessage()));
         }
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Object> updateQty(@RequestBody Map<String, Object> body) {
-        if (body.get("cartId") == null || body.get("qty") == null) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Missing required fields: cartId, qty"));
-        }
+    // ⭐ FIXED UPDATE ENDPOINT – NOW WORKS
+    @PutMapping("/update/{cartId}")
+    public ResponseEntity<?> updateCart(@PathVariable int cartId, @RequestBody Map<String, Object> body) {
 
-        try {
-            int cartId = Integer.parseInt(body.get("cartId").toString());
-            int qty = Integer.parseInt(body.get("qty").toString());
-            service.updateQty(cartId, qty);
-            return ResponseEntity.ok(Map.of("success", true));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("success", false, "error", "Failed to update quantity: " + e.getMessage()));
-        }
+        int qty = ((Number) body.get("qty")).intValue();
+        Boolean isSaved = (body.containsKey("is_saved")) ? (Boolean) body.get("is_saved") : null;
+
+        service.updateCart(cartId, qty, isSaved);
+
+        return ResponseEntity.ok(Map.of("success", true));
     }
 
-    @DeleteMapping("/delete/{cartId}")
-    public ResponseEntity<Object> deleteCartItem(@PathVariable int cartId) {
+    @DeleteMapping("/{cartId}")
+    public ResponseEntity<?> deleteCartItem(@PathVariable int cartId) {
         try {
             service.removeCartItem(cartId);
             return ResponseEntity.ok(Map.of("success", true));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("success", false, "error", "Failed to delete item: " + e.getMessage()));
+            return ResponseEntity.status(400).body(Map.of("success", false, "error", e.getMessage()));
         }
     }
 
     @PostMapping("/save/{cartId}")
-    public ResponseEntity<Object> saveForLater(@PathVariable int cartId) {
-        try {
-            service.saveForLater(cartId);
-            return ResponseEntity.ok(Map.of("success", true));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("success", false, "error", "Failed to save item for later: " + e.getMessage()));
-        }
+    public ResponseEntity<?> saveForLater(@PathVariable int cartId) {
+        service.saveForLater(cartId);
+        return ResponseEntity.ok(Map.of("success", true));
     }
 
     @PostMapping("/move/{cartId}")
-    public ResponseEntity<Object> moveToCart(@PathVariable int cartId) {
-        try {
-            service.moveToCart(cartId);
-            return ResponseEntity.ok(Map.of("success", true));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("success", false, "error", "Failed to move item to cart: " + e.getMessage()));
-        }
+    public ResponseEntity<?> moveToCart(@PathVariable int cartId) {
+        service.moveToCart(cartId);
+        return ResponseEntity.ok(Map.of("success", true));
     }
 }

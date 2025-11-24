@@ -198,28 +198,28 @@ export default function TopBar({  user, setMasterTab  }) {
         left: `${drawerWidthCollapsed}px`,
         width: `calc(100% - ${drawerWidthCollapsed}px)`,
         height: `${topBarHeight}px`,
-        backgroundColor: "#ecf1f7ff",
+        backgroundColor: "#012755ff",
         zIndex: 1300,
       }}
     >
       <Toolbar sx={{ justifyContent: "space-between", minHeight: `${topBarHeight}px`, px: 4 }}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#1a237e" }}  onClick={() => setMasterTab(null)}>
+          <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#ffffffff" }}  onClick={() => setMasterTab(null)}>
             Agaram Technologies
           </Typography>
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Box sx={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
-            <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#424242" }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#ffffffff" }}>
               User: {user?.username || "Administrator"}
             </Typography>
-            <Typography sx={{ fontSize: 12, color: "#757575" }}>
+            <Typography sx={{ fontSize: 12, color: "#ffffffff" }}>
               Role: {user?.role || "ADMIN"}
             </Typography>
           </Box>
 
-          <IconButton onClick={handleClick} sx={{ color: "#616161", p: 0.5 }}>
+          <IconButton onClick={handleClick} sx={{ color: "#ffffffff", p: 0.5 }}>
             <ExpandCircleDownOutlinedIcon />
           </IconButton>
 

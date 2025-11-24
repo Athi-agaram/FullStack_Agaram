@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.List;
 import java.util.logging.Logger;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -17,74 +18,71 @@ public class OrderController {
 
     private static final Logger logger = Logger.getLogger(OrderController.class.getName());
 
-    // Checkout API (users can place an order)
+    // === CHECKOUT ===
     @PostMapping("/checkout/{userId}")
-    public Object checkout(@PathVariable int userId) {
+    public ResponseEntity<?> checkout(@PathVariable int userId) {
         try {
             List<Map<String, Object>> cart = service.getCartForUser(userId);
             if (cart == null || cart.isEmpty()) {
-                return Map.of("success", false, "error", "Cart is empty");
+                return ResponseEntity.badRequest()
+                    .body(Map.of("success", false, "error", "Cart is empty"));
             }
 
             int id = service.checkout(userId);
-            return Map.of("success", true, "orderId", id);
+            return ResponseEntity.ok(Map.of("success", true, "orderId", id));
         } catch (Exception ex) {
             logger.severe("Error during checkout: " + ex.getMessage());
-            return Map.of("success", false, "error", "An error occurred while processing your checkout.");
+            ex.printStackTrace();
+            return ResponseEntity.status(500)
+                .body(Map.of("success", false, "error", "Checkout failed: " + ex.getMessage()));
         }
     }
 
-    // API for fetching orders (both regular user and admin)
-    @GetMapping("/")
-    public Object getAllOrders(@RequestParam("userId") int userId) {
+    // === FETCH ORDERS (USER or ADMIN) ===
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getOrders(
+            @PathVariable int userId,
+            @RequestHeader(value = "role", required = false) String role
+    ) {
         try {
-            if (userId == 1) {
-                return service.getOrdersForAdmin();
+            if ("ADMIN".equalsIgnoreCase(role)) {
+                return ResponseEntity.ok(service.getOrdersForAdmin());
             }
-            return service.getOrders(userId);
+
+            return ResponseEntity.ok(service.getOrders(userId));
+
         } catch (Exception ex) {
-            logger.severe("Error fetching orders for userId " + userId + ": " + ex.getMessage());
-            return Map.of("success", false, "error", "Error fetching orders.");
+            logger.severe("Error fetching orders: " + ex.getMessage());
+            return ResponseEntity.status(500)
+                .body(Map.of("success", false, "error", "Could not fetch orders"));
         }
     }
 
-    // New API for fetching all orders for admin (using /all route)
-    @GetMapping("/all")
-    public Object getAllOrdersForAdmin() {
+    // === UPDATE ORDER STATUS (FIXED ENDPOINT) ===
+    @PutMapping("/status")
+    public ResponseEntity<?> updateOrderStatus(
+            @RequestBody Map<String, Object> body,
+            @RequestHeader(value = "role", required = false) String role    ) {
         try {
-            logger.info("Fetching all orders for admin...");
-            List<Map<String, Object>> orders = service.getOrdersForAdmin();
-            if (orders == null || orders.isEmpty()) {
-                return Map.of("success", false, "error", "No orders found for admin.");
-            }
-            return orders;
-        } catch (Exception ex) {
-            logger.severe("Error fetching all orders for admin: " + ex.getMessage());
-            return Map.of("success", false, "error", "Error fetching all orders for admin.");
-        }
-    }
-
-    // Update Order Status (only admins can update)
-    @PostMapping("/status")
-    public Object updateOrderStatus(@RequestBody Map<String, Object> body, @RequestHeader("role") String role) {
-        try {
-            if (!"ADMIN".equals(role)) {
-                return Map.of("success", false, "error", "Unauthorized");
+            if (!"ADMIN".equalsIgnoreCase(role)) {
+                return ResponseEntity.status(403)
+                    .body(Map.of("success", false, "error", "Unauthorized"));
             }
 
-            int orderId = (int) body.get("orderId");
+            int orderId = ((Number) body.get("orderId")).intValue();
             String status = (String) body.get("status");
-
+            
             int rows = service.updateOrderStatus(orderId, status);
 
-            if (rows > 0) {
-                return Map.of("success", true, "message", "Order status updated successfully.");
-            } else {
-                return Map.of("success", false, "error", "Order not found.");
-            }
+            return rows > 0
+                    ? ResponseEntity.ok(Map.of("success", true))
+                    : ResponseEntity.badRequest()
+                        .body(Map.of("success", false, "error", "Order not found"));
+
         } catch (Exception ex) {
             logger.severe("Error updating order status: " + ex.getMessage());
-            return Map.of("success", false, "error", "Failed to update order status.");
+            return ResponseEntity.status(500)
+                .body(Map.of("success", false, "error", "Update failed: " + ex.getMessage()));
         }
     }
 }

@@ -15,16 +15,28 @@ public class CartRepositoryImpl implements CartRepository {
 
     @Override
     public int addOrIncrease(int userId, int productId, int qty) {
-        // Try update existing record
-        int updated = jdbc.update("UPDATE cart SET qty = qty + ? WHERE user_id = ? AND product_id = ?", qty, userId, productId);
+        // Use parameterized queries to prevent SQL injection
+        int updated = jdbc.update(
+                "UPDATE cart SET qty = qty + ? WHERE user_id = ? AND product_id = ? AND is_saved = 0",
+                qty, userId, productId
+        );
+
         if (updated > 0) return updated;
-        // If no record exists, insert new item into cart
-        return jdbc.update("INSERT INTO cart (user_id, product_id, qty) VALUES (?, ?, ?)", userId, productId, qty);
+
+        return jdbc.update(
+                "INSERT INTO cart (user_id, product_id, qty, is_saved) VALUES (?, ?, ?, 0)",
+                userId, productId, qty
+        );
     }
 
     @Override
-    public int updateQtyByCartId(int cartId, int qty) {
-        return jdbc.update("UPDATE cart SET qty = ? WHERE id = ?", qty, cartId);
+    public int updateCart(int cartId, int qty, Boolean isSaved) {
+        if (isSaved == null) {
+            return jdbc.update("UPDATE cart SET qty = ? WHERE id = ?", qty, cartId);
+        }
+
+        return jdbc.update("UPDATE cart SET qty = ?, is_saved = ? WHERE id = ?",
+                qty, (isSaved ? 1 : 0), cartId);
     }
 
     @Override
@@ -32,31 +44,26 @@ public class CartRepositoryImpl implements CartRepository {
         return jdbc.update("DELETE FROM cart WHERE id = ?", cartId);
     }
 
+    @Override
+    public int markAsSaved(int cartId, boolean isSaved) {
+        return jdbc.update("UPDATE cart SET is_saved = ? WHERE id = ?", (isSaved ? 1 : 0), cartId);
+    }
 
     @Override
     public List<Map<String, Object>> findByUserId(int userId) {
-        try {
-            return jdbc.queryForList(
+        return jdbc.queryForList(
                 "SELECT c.id AS cart_id, c.user_id, c.product_id, c.qty, c.is_saved, " +
-                "p.name, p.price, p.image, p.rating_stars AS rating " +
-                "FROM cart c JOIN storeproducts p ON c.product_id = p.id " +
-                "WHERE c.user_id = ?",
+                        "p.name, p.price, p.image, p.rating_stars AS rating " +
+                        "FROM cart c " +
+                        "JOIN storeproducts p ON c.product_id = p.id " +
+                        "WHERE c.user_id = ? " +
+                        "ORDER BY c.is_saved ASC",
                 userId
-            );
-        } catch (Exception e) {
-            // Log and rethrow the exception as needed
-            throw new RuntimeException("Error retrieving cart for user " + userId, e);
-        }
+        );
     }
-
 
     @Override
     public int clearByUserId(int userId) {
         return jdbc.update("DELETE FROM cart WHERE user_id = ? AND is_saved = 0", userId);
-    }
-
-    @Override
-    public int markAsSaved(int cartId, boolean isSaved) {
-        return jdbc.update("UPDATE cart SET is_saved = ? WHERE id = ?", isSaved ? 1 : 0, cartId);
     }
 }

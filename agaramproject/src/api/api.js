@@ -2,7 +2,7 @@ import axios from "axios";
 
 // ==================== BASE ====================
 const API = axios.create({
-  baseURL: "http://localhost:8098/api", // Ensure this matches your API's base URL
+  baseURL: "http://localhost:8098/api",
 });
 
 // ==================== USERS ====================
@@ -12,20 +12,29 @@ export const getAllUsers = () => API.get("/users/all");
 export const getTeamUsers = (teamName) => API.get(`/users/team/${teamName}`);
 
 export const updateEmployee = (id, payload, currentUser) =>
-  API.put(`/users/update/${id}?currentUser=${encodeURIComponent(currentUser)}`, payload);
+  API.put(
+    `/users/update/${id}?currentUser=${encodeURIComponent(currentUser)}`,
+    payload
+  );
 
 export const deleteUser = (id, currentUser) =>
-  API.delete(`/users/delete/${id}?currentUser=${encodeURIComponent(currentUser)}`);
+  API.delete(
+    `/users/delete/${id}?currentUser=${encodeURIComponent(currentUser)}`
+  );
 
 export const checkUsernameExists = (username) =>
   API.get(`/users/check-username?username=${encodeURIComponent(username)}`);
 
-export const editUserProfile = (id, payload) => API.put(`/users/edit-profile/${id}`, payload);
-export const changeUserPassword = (id, payload) => API.put(`/users/change-password/${id}`, payload);
+export const editUserProfile = (id, payload) =>
+  API.put(`/users/edit-profile/${id}`, payload);
+
+export const changeUserPassword = (id, payload) =>
+  API.put(`/users/change-password/${id}`, payload);
 
 // ==================== MASTER PRODUCTS ====================
 export const addProduct = (payload) => API.post("/master/products", payload);
-export const updateProduct = (id, payload) => API.put(`/master/products/${id}`, payload);
+export const updateProduct = (id, payload) =>
+  API.put(`/master/products/${id}`, payload);
 export const deleteProduct = (id) => API.delete(`/master/products/${id}`);
 export const getProducts = (teamName = "") =>
   API.get(`/master/products${teamName ? `?teamName=${teamName}` : ""}`);
@@ -36,24 +45,46 @@ export const getStoreProductById = (id) => API.get(`/storeproducts/${id}`);
 export const getStoreProductsByCategory = (categoryId) =>
   API.get(`/storeproducts/category/${categoryId}`);
 export const addStoreProduct = (payload) => API.post("/storeproducts", payload);
-export const updateStoreProduct = (id, payload) => API.put(`/storeproducts/${id}`, payload);
-export const deleteStoreProduct = (id) => API.delete(`/storeproducts/${id}`);
+export const updateStoreProduct = (id, payload) =>
+  API.put(`/storeproducts/${id}`, payload);
+export const deleteStoreProduct = (id) =>
+  API.delete(`/storeproducts/${id}`);
 
 // ==================== CART ====================
-export const getCartApi = (userId) => API.get(`/cart/${userId}`);
-export const addToCartApi = (payload) => API.post("/cart/add", payload);
-export const updateCartItemApi = (payload) => API.put("/cart/update", payload);
-export const removeCartItemApi = (cartId) => API.delete(`/cart/delete/${cartId}`);
 
+// GET CART
+export const getCartApi = (userId) => API.get(`/cart/${userId}`);
+
+// ADD TO CART
+export const addToCartApi = (data) => API.post(`/cart/add`, data);
+
+// UPDATE CART (qty + save-for-later flag)
+export const updateCartItemApi = (cartId, qty, is_saved = null) =>
+  API.put(`/cart/update/${cartId}`, { qty, is_saved });
+
+// DELETE CART ITEM
+export const removeCartItemApi = (cartId) => API.delete(`/cart/${cartId}`);
+
+// SAVE FOR LATER
 export const saveForLaterApi = (cartId) => API.post(`/cart/save/${cartId}`);
+
+// MOVE TO CART
 export const moveToCartApi = (cartId) => API.post(`/cart/move/${cartId}`);
 
 // ==================== ORDERS ====================
-export const checkoutApi = (userId) => API.post(`/orders/checkout/${userId}`);
-export const getOrdersApi = (userId) => API.get(`/orders?userId=${userId}`);
 
+// CHECKOUT
+export const checkoutApi = (userId) => API.post(`/orders/checkout/${userId}`);
+
+// GET ORDERS (pass role in headers for admin)
+export const getOrdersApi = (userId, role = null) =>
+  API.get(`/orders/${userId}`, {
+    headers: role ? { role } : {},
+  });
+
+// UPDATE ORDER STATUS (admin only)
 export const updateOrderStatusApi = (orderId, status) =>
-  API.post("/orders/status", { orderId, status });
+  API.put(`/orders/status`, { orderId, status }, { headers: { role: "ADMIN" } });
 
 // ==================== REVENUE ====================
 export const getRevenue = (teamName = "") =>
@@ -63,7 +94,6 @@ export const getRevenueSummary = () => API.get("/master/revenue/summary");
 export const getTeamRevenue = () => API.get("/master/revenue/team-wise");
 export const getMonthlyRevenue = () => API.get("/master/revenue/month-wise");
 export const getEmployeeRevenue = () => API.get("/master/revenue/employee-wise");
-
 export const getRevenueDashboard = () => API.get("/master/revenue/dashboard");
 
 // ==================== TEAMS ====================
@@ -80,3 +110,16 @@ export const getTeams = async () => {
 // ==================== CATEGORIES ====================
 export const getCategories = () => API.get("/ecommerce/categories");
 export const createCategory = (payload) => API.post("/ecommerce/categories", payload);
+
+// ==================== WISHLIST ====================
+
+// GET WISHLIST for user
+export const getWishlistApi = (userId) => API.get(`/wishlist?userId=${userId}`);
+
+// ADD ITEM to wishlist
+export const addWishlistApi = (userId, productId, qty = 1) =>
+  API.post(`/wishlist?userId=${userId}&productId=${productId}&qty=${qty}`);
+
+// REMOVE ITEM from wishlist
+export const removeWishlistApi = (userId, wishlistId) =>
+  API.delete(`/wishlist/${wishlistId}?userId=${userId}`);
