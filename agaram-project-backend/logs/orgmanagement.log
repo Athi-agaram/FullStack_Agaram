@@ -7015,3 +7015,31 @@ Identify and stop the process that's listening on port 8098 or configure this ap
 2025-11-24T18:44:58.207+05:30  INFO 5608 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Starting AgaramProjectBackendApplication using Java 21.0.8 with PID 5608 (C:\Users\athira\Downloads\fullstack_Agaram\agaram-project-backend\target\classes started by athira in C:\Users\athira\Downloads\fullstack_Agaram\agaram-project-backend)
 2025-11-24T18:44:58.207+05:30 DEBUG 5608 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Running with Spring Boot v3.5.7, Spring v6.2.12
 2025-11-24T18:44:58.207+05:30  INFO 5608 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-11-24T18:44:58.607+05:30  INFO 5608 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-24T18:44:58.626+05:30  INFO 5608 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 16 ms. Found 0 JPA repository interfaces.
+2025-11-24T18:44:58.806+05:30  INFO 5608 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8098 (http)
+2025-11-24T18:44:58.810+05:30  INFO 5608 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-24T18:44:58.810+05:30  INFO 5608 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-24T18:44:58.846+05:30  INFO 5608 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-24T18:44:58.846+05:30  INFO 5608 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 635 ms
+2025-11-24T18:44:58.934+05:30  INFO 5608 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2025-11-24T18:44:58.968+05:30  INFO 5608 --- [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection ConnectionID:51 ClientConnectionId: 9fce6a56-8efa-423d-a112-4fb37889a745
+2025-11-24T18:44:58.968+05:30  INFO 5608 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2025-11-24T18:44:58.971+05:30  INFO 5608 --- [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-24T18:44:58.979+05:30  INFO 5608 --- [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-24T18:44:59.054+05:30  INFO 5608 --- [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-24T18:44:59.121+05:30  INFO 5608 --- [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
+	Database driver: undefined/unknown
+	Database version: 16.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-24T18:44:59.171+05:30  INFO 5608 --- [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-24T18:44:59.172+05:30  INFO 5608 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-24T18:44:59.442+05:30  WARN 5608 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-24T18:44:59.861+05:30  INFO 5608 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-11-24T18:44:59.887+05:30  INFO 5608 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8098 (http) with context path '/'
+2025-11-24T18:44:59.896+05:30  INFO 5608 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Started AgaramProjectBackendApplication in 1.778 seconds (process running for 6909.946)
+2025-11-24T18:44:59.899+05:30  INFO 5608 --- [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
