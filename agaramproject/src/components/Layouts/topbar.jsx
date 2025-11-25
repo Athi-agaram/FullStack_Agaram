@@ -198,13 +198,13 @@ export default function TopBar({  user, setMasterTab  }) {
         left: `${drawerWidthCollapsed}px`,
         width: `calc(100% - ${drawerWidthCollapsed}px)`,
         height: `${topBarHeight}px`,
-        backgroundColor: "#012755ff",
+        backgroundColor: "#011c66ff",
         zIndex: 1300,
       }}
     >
       <Toolbar sx={{ justifyContent: "space-between", minHeight: `${topBarHeight}px`, px: 4 }}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#ffffffff" }}  onClick={() => setMasterTab(null)}>
+          <Typography sx={{ fontSize: 25, fontWeight: 700, color: "#ffffffff" }}  onClick={() => setMasterTab(null)}>
             Agaram Technologies
           </Typography>
         </Box>

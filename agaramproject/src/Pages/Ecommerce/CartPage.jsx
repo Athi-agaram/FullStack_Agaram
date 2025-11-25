@@ -191,7 +191,8 @@ export default function CartPage({
 
   // ---------------- UI ----------------
   return (
-    <Box sx={{ p: 2 ,bgcolor:"#e1e7f3ff", minHeight: "100%"}}>
+    <Box sx={{ p: 2 ,background: "linear-gradient(135deg, #10002eff 0%, #87c8eeff 100%)"
+, minHeight: "100%"}}>
       {message && (
         <Alert severity={message.type} onClose={() => setMessage(null)} sx={{ mb: 2 }}>
           {message.text}
@@ -209,8 +210,8 @@ export default function CartPage({
         <Box>
 
           {cartItems.map((it) => (
-            <Paper key={it.id} sx={{ display: "flex", p: 2, mb: 1.2, border: "1px solid #ddd",borderRadius:3 }}>
-              <Box sx={{ width: 120, mr: 2 }}>
+            <Paper key={it.id} sx={{ display: "flex", p: 2, mb: 1.2, border: "1px solid #ddd",borderRadius:3 ,bgcolor:"#f7f9fcff"}}>
+              <Box sx={{ width: 120, mr: 2}}>
                 <img src={it.image} alt={it.name} style={{ width: "100%", height: 120, objectFit: "contain" }} />
               </Box>
               <Box sx={{ flex: 1 }}>
@@ -246,10 +247,10 @@ export default function CartPage({
 
       {/* Saved for Later */}
       {!loading && savedForLater.length > 0 && (  // ← Changed
-        <Box mt={4}>
-          <Typography variant="h6" fontWeight="bold" mb={2}>
+        <Box mt={4} >
+          <Button variant="contained" size="small" fontWeight="bold" mb={2} >
             Saved for Later ({savedForLater.length} {savedForLater.length === 1 ? "item" : "items"})  {/* ← Changed */}
-          </Typography>
+          </Button>
 
           {savedForLater.map((it) => (  // ← Changed
             <Paper key={it.id} sx={{ display: "flex", p: 2, mb: 2, border: "1px solid #ddd", background: "#fafafa" }}>
@@ -275,17 +276,17 @@ export default function CartPage({
 
       {/* Total & Checkout */}
       {cartItems.length > 0 && (
-        <Paper sx={{ p: 1, mt: 2, textAlign: "right", position: "sticky", bottom: 0 ,bgcolor: "#eeeff1ff",borderColor:"#cccccc", borderWidth:1, borderStyle:"solid"}}>
-          <Typography variant="h6" fontWeight="bold" mb={1}>
+        <Paper sx={{ p: 1, mt: 2, textAlign: "right", position: "sticky", bottom: 0 ,background: "linear-gradient(135deg, #13283fff, #31568aff, #081e38ff)",borderRadius:4,borderColor:"#cccccc", borderWidth:1, borderStyle:"solid"}}>
+          <Typography variant="h6" fontWeight="bold" mb={1} mt={1} color="#fff">
             Subtotal ({cartItems.reduce((s, it) => s + it.qty, 0)} items):
-            <span style={{ color: "#1976d2", marginLeft: 8 }}>₹{total.toFixed(2)}</span>
+            <span style={{ color: "#ddeefcff", marginLeft: 8 }}>₹{total.toFixed(2)}</span>
           </Typography>
           <Button
             variant="contained"
             size="large"
             onClick={handleCheckout}
             disabled={checkoutLoading}
-            sx={{ mt: 2, minWidth: 200 }}
+            sx={{ mt: 1,mb:1,mr:2, minWidth: 200 }}
           >
             {checkoutLoading ? <CircularProgress size={24} color="inherit" /> : "Proceed to Checkout"}
           </Button>

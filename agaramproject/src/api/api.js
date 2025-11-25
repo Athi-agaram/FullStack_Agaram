@@ -44,11 +44,22 @@ export const getStoreProducts = () => API.get("/storeproducts");
 export const getStoreProductById = (id) => API.get(`/storeproducts/${id}`);
 export const getStoreProductsByCategory = (categoryId) =>
   API.get(`/storeproducts/category/${categoryId}`);
-export const addStoreProduct = (payload) => API.post("/storeproducts", payload);
 export const updateStoreProduct = (id, payload) =>
   API.put(`/storeproducts/${id}`, payload);
 export const deleteStoreProduct = (id) =>
   API.delete(`/storeproducts/${id}`);
+// STORE PRODUCTS
+export const addStoreProduct = async (payload) => {
+  try {
+    const res = await API.post("/storeproducts", payload);
+    // Backend returns { success: true/false }
+    return { ok: res.data.success, data: res.data };
+  } catch (err) {
+    console.error("Error adding store product:", err);
+    return { ok: false };
+  }
+};
+
 
 // ==================== CART ====================
 

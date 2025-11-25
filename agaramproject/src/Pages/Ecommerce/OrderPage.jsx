@@ -171,14 +171,15 @@ export default function OrdersPage() {
   }
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={{ p: 2  ,background: "linear-gradient(135deg, #10002eff 0%, #87c8eeff 100%)",
+ }}>
       {/* Search */}
       <TextField
         fullWidth
         placeholder={isAdmin ? "Search by Order ID or Username..." : "Search by Order ID..."}
         value={searchQuery}
         onChange={handleSearch}
-        sx={{ mb: 3,backgroundColor:"#fff" }}
+        sx={{ mb: 3,backgroundColor:"#f2f5fcff",borderRadius:2 }}
       />
 
       {filteredOrders.length === 0 ? (
@@ -202,7 +203,7 @@ export default function OrdersPage() {
             key={order.id}
             sx={{
               mb: 4,
-              borderRadius: 2,
+              borderRadius: 5,
               boxShadow: 3,
               border: "1px solid #e0e0e0",
               overflow: "hidden",
@@ -211,8 +212,8 @@ export default function OrdersPage() {
             {/* HEADER */}
             <Box
               sx={{
-                bgcolor: "#013466",
-                color: "#fff",
+                background:"linear-gradient(135deg, #a9cefcff, #cfe2fdff, #b8cce4ff)",
+                color: "#040024ff",
                 p: 2,
                 display: "flex",
                 justifyContent: "space-between",
@@ -239,7 +240,7 @@ export default function OrdersPage() {
                 <Typography fontWeight={600}>
                   {formatCurrency(total)}
                 </Typography>
-                <IconButton size="small" sx={{ color: "#fff" }}>
+                <IconButton size="small" sx={{ color: "#040024ff" }}>
                   {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 </IconButton>
               </Box>

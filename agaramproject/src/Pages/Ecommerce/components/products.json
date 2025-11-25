@@ -1,7 +1,7 @@
 [
   {
     "id": "201",
-    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/moisturizer.jpg",
+    "image": "/Agaramfrontend/product_images/201.jpg",
     "name": "Hydrating Facial Moisturizer",
     "rating": {
       "stars": 4.7,
@@ -20,7 +20,7 @@
   },
   {
     "id": "202",
-    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/shampoo.jpg",
+    "image": "/Agaramfrontend/product_images/202.jpg",
     "name": "Anti-Dandruff Shampoo",
     "rating": {
       "stars": 4.5,
@@ -39,7 +39,7 @@
   },
   {
     "id": "203",
-    "image": "https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/foundation.jpg",
+    "image": "/Agaramfrontend/product_images/203.jpg",
     "name": "Matte Liquid Foundation",
     "rating": {
       "stars": 4.6,

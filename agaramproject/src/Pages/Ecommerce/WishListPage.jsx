@@ -56,7 +56,8 @@ export default function WishlistPage({
   }
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: "#e1e7f3ff", minHeight: "100%" }}>
+    <Box sx={{ p: { xs: 2, md: 4 },background: "linear-gradient(135deg, #10002eff 0%, #87c8eeff 100%)",
+ minHeight: "100%" }}>
 
       <Grid container spacing={3}>
         {wishlistItems.map((item) => (
