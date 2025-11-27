@@ -113,17 +113,21 @@ export default function CartPage({
   };
 
   // ---------------- REMOVE ITEM ----------------
-  const handleRemove = async (cartId) => {
-    try {
-      await removeCartItemApi(cartId);
-      setCartItems((prev) => prev.filter((i) => i.id !== cartId));
-      setSavedForLater((prev) => prev.filter((i) => i.id !== cartId));
-      setMessage({ type: "success", text: "Item removed" });
-    } catch (err) {
-      console.error("Remove failed:", err);
-      setMessage({ type: "error", text: "Failed to remove item" });
-    }
-  };
+const handleRemove = async (cartId) => {
+  // Ask for confirmation
+  const confirmDelete = window.confirm("Are you sure you want to remove this item from your cart?");
+  if (!confirmDelete) return; // Exit if user cancels
+
+  try {
+    await removeCartItemApi(cartId);
+    setCartItems((prev) => prev.filter((i) => i.id !== cartId));
+    setSavedForLater((prev) => prev.filter((i) => i.id !== cartId));
+    setMessage({ type: "success", text: "Item removed" });
+  } catch (err) {
+    console.error("Remove failed:", err);
+    setMessage({ type: "error", text: "Failed to remove item" });
+  }
+};
 
   // ---------------- SAVE FOR LATER ----------------
   const handleSaveForLater = async (item) => {
@@ -294,8 +298,8 @@ export default function CartPage({
 
       {/* Saved for Later */}
       {!loading && savedForLater.length > 0 && (
-        <Box mt={4} mb={4}>
-          <Typography variant="h5" color="#e8f4f8ff" fontWeight="bold" mb={2}>
+        <Box mt={5} mb={4}>
+          <Typography variant="h5"  color="#e8f4f8ff" fontWeight="bold" mb={2}>
             Saved for Later ({savedForLater.length} {savedForLater.length === 1 ? "item" : "items"})
           </Typography>
 

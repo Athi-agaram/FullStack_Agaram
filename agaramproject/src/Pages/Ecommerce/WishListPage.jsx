@@ -9,15 +9,18 @@ export default function WishlistPage({
   cartItems,
   setCartItems 
 }) {
-  const handleRemove = async (wishlistId) => {
-    try {
-      await removeWishlistApi(userId, wishlistId);
-      setWishlistItems(prev => prev.filter(item => item.wishlist_id !== wishlistId));
-    } catch (err) {
-      console.error("Error removing wishlist item:", err);
-      alert("Error removing item from wishlist");
-    }
-  };
+const handleRemove = async (wishlistId) => {
+  const confirmDelete = window.confirm("Are you sure you want to remove this item from your wishlist?");
+  if (!confirmDelete) return; // Exit if user cancels
+
+  try {
+    await removeWishlistApi(userId, wishlistId);
+    setWishlistItems(prev => prev.filter(item => item.wishlist_id !== wishlistId));
+  } catch (err) {
+    console.error("Error removing wishlist item:", err);
+    alert("Error removing item from wishlist");
+  }
+};
 
   const handleAddToCart = async (item) => {
     try {

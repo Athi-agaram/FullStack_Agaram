@@ -1,10 +1,12 @@
 import axios from "axios";
 
 // ==================== BASE ====================
+// const API = axios.create({
+//   baseURL: "http://localhost:8098/api",
+// });
 const API = axios.create({
-  baseURL: "http://localhost:8098/api",
+  baseURL: `${window.location.origin}/agaram-project-backend-completed/api`,
 });
-
 // ==================== USERS ====================
 export const loginUser = (payload) => API.post("/users/login", payload);
 export const registerUser = (payload) => API.post("/users/register", payload);
@@ -134,3 +136,19 @@ export const addWishlistApi = (userId, productId, qty = 1) =>
 // REMOVE ITEM from wishlist
 export const removeWishlistApi = (userId, wishlistId) =>
   API.delete(`/wishlist/${wishlistId}?userId=${userId}`);
+
+
+// ------------------------ IMAGE UPLOAD + FETCH ------------------------
+
+// Upload image (multipart/form-data)
+export const uploadImageApi = (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return API.post("/images/upload", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+// Get image by ID (returns raw blob)
+export const getImageApi = (id) =>
+  API.get(`/images/${id}`, { responseType: "blob" });

@@ -1020,6 +1020,12 @@ VALUES
  (SELECT id FROM categories WHERE name = 'Shoes'));
 
 
+
+
+UPDATE storeproducts SET image = 'https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/moisturizer.jpg' WHERE id = 201;
+UPDATE storeproducts SET image = 'https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/shampoo.jpg' WHERE id = 202;
+UPDATE storeproducts SET image = 'https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/foundation.jpg' WHERE id = 203;
+
 UPDATE storeproducts SET image = 'http://localhost:8098/product-images/201.jpg' WHERE id = 201;
 UPDATE storeproducts SET image = 'http://localhost:8098/product-images/202.jpg' WHERE id = 202;
 UPDATE storeproducts SET image = 'http://localhost:8098/product-images/203.jpg' WHERE id = 203;
@@ -1096,3 +1102,14 @@ SELECT id, name FROM storeproducts ORDER BY id desc;
 
 SELECT id, name, price, category, category_id FROM storeproducts ORDER BY id;
 SELECT * FROM categories;
+
+
+
+CREATE TABLE images (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    name NVARCHAR(255),
+    type NVARCHAR(100),
+    data VARBINARY(MAX)
+);
+SELECT * FROM images;
+EXEC sp_help 'images';

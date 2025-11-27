@@ -1,6 +1,6 @@
 {
   "name": "agaramproject",
-  "homepage": "/Agaramfrontend",
+  "homepage": "/AgaramfrontendCompleted",
   "version": "0.1.0",
   "proxy": "http://localhost:8098",
   "private": true,
