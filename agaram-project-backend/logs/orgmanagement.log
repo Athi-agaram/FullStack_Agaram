@@ -2030,3 +2030,50 @@
 2025-11-27T13:04:57.964+05:30  INFO 11144 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-11-27T13:04:57.969+05:30  INFO 11144 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2025-11-27T13:04:57.995+05:30  INFO 11144 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-11-27T13:07:58.645+05:30  INFO 19536 --- [http-nio-8098-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-27T13:07:58.645+05:30  INFO 19536 --- [http-nio-8098-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-27T13:07:58.647+05:30  INFO 19536 --- [http-nio-8098-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-11-27T13:07:58.658+05:30 DEBUG 19536 --- [http-nio-8098-exec-1] o.s.jdbc.core.JdbcTemplate               : Executing SQL query [SELECT * FROM storeproducts ORDER BY id]
+2025-11-27T13:08:03.999+05:30 DEBUG 19536 --- [http-nio-8098-exec-2] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
+2025-11-27T13:08:03.999+05:30 DEBUG 19536 --- [http-nio-8098-exec-2] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT c.id AS cart_id, c.user_id, c.product_id, c.qty, c.is_saved, p.name, p.price, p.image, p.rating_stars AS rating FROM cart c JOIN storeproducts p ON c.product_id = p.id WHERE c.user_id = ? ORDER BY c.is_saved ASC]
+2025-11-27T13:08:36.401+05:30 DEBUG 19536 --- [http-nio-8098-exec-3] o.s.jdbc.core.JdbcTemplate               : Executing SQL query [SELECT * FROM storeproducts ORDER BY id]
+2025-11-27T14:35:48.821+05:30  WARN 19536 --- [HikariPool-7:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-7 - Thread starvation or clock leap detected (housekeeper delta=53m3s437ms527µs700ns).
+2025-11-27T14:38:40.786+05:30 DEBUG 19536 --- [http-nio-8098-exec-5] o.s.jdbc.core.JdbcTemplate               : Executing SQL query [SELECT * FROM storeproducts ORDER BY id]
+2025-11-27T14:41:17.641+05:30 DEBUG 19536 --- [http-nio-8098-exec-7] o.s.jdbc.core.JdbcTemplate               : Executing SQL query [SELECT * FROM storeproducts ORDER BY id]
+2025-11-27T14:42:38.183+05:30  INFO 19536 --- [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-11-27T14:42:38.185+05:30  INFO 19536 --- [Thread-27] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-27T14:42:38.191+05:30  INFO 19536 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-11-27T14:42:38.194+05:30  INFO 19536 --- [Thread-27] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-27T14:42:38.196+05:30  INFO 19536 --- [Thread-27] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Shutdown initiated...
+2025-11-27T14:42:38.204+05:30  INFO 19536 --- [Thread-27] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Shutdown completed.
+2025-11-27T14:42:38.357+05:30  INFO 19536 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Starting AgaramProjectBackendApplication using Java 21.0.8 with PID 19536 (C:\Users\athira\Downloads\fullstack_Agaram\agaram-project-backend\target\classes started by athira in C:\Users\athira\Downloads\fullstack_Agaram\agaram-project-backend)
+2025-11-27T14:42:38.357+05:30 DEBUG 19536 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Running with Spring Boot v3.5.7, Spring v6.2.12
+2025-11-27T14:42:38.357+05:30  INFO 19536 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-11-27T14:42:38.775+05:30  INFO 19536 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-27T14:42:38.792+05:30  INFO 19536 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 15 ms. Found 0 JPA repository interfaces.
+2025-11-27T14:42:39.017+05:30  INFO 19536 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8098 (http)
+2025-11-27T14:42:39.019+05:30  INFO 19536 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-27T14:42:39.019+05:30  INFO 19536 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-27T14:42:39.050+05:30  INFO 19536 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-27T14:42:39.051+05:30  INFO 19536 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 691 ms
+2025-11-27T14:42:39.109+05:30  INFO 19536 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-8 - Starting...
+2025-11-27T14:42:39.134+05:30  INFO 19536 --- [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-8 - Added connection ConnectionID:121 ClientConnectionId: 83859eec-a8da-4137-aeac-bee7f4600089
+2025-11-27T14:42:39.135+05:30  INFO 19536 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-8 - Start completed.
+2025-11-27T14:42:39.137+05:30  INFO 19536 --- [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-27T14:42:39.142+05:30  INFO 19536 --- [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-27T14:42:39.172+05:30  INFO 19536 --- [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-27T14:42:39.205+05:30  INFO 19536 --- [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-8)']
+	Database driver: undefined/unknown
+	Database version: 16.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-27T14:42:39.250+05:30  INFO 19536 --- [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-27T14:42:39.251+05:30  INFO 19536 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-27T14:42:39.376+05:30  WARN 19536 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-27T14:42:39.578+05:30  INFO 19536 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-11-27T14:42:39.606+05:30  INFO 19536 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8098 (http) with context path '/'
+2025-11-27T14:42:39.611+05:30  INFO 19536 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Started AgaramProjectBackendApplication in 1.317 seconds (process running for 12419.442)
+2025-11-27T14:42:39.613+05:30  INFO 19536 --- [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
