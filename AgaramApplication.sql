@@ -1026,7 +1026,6 @@ UPDATE storeproducts SET image = 'http://localhost:8098/product-images/203.jpg' 
 
 
 
-
 EXEC sp_rename 'storeproducts.new_id', 'id', 'COLUMN';
 
 
