@@ -40,7 +40,13 @@ public class CartController {
     public ResponseEntity<?> updateCart(@PathVariable int cartId, @RequestBody Map<String, Object> body) {
 
         int qty = ((Number) body.get("qty")).intValue();
-        Boolean isSaved = (body.containsKey("is_saved")) ? (Boolean) body.get("is_saved") : null;
+        Boolean isSaved = null;
+
+        if (body.containsKey("is_saved")) {
+            isSaved = (Boolean) body.get("is_saved");
+        } else if (body.containsKey("isSaved")) {
+            isSaved = (Boolean) body.get("isSaved");
+        }
 
         service.updateCart(cartId, qty, isSaved);
 

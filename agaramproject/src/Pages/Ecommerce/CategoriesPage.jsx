@@ -132,14 +132,14 @@ export default function CategoriesPage({ onCategorySelect, onSwitchToProductsTab
       image: "https://katiecouric.com/wp-content/uploads/2022/06/Best-Clean-Beauty-Products-scaled.jpg", 
       key: "makeup and skincare",
       badge: "Hot",
-      color: "#FF69B4"
+      color: "#4CAF50"
     },
     { 
       name: "Health & Fitness", 
       image: "https://thewritelife.com/wp-content/uploads/2016/07/health-magazines.jpg", 
       key: "food and grocery",
       badge: "Trending",
-      color: "#4CAF50"
+      color: "#FF69B4"
     },
     { 
       name: "Fashion", 
@@ -153,14 +153,14 @@ export default function CategoriesPage({ onCategorySelect, onSwitchToProductsTab
       image: "https://image-cdn.hypb.st/https://hypebeast.com/image/2018/06/jordan-brand-fall-2018-preview-12.jpg?w=1260&format=jpeg&cbr=1&q=90&fit=max", 
       key: "shoes",
       badge: "Sale",
-      color: "#FF9800"
+      color: "#2196F3"
     },
     { 
       name: "Electronics", 
       image: "https://img.freepik.com/free-photo/laptop-headphone-isolated-white_93675-71522.jpg?size=626&ext=jpg", 
       key: "electronics",
       badge: "Best Seller",
-      color: "#2196F3"
+      color: "#FF9800"
     },
   ];
 

@@ -212,7 +212,7 @@ export default function OrdersPage() {
             {/* HEADER */}
             <Box
               sx={{
-                background:"linear-gradient(135deg, #a9cefcff, #cfe2fdff, #b8cce4ff)",
+                background:"linear-gradient(135deg, #c0dbfcff, #e2eeffff, #c8e1ffff)",
                 color: "#040024ff",
                 p: 2,
                 display: "flex",
@@ -267,7 +267,7 @@ export default function OrdersPage() {
                   <Button
                     variant="contained"
                     color="primary"
-                    sx={{ mb: 3 }}
+                    sx={{ mb: 3,fontSize:15 }}
                     onClick={() => handleNextStatus(order)}
                   >
                     Move to {steps[statusIdx + 1]}

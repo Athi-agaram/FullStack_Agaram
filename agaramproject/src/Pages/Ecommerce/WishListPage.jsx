@@ -66,7 +66,7 @@ export default function WishlistPage({
               display: "flex", 
               flexDirection: "column", 
               alignItems: "center", 
-              p: 2, 
+              p: 1.5, 
               height: "370px",
               width: "267px",
               borderRadius: 3, 

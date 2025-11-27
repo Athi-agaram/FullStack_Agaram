@@ -8,6 +8,7 @@ import {
   Rating,
   CircularProgress,
   Alert,
+  Divider,
 } from "@mui/material";
 
 import {
@@ -29,8 +30,8 @@ function debounce(fn, delay) {
 export default function CartPage({
   cartItems,
   setCartItems,
-  savedForLater,        // ← Changed from wishlistItems
-  setSavedForLater,     // ← Changed from setWishlistItems
+  savedForLater,
+  setSavedForLater,
   setTab,
   fetchOrders,
 }) {
@@ -46,27 +47,38 @@ export default function CartPage({
     setLoading(true);
     try {
       const res = await getCartApi(user.id);
+      console.log("Raw cart data from backend:", res.data);
 
       if (Array.isArray(res.data)) {
-        const mapped = res.data.map((r) => ({
-          id: r.cart_id,
-          productId: r.product_id,
-          name: r.name,
-          price: Number(r.price),
-          image: r.image,
-          qty: Number(r.qty),
-          rating: r.rating || 0,
-          is_saved: r.is_saved === 1,
-        }));
+        const mapped = res.data.map((r) => {
+          // Handle different formats of is_saved (number, boolean, string)
+          const isSaved = r.is_saved === 1 || r.is_saved === true || r.is_saved === "1";
+          
+          console.log(`Item ${r.cart_id}: is_saved raw = ${r.is_saved}, parsed = ${isSaved}`);
+          
+          return {
+            id: r.cart_id,
+            productId: r.product_id,
+            name: r.name,
+            price: Number(r.price),
+            image: r.image,
+            qty: Number(r.qty),
+            rating: r.rating || 0,
+            is_saved: isSaved,
+          };
+        });
 
         const activeCart = mapped.filter((i) => !i.is_saved);
         const savedItems = mapped.filter((i) => i.is_saved);
 
+        console.log("Active cart items:", activeCart.length);
+        console.log("Saved for later items:", savedItems.length);
+
         setCartItems(activeCart);
-        setSavedForLater(savedItems);  // ← Changed
+        setSavedForLater(savedItems);
       } else {
         setCartItems([]);
-        setSavedForLater([]);  // ← Changed
+        setSavedForLater([]);
       }
     } catch (err) {
       console.error("Fetch cart failed:", err);
@@ -105,7 +117,7 @@ export default function CartPage({
     try {
       await removeCartItemApi(cartId);
       setCartItems((prev) => prev.filter((i) => i.id !== cartId));
-      setSavedForLater((prev) => prev.filter((i) => i.id !== cartId));  // ← Changed
+      setSavedForLater((prev) => prev.filter((i) => i.id !== cartId));
       setMessage({ type: "success", text: "Item removed" });
     } catch (err) {
       console.error("Remove failed:", err);
@@ -116,14 +128,17 @@ export default function CartPage({
   // ---------------- SAVE FOR LATER ----------------
   const handleSaveForLater = async (item) => {
     try {
-      setCartItems((prev) => prev.filter((i) => i.id !== item.id));
-      setSavedForLater((prev) => [...prev, { ...item, is_saved: true }]);  // ← Changed
-      setMessage({ type: "success", text: "Saved for later" });
-
+      // First update the backend
       await updateCartItemApi(item.id, item.qty, true);
+      
+      // Then update the UI
+      setCartItems((prev) => prev.filter((i) => i.id !== item.id));
+      setSavedForLater((prev) => [...prev, { ...item, is_saved: true }]);
+      setMessage({ type: "success", text: "Saved for later" });
     } catch (err) {
       console.error("Save for later failed:", err);
       setMessage({ type: "error", text: "Failed to save for later" });
+      // Refresh cart to sync with backend state
       fetchCart();
     }
   };
@@ -131,14 +146,17 @@ export default function CartPage({
   // ---------------- MOVE TO CART ----------------
   const handleMoveToCart = async (item) => {
     try {
-      setSavedForLater((prev) => prev.filter((i) => i.id !== item.id));  // ← Changed
+      // First update the backend
+      await updateCartItemApi(item.id, item.qty, false);
+      
+      // Then update the UI
+      setSavedForLater((prev) => prev.filter((i) => i.id !== item.id));
       setCartItems((prev) => [...prev, { ...item, is_saved: false }]);
       setMessage({ type: "success", text: "Moved to cart" });
-
-      await updateCartItemApi(item.id, item.qty, false);
     } catch (err) {
       console.error("Move failed:", err);
       setMessage({ type: "error", text: "Failed to move to cart" });
+      // Refresh cart to sync with backend state
       fetchCart();
     }
   };
@@ -191,8 +209,11 @@ export default function CartPage({
 
   // ---------------- UI ----------------
   return (
-    <Box sx={{ p: 2 ,background: "linear-gradient(135deg, #10002eff 0%, #87c8eeff 100%)"
-, minHeight: "100%"}}>
+    <Box sx={{ 
+      p: 2, 
+      background: "linear-gradient(135deg, #10002eff 0%, #87c8eeff 100%)", 
+      minHeight: "100%" 
+    }}>
       {message && (
         <Alert severity={message.type} onClose={() => setMessage(null)} sx={{ mb: 2 }}>
           {message.text}
@@ -208,16 +229,32 @@ export default function CartPage({
       {/* Active Cart */}
       {!loading && cartItems.length > 0 && (
         <Box>
+          <Typography variant="h5" color="#e8f4f8ff" fontWeight="bold" mb={2}>
+            Cart Items ({cartItems.length} {cartItems.length === 1 ? "item" : "items"})
+          </Typography>
 
           {cartItems.map((it) => (
-            <Paper key={it.id} sx={{ display: "flex", p: 2, mb: 1.2, border: "1px solid #ddd",borderRadius:3 ,bgcolor:"#f7f9fcff"}}>
-              <Box sx={{ width: 120, mr: 2}}>
-                <img src={it.image} alt={it.name} style={{ width: "100%", height: 120, objectFit: "contain" }} />
+            <Paper key={it.id} sx={{ 
+              display: "flex", 
+              p: 2, 
+              mb: 1.2, 
+              border: "1px solid #ddd",
+              borderRadius: 3,
+              bgcolor: "#f7f9fcff" 
+            }}>
+              <Box sx={{ width: 120, mr: 2 }}>
+                <img 
+                  src={it.image} 
+                  alt={it.name} 
+                  style={{ width: "100%", height: 120, objectFit: "contain" }} 
+                />
               </Box>
               <Box sx={{ flex: 1 }}>
                 <Typography variant="subtitle1" fontWeight={600}>{it.name}</Typography>
                 <Rating value={it.rating} readOnly size="small" />
-                <Typography fontWeight="bold" mt={1} color="primary">₹{it.price.toFixed(2)}</Typography>
+                <Typography fontWeight="bold" mt={1} color="primary">
+                  ₹{it.price.toFixed(2)}
+                </Typography>
                 <Box sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <Typography variant="body2">Qty:</Typography>
@@ -232,10 +269,20 @@ export default function CartPage({
                       }
                     />
                   </Box>
-                  <Button variant="outlined" size="small" onClick={() => handleSaveForLater(it)}>
+                  <Button 
+                    variant="contained" 
+                    color="success" 
+                    size="medium" 
+                    onClick={() => handleSaveForLater(it)}
+                  >
                     Save for Later
                   </Button>
-                  <Button variant="outlined" color="error" size="small" onClick={() => handleRemove(it.id)}>
+                  <Button 
+                    variant="contained" 
+                    color="error" 
+                    size="medium" 
+                    onClick={() => handleRemove(it.id)}
+                  >
                     Remove
                   </Button>
                 </Box>
@@ -246,25 +293,46 @@ export default function CartPage({
       )}
 
       {/* Saved for Later */}
-      {!loading && savedForLater.length > 0 && (  // ← Changed
-        <Box mt={4} >
-          <Button variant="contained" size="small" fontWeight="bold" mb={2} >
-            Saved for Later ({savedForLater.length} {savedForLater.length === 1 ? "item" : "items"})  {/* ← Changed */}
-          </Button>
+      {!loading && savedForLater.length > 0 && (
+        <Box mt={4} mb={4}>
+          <Typography variant="h5" color="#e8f4f8ff" fontWeight="bold" mb={2}>
+            Saved for Later ({savedForLater.length} {savedForLater.length === 1 ? "item" : "items"})
+          </Typography>
 
-          {savedForLater.map((it) => (  // ← Changed
-            <Paper key={it.id} sx={{ display: "flex", p: 2, mb: 2, border: "1px solid #ddd", background: "#fafafa" }}>
+          {savedForLater.map((it) => (
+            <Paper key={it.id} sx={{ 
+              display: "flex", 
+              p: 2, 
+              mb: 2, 
+              border: "1px solid #ddd", 
+              borderRadius: 3,
+              background: "#fafafa" 
+            }}>
               <Box sx={{ width: 120, mr: 2 }}>
-                <img src={it.image} alt={it.name} style={{ width: "100%", height: 120, objectFit: "contain" }} />
+                <img 
+                  src={it.image} 
+                  alt={it.name} 
+                  style={{ width: "100%", height: 120, objectFit: "contain" }} 
+                />
               </Box>
               <Box sx={{ flex: 1 }}>
                 <Typography variant="subtitle1" fontWeight={600}>{it.name}</Typography>
+                <Rating value={it.rating} readOnly size="small" />
                 <Typography fontWeight="bold" mt={1}>₹{it.price.toFixed(2)}</Typography>
                 <Box sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}>
-                  <Button variant="contained" size="small" onClick={() => handleMoveToCart(it)}>
+                  <Button 
+                    variant="contained" 
+                    size="medium" 
+                    onClick={() => handleMoveToCart(it)}
+                  >
                     Move to Cart
                   </Button>
-                  <Button variant="outlined" color="error" size="small" onClick={() => handleRemove(it.id)}>
+                  <Button 
+                    variant="contained" 
+                    color="error" 
+                    size="medium" 
+                    onClick={() => handleRemove(it.id)}
+                  >
                     Remove
                   </Button>
                 </Box>
@@ -276,7 +344,18 @@ export default function CartPage({
 
       {/* Total & Checkout */}
       {cartItems.length > 0 && (
-        <Paper sx={{ p: 1, mt: 2, textAlign: "right", position: "sticky", bottom: 0 ,background: "linear-gradient(135deg, #13283fff, #31568aff, #081e38ff)",borderRadius:4,borderColor:"#cccccc", borderWidth:1, borderStyle:"solid"}}>
+        <Paper sx={{ 
+          p: 1, 
+          mt: 2, 
+          textAlign: "right", 
+          position: "sticky", 
+          bottom: 0,
+          background: "linear-gradient(135deg, #13283fff, #31568aff, #081e38ff)",
+          borderRadius: 4,
+          borderColor: "#cccccc", 
+          borderWidth: 1, 
+          borderStyle: "solid"
+        }}>
           <Typography variant="h6" fontWeight="bold" mb={1} mt={1} color="#fff">
             Subtotal ({cartItems.reduce((s, it) => s + it.qty, 0)} items):
             <span style={{ color: "#ddeefcff", marginLeft: 8 }}>₹{total.toFixed(2)}</span>
@@ -286,18 +365,34 @@ export default function CartPage({
             size="large"
             onClick={handleCheckout}
             disabled={checkoutLoading}
-            sx={{ mt: 1,mb:1,mr:2, minWidth: 200 }}
+            sx={{ mt: 1, mb: 1, mr: 2, minWidth: 200, fontWeight: "bold" }}
           >
             {checkoutLoading ? <CircularProgress size={24} color="inherit" /> : "Proceed to Checkout"}
           </Button>
         </Paper>
       )}
 
-      {/* Info when cart empty but savedForLater has items */}
-      {!loading && cartItems.length === 0 && savedForLater.length > 0 && (  // ← Changed
-        <Paper sx={{ p: 3, mt: 2, bgcolor: "#fff3cd", border: "1px solid #ffc107" }}>
-          <Typography variant="body1" color="text.primary">
-            💡 Your shopping cart is empty. Move items from "Saved for Later" to your cart to proceed with checkout.
+      {/* Empty state */}
+      {!loading && cartItems.length === 0 && savedForLater.length === 0 && (
+        <Paper sx={{ p: 3, mt: 2, bgcolor: "#ecf0ffff", border: "1px solid #ffffffff", borderRadius: 3 }}>
+          <Typography variant="h6" color="error" fontWeight="bold" mb={1}>
+            Your cart is empty
+          </Typography>
+          <Typography variant="body2" color="#0b0047ff">
+            Add some products to continue shopping.
+          </Typography>
+        </Paper>
+      )}
+
+      {/* Info when only saved items exist */}
+      {!loading && cartItems.length === 0 && savedForLater.length > 0 && (
+        <Paper sx={{ p: 3, mt: 2, bgcolor: "#fff3e0", border: "1px solid #ffb74d", borderRadius: 3 }}>
+          <Typography variant="h6" fontWeight="bold" mb={1} color="#e65100">
+            Your cart is empty
+          </Typography>
+          <Typography variant="body2" color="#5d4037">
+            You have {savedForLater.length} {savedForLater.length === 1 ? "item" : "items"} saved for later. 
+            Move them to cart to proceed with checkout.
           </Typography>
         </Paper>
       )}
