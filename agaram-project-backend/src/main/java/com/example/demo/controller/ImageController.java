@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000") // allow your frontend origin
+@CrossOrigin(origins = "*") // allow your frontend origin
 @RequestMapping("/api/images")
 public class ImageController {
 

@@ -4,38 +4,33 @@ import com.example.demo.order.dao.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderRepository repo;
+    
+    private static final Logger logger = Logger.getLogger(OrderServiceImpl.class.getName());
 
     @Override
     @Transactional
     public int checkout(int userId) {
-        // 1. Get cart items (only non-saved items)
         List<Map<String, Object>> cart = repo.findCartByUserId(userId);
-
         if (cart == null || cart.isEmpty()) {
             throw new RuntimeException("Cart is empty");
         }
 
-        // 2. Calculate total
-        double total = 0.0;
-        for (Map<String, Object> item : cart) {
-            double price = ((Number) item.get("price")).doubleValue();
-            int qty = ((Number) item.get("qty")).intValue();
-            total += price * qty;
-        }
+        double total = cart.stream()
+                .mapToDouble(item -> ((Number) item.get("price")).doubleValue() *
+                                     ((Number) item.get("qty")).intValue())
+                .sum();
 
-        // 3. Create order
         int orderId = repo.createOrder(userId, total);
 
-        // 4. Insert order items and decrement stock
         for (Map<String, Object> item : cart) {
             int productId = ((Number) item.get("product_id")).intValue();
             int qty = ((Number) item.get("qty")).intValue();
@@ -45,9 +40,7 @@ public class OrderServiceImpl implements OrderService {
             repo.decrementStock(productId, qty);
         }
 
-        // 5. Clear cart (only non-saved items)
         repo.clearCart(userId);
-
         return orderId;
     }
 
@@ -62,12 +55,94 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public int updateOrderStatus(int orderId, String status) {
-        return repo.updateStatus(orderId, status);
+    public List<Map<String, Object>> getOrdersForRoles() {
+        // Role users (warehouse, distributor, agent, courier) see all orders
+        return repo.findAllOrders();
     }
 
     @Override
     public List<Map<String, Object>> getCartForUser(int userId) {
         return repo.findCartByUserId(userId);
     }
+
+    @Override
+    public List<Map<String, Object>> getNotificationsByUsername(String username) {
+        return repo.findNotificationsByUsername(username);
+    }
+
+    @Override
+    public int sendNotification(int orderId, String username, String message, String status) {
+        return repo.insertNotification(orderId, username, message, status);
+    }
+
+    @Override
+    public boolean canUserUpdateStep(String username, String currentStatus) {
+        return repo.canUserUpdateStep(username, currentStatus);
+    }
+
+    @Override
+    public Map<String, Object> getUserPermission(String username) {
+        return repo.findUserPermission(username);
+    }
+
+    @Override
+    public String getUserRole(String username) {
+        if (username == null) return "USER";
+        
+        Map<String, Object> perm = getUserPermission(username);
+        if (perm == null) return "USER";
+        
+        Object ptype = perm.get("permission_type");
+        return ptype == null ? "USER" : ptype.toString();
+    }
+    @Override
+    @Transactional
+    public int updateOrderStatus(int orderId, String status) {
+
+        int rows = repo.updateStatus(orderId, status);
+
+        if (rows <= 0) return rows;
+
+        // =============================
+        // AUTO-MESSAGE FOR NEXT PERSON
+        // =============================
+        String nextMessage = "";
+        String nextStatus = status;
+
+        switch (status.toUpperCase()) {
+
+            case "PROCESSING":
+                nextMessage = "Warehouse has confirmed and processed the order";
+                break;
+
+            case "PACKED":
+                nextMessage = "Distributor has packed and prepared the order for shipment";
+                break;
+
+            case "DISPATCHED":
+                nextMessage = "Agent has dispatched the product to the courier";
+                break;
+
+            case "OUT_FOR_DELIVERY":
+                nextMessage = "Courier is out for delivery";
+                break;
+
+            case "DELIVERED":
+                nextMessage = "Your order has been delivered";
+                break;
+        }
+
+        if (!nextMessage.isEmpty()) {
+            repo.insertNotification(orderId, "system", nextMessage, nextStatus);
+        }
+
+        // =========================================
+        // ⭐ FIX: DELETE ALL OLD NOTIFICATIONS
+        // Keep only the newest one
+        // =========================================
+        repo.deleteOldNotificationsExceptLatest(orderId);
+
+        return rows;
+    }
+
 }

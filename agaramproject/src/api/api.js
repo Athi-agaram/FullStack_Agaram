@@ -1,12 +1,12 @@
 import axios from "axios";
 
 // ==================== BASE ====================
-// const API = axios.create({
-//   baseURL: "http://localhost:8098/api",
-// });
 const API = axios.create({
-  baseURL: `${window.location.origin}/agaram-project-backend-completed/api`,
+  baseURL: "http://localhost:8098/api",
 });
+// const API = axios.create({
+//   baseURL: `${window.location.origin}/agaram-project-backend-completed/api`,
+// });
 // ==================== USERS ====================
 export const loginUser = (payload) => API.post("/users/login", payload);
 export const registerUser = (payload) => API.post("/users/register", payload);
@@ -89,15 +89,37 @@ export const moveToCartApi = (cartId) => API.post(`/cart/move/${cartId}`);
 // CHECKOUT
 export const checkoutApi = (userId) => API.post(`/orders/checkout/${userId}`);
 
-// GET ORDERS (pass role in headers for admin)
-export const getOrdersApi = (userId, role = null) =>
-  API.get(`/orders/${userId}`, {
-    headers: role ? { role } : {},
+// GET ORDERS - Updated to pass username in header
+export const getOrdersApi = (userId, username) => {
+  return API.get(`/orders/${userId}`, {
+    headers: username ? { username } : {},
   });
+};
 
-// UPDATE ORDER STATUS (admin only)
-export const updateOrderStatusApi = (orderId, status) =>
-  API.put(`/orders/status`, { orderId, status }, { headers: { role: "ADMIN" } });
+// UPDATE ORDER STATUS - Updated to match backend
+export const updateOrderStatusApi = (orderId, status, currentStatus, username) => {
+  return API.put(
+    `/orders/status`,
+    { orderId, status, currentStatus },
+    { headers: { username } }
+  );
+};
+
+// ==================== NOTIFICATIONS ====================
+
+// GET NOTIFICATIONS
+export const getNotificationsApi = (username) => {
+  return API.get("/orders/notifications", {
+    headers: { username }
+  });
+};
+
+// SEND NOTIFICATION - Updated to include status
+export const sendNotificationApi = (data) => {
+  return API.post("/orders/notifications/send", data, {
+    headers: { username: data.username }
+  });
+};
 
 // ==================== REVENUE ====================
 export const getRevenue = (teamName = "") =>
@@ -135,7 +157,9 @@ export const addWishlistApi = (userId, productId, qty = 1) =>
 
 // REMOVE ITEM from wishlist
 export const removeWishlistApi = (userId, wishlistId) =>
-  API.delete(`/wishlist/${wishlistId}?userId=${userId}`);
+  API.delete(`/wishlist/${wishlistId}?userId=${userId}`, {
+    validateStatus: () => true, // Prevent Axios error on 204
+  });
 
 
 // ------------------------ IMAGE UPLOAD + FETCH ------------------------
@@ -152,3 +176,4 @@ export const uploadImageApi = (file) => {
 // Get image by ID (returns raw blob)
 export const getImageApi = (id) =>
   API.get(`/images/${id}`, { responseType: "blob" });
+

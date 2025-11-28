@@ -59,7 +59,7 @@ CREATE TABLE revenue (
     FOREIGN KEY (team_id) REFERENCES teams(id)
 );
 GO
-
+sp_help users;
 
 INSERT INTO teams (team_name) VALUES ('Team Alpha');
 
@@ -1020,7 +1020,24 @@ VALUES
  (SELECT id FROM categories WHERE name = 'Shoes'));
 
 
-
+ (201, 'Hydrating Facial Moisturizer', 20.00, 'Beauty & Personal Care', 'Skincare',
+ 'https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/moisturizer.jpg',
+ 4.7, 120,
+ 'This Hydrating Facial Moisturizer is expertly formulated to deeply nourish and hydrate your skin, providing lasting moisture and a smooth, radiant complexion. Ideal for daily use.',
+ 'moisturizer,hydration,skincare,beauty',
+ (SELECT id FROM categories WHERE name = 'Beauty & Personal Care')),
+(202, 'Anti-Dandruff Shampoo', 15.00, 'Beauty & Personal Care', 'Hair Care',
+ 'https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/shampoo.jpg',
+ 4.5, 85,
+ 'Our Anti-Dandruff Shampoo effectively combats flakes and itchiness, promoting a healthy scalp. Infused with soothing ingredients, it cleanses your hair without stripping natural oils.',
+ 'shampoo,hair care,anti-dandruff,cleanse',
+ (SELECT id FROM categories WHERE name = 'Beauty & Personal Care')),
+(203, 'Matte Liquid Foundation', 22.00, 'Beauty & Personal Care', 'Makeup',
+ 'https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/foundation.jpg',
+ 4.6, 98,
+ 'This Matte Liquid Foundation offers a flawless finish with long-lasting wear. Lightweight and breathable, it blends seamlessly into the skin, providing even coverage and a natural look.',
+ 'foundation,makeup,beauty,matte',
+ (SELECT id FROM categories WHERE name = 'Beauty & Personal Care')),
 
 UPDATE storeproducts SET image = 'https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/moisturizer.jpg' WHERE id = 201;
 UPDATE storeproducts SET image = 'https://kolzsticks.github.io/Free-Ecommerce-Products-Api/main/images/products/shampoo.jpg' WHERE id = 202;
@@ -1029,7 +1046,6 @@ UPDATE storeproducts SET image = 'https://kolzsticks.github.io/Free-Ecommerce-Pr
 UPDATE storeproducts SET image = 'http://localhost:8098/product-images/201.jpg' WHERE id = 201;
 UPDATE storeproducts SET image = 'http://localhost:8098/product-images/202.jpg' WHERE id = 202;
 UPDATE storeproducts SET image = 'http://localhost:8098/product-images/203.jpg' WHERE id = 203;
-
 
 
 EXEC sp_rename 'storeproducts.new_id', 'id', 'COLUMN';
@@ -1113,3 +1129,294 @@ CREATE TABLE images (
 );
 SELECT * FROM images;
 EXEC sp_help 'images';
+
+
+-- Notifications table
+
+SELECT name 
+FROM sys.default_constraints 
+WHERE parent_object_id = OBJECT_ID('orders')
+AND parent_column_id = COLUMNPROPERTY(parent_object_id, 'status', 'ColumnId');
+
+ALTER TABLE orders DROP CONSTRAINT DF__orders__status__30C33EC3;
+
+-- Update orders table to support new statuses
+ALTER TABLE orders 
+ADD CONSTRAINT DF_orders_status_default 
+DEFAULT 'PLACED' FOR status;
+
+
+-- Add notifications table
+CREATE TABLE notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    sender_username VARCHAR(100) NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
+EXEC sp_rename 'notifications.sender_role', 'sender_username', 'COLUMN';
+-- Add user_permissions table to manage who can do what
+CREATE TABLE user_permissions (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    permission_type VARCHAR(50) NOT NULL,
+    allowed_step VARCHAR(50),
+    can_update_any BIT DEFAULT 0,
+    created_at DATETIME DEFAULT GETDATE()
+);
+ALTER TABLE notifications ADD status VARCHAR(64);
+
+select * from notifications
+-- Insert sample permissions
+INSERT INTO user_permissions (username, permission_type, allowed_step, can_update_any) VALUES
+-- Admins
+('administrator', 'ADMIN', NULL, 1),
+
+-- Warehouse users
+('warehouse', 'WAREHOUSE', 'PLACED', 0),
+
+-- Distributor users
+('distributor', 'DISTRIBUTOR', 'PROCESSING', 0),
+
+-- Agent users
+('agent', 'AGENT', 'SHIPPED', 0),
+
+-- Courier users
+('courier', 'COURIER', 'OUT_FOR_DELIVERY', 0);
+
+select * from users
+
+
+
+-- Check permissions
+SELECT * FROM user_permissions;
+
+-- Should show:
+-- administrator | ADMIN      | NULL         | 1
+-- warehouse     | WAREHOUSE  | PLACED       | 0
+-- distributor   | DISTRIBUTOR| PROCESSING   | 0
+-- agent         | AGENT      | SHIPPED      | 0
+-- courier       | COURIER    | OUT_FOR_DELIVERY | 0
+
+-- Check orders exist
+SELECT COUNT(*) FROM orders;
+-- Should be > 0
+
+-- Check order details
+SELECT o.id, o.user_id, u.username, o.status, o.total_amount
+FROM orders o
+JOIN users u ON o.user_id = u.id;
+
+SELECT * FROM user_permissions WHERE username = 'warehouse';
+
+
+
+
+-- ========================================
+-- STEP 1: CHECK CURRENT STATE
+-- ========================================
+
+-- Check if user_permissions table exists and has data
+SELECT * FROM user_permissions;
+
+-- Check if users exist
+SELECT id, username, role FROM users 
+WHERE username IN ('administrator', 'warehouse', 'distributor', 'agent', 'courier');
+
+-- Check orders
+SELECT 
+    o.id AS order_id, 
+    o.user_id, 
+    u.username AS customer_username,
+    o.status, 
+    o.total_amount, 
+    o.created_at
+FROM orders o
+JOIN users u ON o.user_id = u.id
+ORDER BY o.created_at DESC;
+
+-- Check notifications
+SELECT 
+    n.id,
+    n.order_id,
+    n.sender_username,
+    n.message,
+    n.status,
+    n.created_at
+FROM notifications n
+ORDER BY n.created_at DESC;
+
+-- ========================================
+-- STEP 2: ENSURE PERMISSIONS ARE SET
+-- ========================================
+
+-- Delete existing permissions (if any conflicts)
+DELETE FROM user_permissions 
+WHERE username IN ('administrator', 'warehouse', 'distributor', 'agent', 'courier');
+
+-- Insert fresh permissions
+INSERT INTO user_permissions (username, permission_type, allowed_step, can_update_any) VALUES
+('administrator', 'ADMIN', NULL, 1),
+('warehouse', 'WAREHOUSE', 'PLACED', 0),
+('distributor', 'DISTRIBUTOR', 'PROCESSING', 0),
+('agent', 'AGENT', 'SHIPPED', 0),
+('courier', 'COURIER', 'OUT_FOR_DELIVERY', 0);
+
+-- Verify permissions inserted correctly
+SELECT 
+    username,
+    permission_type,
+    allowed_step,
+    can_update_any,
+    CASE 
+        WHEN can_update_any = 1 THEN 'Can update ANY step'
+        ELSE 'Can update only: ' + ISNULL(allowed_step, 'NONE')
+    END AS permission_description
+FROM user_permissions
+ORDER BY 
+    CASE permission_type
+        WHEN 'ADMIN' THEN 1
+        WHEN 'WAREHOUSE' THEN 2
+        WHEN 'DISTRIBUTOR' THEN 3
+        WHEN 'AGENT' THEN 4
+        WHEN 'COURIER' THEN 5
+        ELSE 6
+    END;
+
+-- ========================================
+-- STEP 3: ENSURE USERS EXIST
+-- ========================================
+
+-- Check if these users exist in users table
+SELECT username FROM users 
+WHERE username IN ('administrator', 'warehouse', 'distributor', 'agent', 'courier');
+
+-- If users DON'T exist, create them:
+-- (Only run if users are missing)
+
+-- Create admin user
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'administrator')
+BEGIN
+    INSERT INTO users (username, password, role, team_id, authorized, team_name) 
+    VALUES ('administrator', 'admin123', 'ADMIN', NULL, 1, NULL);
+END
+
+-- Create warehouse user
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'warehouse')
+BEGIN
+    INSERT INTO users (username, password, role, team_id, authorized, team_name) 
+    VALUES ('warehouse', 'warehouse123', 'EMPLOYEE', NULL, 1, 'Warehouse Team');
+END
+
+-- Create distributor user
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'distributor')
+BEGIN
+    INSERT INTO users (username, password, role, team_id, authorized, team_name) 
+    VALUES ('distributor', 'distributor123', 'EMPLOYEE', NULL, 1, 'Distribution Team');
+END
+
+-- Create agent user
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'agent')
+BEGIN
+    INSERT INTO users (username, password, role, team_id, authorized, team_name) 
+    VALUES ('agent', 'agent123', 'EMPLOYEE', NULL, 1, 'Agent Team');
+END
+delete from notifications
+
+-- Create courier user
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'courier')
+BEGIN
+    INSERT INTO users (username, password, role, team_id, authorized, team_name) 
+    VALUES ('courier', 'courier123', 'EMPLOYEE', NULL, 1, 'Courier Team');
+END
+
+-- ========================================
+-- STEP 4: CREATE TEST ORDER (if needed)
+-- ========================================
+
+-- Check if you have any orders
+SELECT COUNT(*) AS order_count FROM orders;
+
+-- If no orders exist, create a test order
+-- First, get a customer user_id
+DECLARE @customerId INT;
+SELECT TOP 1 @customerId = id FROM users 
+WHERE username NOT IN ('administrator', 'warehouse', 'distributor', 'agent', 'courier');
+
+-- If customer exists, create test order
+IF @customerId IS NOT NULL
+BEGIN
+    DECLARE @orderId INT;
+    
+    INSERT INTO orders (user_id, total_amount, status, created_at) 
+    VALUES (@customerId, 2500.00, 'PLACED', GETDATE());
+    
+    SET @orderId = SCOPE_IDENTITY();
+    
+    -- Add order items (assuming you have products)
+    INSERT INTO order_items (order_id, product_id, qty, price)
+    SELECT TOP 2 @orderId, id, 2, price
+    FROM storeproducts;
+    
+    -- Create initial notification
+    INSERT INTO notifications (order_id, sender_username, message, status, created_at)
+    VALUES (@orderId, 
+            (SELECT username FROM users WHERE id = @customerId), 
+            'New order placed with test items', 
+            'PLACED', 
+            GETDATE());
+    
+    SELECT 'Test order created with ID: ' + CAST(@orderId AS VARCHAR);
+END
+ELSE
+BEGIN
+    SELECT 'No customer found to create test order';
+END
+
+-- ========================================
+-- STEP 5: VERIFY EVERYTHING
+-- ========================================
+
+-- Final verification query
+SELECT 
+    'User Permissions' AS [Check],
+    COUNT(*) AS [Count],
+    STRING_AGG(username, ', ') AS [Users]
+FROM user_permissions
+UNION ALL
+SELECT 
+    'Orders',
+    COUNT(*),
+    CAST(COUNT(*) AS VARCHAR)
+FROM orders
+UNION ALL
+SELECT 
+    'Notifications',
+    COUNT(*),
+    CAST(COUNT(*) AS VARCHAR)
+FROM notifications;
+
+-- Show which users can see what
+SELECT 
+    up.username,
+    up.permission_type,
+    CASE 
+        WHEN up.can_update_any = 1 THEN 'ALL ORDERS'
+        ELSE 'ALL ORDERS (read only except at step: ' + ISNULL(up.allowed_step, 'NONE') + ')'
+    END AS [What They See],
+    CASE 
+        WHEN up.can_update_any = 1 THEN 'ANY STEP'
+        ELSE up.allowed_step
+    END AS [Can Update]
+FROM user_permissions up
+ORDER BY 
+    CASE up.permission_type
+        WHEN 'ADMIN' THEN 1
+        WHEN 'WAREHOUSE' THEN 2
+        WHEN 'DISTRIBUTOR' THEN 3
+        WHEN 'AGENT' THEN 4
+        WHEN 'COURIER' THEN 5
+    END;
+	select * from orders
+	delete from orders

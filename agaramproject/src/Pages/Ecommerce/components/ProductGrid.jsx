@@ -26,7 +26,6 @@ import {
   addStoreProduct,
 } from "../../../api/api";
 
-// ⭐ CATEGORY LIST
 const categoryOptions = [
   { name: "Electronics and gadgets", key: "electronics", id: 1 },
   { name: "Beauty & Personal Care", key: "beauty", id: 2 },
@@ -51,7 +50,6 @@ export default function ProductGrid({
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortType, setSortType] = useState("none");
 
-  // ⭐ MODAL STATES
   const [openModal, setOpenModal] = useState(false);
   const [newProduct, setNewProduct] = useState({
     name: "",
@@ -67,9 +65,7 @@ export default function ProductGrid({
     category_id: 1,
   });
 
-  // --------------------------
-  // NORMALIZE PRODUCTS
-  // --------------------------
+ 
   const normalizeProducts = (arr) =>
     arr.map((p) => ({
       id: p.id,
@@ -84,9 +80,7 @@ export default function ProductGrid({
       category_id: Number(p.category_id) || 1,
     }));
 
-  // --------------------------
-  // LOAD PRODUCTS FROM BACKEND
-  // --------------------------
+
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -106,12 +100,9 @@ export default function ProductGrid({
     fetchProducts();
   }, []);
 
-  // Only use the main 6 categories for filter dropdown
   const categoryList = ["all", ...categoryOptions.map((c) => c.name)];
 
-  // --------------------------
-  // FILTER + SORT
-  // --------------------------
+
   useEffect(() => {
     let list = [...products];
 
@@ -134,9 +125,7 @@ export default function ProductGrid({
     setFiltered(list);
   }, [search, selectedCategory, sortType, products]);
 
-  // --------------------------
-  // WISHLIST TOGGLE
-  // --------------------------
+ 
   const toggleWishlist = async (p) => {
     if (!userId) return alert("Login required");
 

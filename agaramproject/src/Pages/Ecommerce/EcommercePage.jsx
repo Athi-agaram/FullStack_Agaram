@@ -553,7 +553,7 @@ export default function EcommercePage() {
     { label: "Categories", tab: 0, icon: <CategoryIcon /> },
     { label: "Products", tab: 1, icon: <Inventory2Icon /> },
     { label: "Orders", tab: 3, icon: <AssignmentIcon /> },
-    { label: "Image Upload", tab: 5, icon: <ImageIcon /> },
+    // { label: "Image Upload", tab: 5, icon: <ImageIcon /> },
 
   ];
 
@@ -815,7 +815,7 @@ export default function EcommercePage() {
               setCartItems={setCartItems}
             />
           )}
-          {tab === 5 && <ImageTestPage />}
+          {/* {tab === 5 && <ImageTestPage />} */}
 
         </Box>
       </Box>
