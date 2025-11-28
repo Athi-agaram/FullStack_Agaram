@@ -42,6 +42,8 @@ export default function ProductGrid({
   setWishlistItems,
   userId,
   userRole,
+  selectedCategoryFromCategoryPage,  // <-- NEW PROP
+
 }) {
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -64,8 +66,22 @@ export default function ProductGrid({
     stock: 0,
     category_id: 1,
   });
+  const mapKeyToCategoryId = {
+  electronics: 1,
+  beauty: 2,
+  fashion: 3,
+  home: 4,
+  health: 5,
+  shoes: 6,
+};
 
- 
+
+ useEffect(() => {
+  if (selectedCategoryFromCategoryPage) {
+    setSelectedCategory(selectedCategoryFromCategoryPage);
+  }
+}, [selectedCategoryFromCategoryPage]);
+
   const normalizeProducts = (arr) =>
     arr.map((p) => ({
       id: p.id,
@@ -115,9 +131,11 @@ export default function ProductGrid({
       );
     }
 
-    if (selectedCategory !== "all") {
-      list = list.filter((p) => p.category === selectedCategory);
-    }
+if (selectedCategory !== "all") {
+  const catId = mapKeyToCategoryId[selectedCategory];
+  list = list.filter((p) => Number(p.category_id) === Number(catId));
+}
+
 
     if (sortType === "low-high") list.sort((a, b) => a.price - b.price);
     if (sortType === "high-low") list.sort((a, b) => b.price - a.price);

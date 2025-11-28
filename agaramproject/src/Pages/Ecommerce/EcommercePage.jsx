@@ -484,6 +484,8 @@ export default function EcommercePage() {
   const [cartItems, setCartItems] = useState([]);
   const [savedForLater, setSavedForLater] = useState([]);
   const [wishlistItems, setWishlistItems] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+
 
   const switchToProductsTab = () => {
     setTab(1);
@@ -766,33 +768,42 @@ export default function EcommercePage() {
         </Box>
 
         {/* Main Content */}
-        <Box sx={{ flex: 1, overflowY: "auto", bgcolor: "#f8f9fa" }}>
-          {tab === 0 && (
-            <CategoriesPage
-              onCategorySelect={(cat) => {
-                const key = cat.key.toLowerCase();
-                const filtered = productsData.filter(
-                  (p) => p.category.toLowerCase() === key
-                );
-                setFilteredProducts(filtered);
-              }}
-              onSwitchToProductsTab={switchToProductsTab}
-            />
-          )}
 
-          {tab === 1 && (
-            <ProductGrid
-              initialProducts={
-                filteredProducts.length > 0 ? filteredProducts : productsData
-              }
-              cartItems={cartItems}
-              setCartItems={setCartItems}
-              wishlistItems={wishlistItems}
-              setWishlistItems={setWishlistItems}
-              userId={user?.id}
-              userRole={user?.role}
-            />
-          )}
+<Box sx={{ flex: 1, overflowY: "auto", bgcolor: "#f8f9fa" }}>
+  {tab === 0 && (
+    <CategoriesPage
+      onCategorySelect={(cat) => {
+        if (!cat || !cat.key) {
+          console.warn("Invalid category clicked:", cat);
+          return;
+        }
+
+        const key = cat.key.toLowerCase();
+
+        const filtered = productsData.filter((p) =>
+          p.category && p.category.toLowerCase() === key
+        );
+
+        setFilteredProducts(filtered);
+        switchToProductsTab();  // 🔥 Auto-switch to products tab
+      }}
+      onSwitchToProductsTab={switchToProductsTab}
+    />
+  )}
+
+  {tab === 1 && (
+    <ProductGrid
+      initialProducts={
+        filteredProducts.length > 0 ? filteredProducts : productsData
+      }
+      cartItems={cartItems}
+      setCartItems={setCartItems}
+      wishlistItems={wishlistItems}
+      setWishlistItems={setWishlistItems}
+      userId={user?.id}
+      userRole={user?.role}
+    />
+  )}
 
           {tab === 2 && (
             <CartPage

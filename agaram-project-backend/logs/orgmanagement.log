@@ -16314,3 +16314,40 @@ java.lang.RuntimeException: Invalid password
 2025-11-28T18:22:36.043+05:30  INFO 10420 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8098 (http) with context path '/'
 2025-11-28T18:22:36.052+05:30  INFO 10420 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Started AgaramProjectBackendApplication in 2.626 seconds (process running for 6337.795)
 2025-11-28T18:22:36.056+05:30  INFO 10420 --- [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-11-28T18:39:05.279+05:30  INFO 10420 --- [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-11-28T18:39:05.297+05:30  INFO 10420 --- [Thread-7] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-28T18:39:05.315+05:30  INFO 10420 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-11-28T18:39:05.320+05:30  INFO 10420 --- [Thread-7] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-28T18:39:05.322+05:30  INFO 10420 --- [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2025-11-28T18:39:05.329+05:30  INFO 10420 --- [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2025-11-28T18:39:05.555+05:30  INFO 10420 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Starting AgaramProjectBackendApplication using Java 21.0.8 with PID 10420 (C:\Users\athira\Downloads\fullstack_Agaram\agaram-project-backend\target\classes started by athira in C:\Users\athira\Downloads\fullstack_Agaram\agaram-project-backend)
+2025-11-28T18:39:05.555+05:30 DEBUG 10420 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Running with Spring Boot v3.5.7, Spring v6.2.12
+2025-11-28T18:39:05.556+05:30  INFO 10420 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-11-28T18:39:06.335+05:30  INFO 10420 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-28T18:39:06.366+05:30  INFO 10420 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 29 ms. Found 0 JPA repository interfaces.
+2025-11-28T18:39:06.654+05:30  INFO 10420 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8098 (http)
+2025-11-28T18:39:06.658+05:30  INFO 10420 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-28T18:39:06.658+05:30  INFO 10420 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-28T18:39:06.718+05:30  INFO 10420 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-28T18:39:06.718+05:30  INFO 10420 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1155 ms
+2025-11-28T18:39:06.893+05:30  INFO 10420 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2025-11-28T18:39:07.126+05:30  INFO 10420 --- [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-3 - Added connection ConnectionID:55 ClientConnectionId: e1b48400-c09c-4d11-bacf-2b49ad260fa0
+2025-11-28T18:39:07.127+05:30  INFO 10420 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2025-11-28T18:39:07.130+05:30  INFO 10420 --- [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-28T18:39:07.140+05:30  INFO 10420 --- [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-28T18:39:07.195+05:30  INFO 10420 --- [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-28T18:39:07.270+05:30  INFO 10420 --- [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-3)']
+	Database driver: undefined/unknown
+	Database version: 16.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-28T18:39:07.305+05:30  INFO 10420 --- [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-28T18:39:07.305+05:30  INFO 10420 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-28T18:39:07.532+05:30  WARN 10420 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-28T18:39:07.908+05:30  INFO 10420 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-11-28T18:39:07.937+05:30  INFO 10420 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8098 (http) with context path '/'
+2025-11-28T18:39:07.945+05:30  INFO 10420 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Started AgaramProjectBackendApplication in 2.498 seconds (process running for 7329.677)
+2025-11-28T18:39:07.947+05:30  INFO 10420 --- [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
