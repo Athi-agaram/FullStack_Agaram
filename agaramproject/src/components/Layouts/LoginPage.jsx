@@ -540,7 +540,7 @@ export default function LoginPage() {
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          filter: "brightness(0.60)", // optional dimming for contrast
+          filter: "brightness(1.00)", // optional dimming for contrast
         }}
       />
 
@@ -629,8 +629,8 @@ export default function LoginPage() {
 
 
               {usernameExists === false && (
-                <Typography variant="body2" color="error" align="center">
-                  Username not found*
+                <Typography variant="body2" color="white" align="center">
+                  Username not found
                 </Typography>
               )}
 

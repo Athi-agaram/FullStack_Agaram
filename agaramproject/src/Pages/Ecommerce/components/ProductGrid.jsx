@@ -26,13 +26,24 @@ import {
   addStoreProduct,
 } from "../../../api/api";
 
+/**
+ * Responsive ProductGrid (uses category_id everywhere)
+ *
+ * Props:
+ *  - cartItems, setCartItems
+ *  - wishlistItems, setWishlistItems
+ *  - userId
+ *  - userRole
+ *  - selectedCategoryFromCategoryPage  // may be number/string (category_id)
+ */
+
 const categoryOptions = [
-  { name: "Electronics and gadgets", key: "electronics", id: 1 },
-  { name: "Beauty & Personal Care", key: "beauty", id: 2 },
-  { name: "Fashion & Apparel", key: "fashion", id: 3 },
-  { name: "Home & Kitchen", key: "home", id: 4 },
-  { name: "Health & Fitness", key: "health", id: 5 },
-  { name: "Shoes", key: "shoes", id: 6 },
+  { id: 1, key: "electronics", name: "Electronics & Gadgets" },
+  { id: 2, key: "beauty", name: "Beauty & Personal Care" },
+  { id: 3, key: "fashion", name: "Fashion & Apparel" },
+  { id: 4, key: "home", name: "Home & Kitchen" },
+  { id: 5, key: "health", name: "Health & Fitness" },
+  { id: 6, key: "shoes", name: "Shoes" },
 ];
 
 export default function ProductGrid({
@@ -42,21 +53,25 @@ export default function ProductGrid({
   setWishlistItems,
   userId,
   userRole,
-  selectedCategoryFromCategoryPage,  // <-- NEW PROP
-
+  selectedCategoryFromCategoryPage,
 }) {
+  // --- data states
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
+
+
+  // --- UI states
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [sortType, setSortType] = useState("none");
 
+  // --- modal / new product
   const [openModal, setOpenModal] = useState(false);
   const [newProduct, setNewProduct] = useState({
     name: "",
     price: 0,
-    category: "",
+    category_id: 1,
     subcategory: "",
     image: "",
     rating_stars: 4.5,
@@ -64,39 +79,29 @@ export default function ProductGrid({
     description: "",
     keywords: "",
     stock: 0,
-    category_id: 1,
   });
-  const mapKeyToCategoryId = {
-  electronics: 1,
-  beauty: 2,
-  fashion: 3,
-  home: 4,
-  health: 5,
-  shoes: 6,
-};
 
-
- useEffect(() => {
-  if (selectedCategoryFromCategoryPage) {
-    setSelectedCategory(selectedCategoryFromCategoryPage);
-  }
-}, [selectedCategoryFromCategoryPage]);
-
+  // --- normalize backend product shape to predictable fields
   const normalizeProducts = (arr) =>
     arr.map((p) => ({
       id: p.id,
       name: p.name,
-      price: Number(p.price),
-      category: p.category || "general",
-      image: p.image,
-      rating: Number(p.rating_stars) || 4,
-      reviews: Number(p.rating_count) || 20,
-      keywords: typeof p.keywords === "string" ? p.keywords.split(",") : [],
-      stock: Number(p.stock) || 0,
-      category_id: Number(p.category_id) || 1,
+      price: Number(p.price || 0),
+      category: p.category || "",
+      image: p.image || "",
+      rating: Number(p.rating_stars ?? p.rating ?? 4) || 4,
+      reviews: Number(p.rating_count ?? p.reviews ?? 0) || 0,
+      keywords:
+        typeof p.keywords === "string"
+          ? p.keywords.split(",").map((k) => k.trim()).filter(Boolean)
+          : Array.isArray(p.keywords)
+          ? p.keywords
+          : [],
+      stock: Number(p.stock ?? 0) || 0,
+      category_id: Number(p.category_id ?? 1) || 1,
     }));
 
-
+  // --- fetch products
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -116,12 +121,24 @@ export default function ProductGrid({
     fetchProducts();
   }, []);
 
-  const categoryList = ["all", ...categoryOptions.map((c) => c.name)];
+  // --- honor selectedCategoryFromCategoryPage if provided (number or string)
+  useEffect(() => {
+    if (
+      selectedCategoryFromCategoryPage !== undefined &&
+      selectedCategoryFromCategoryPage !== null &&
+      selectedCategoryFromCategoryPage !== ""
+    ) {
+      const parsed = Number(selectedCategoryFromCategoryPage);
+      if (!Number.isNaN(parsed) && parsed > 0) setSelectedCategoryId(parsed);
+      // if caller passed a key or name instead of id, you could map it here.
+    }
+  }, [selectedCategoryFromCategoryPage]);
 
-
+  // --- filtering / searching / sorting
   useEffect(() => {
     let list = [...products];
 
+    // search
     if (search.trim() !== "") {
       const s = search.toLowerCase();
       list = list.filter(
@@ -131,19 +148,19 @@ export default function ProductGrid({
       );
     }
 
-if (selectedCategory !== "all") {
-  const catId = mapKeyToCategoryId[selectedCategory];
-  list = list.filter((p) => Number(p.category_id) === Number(catId));
-}
+    // category filter (0 = all)
+    if (selectedCategoryId && Number(selectedCategoryId) !== 0) {
+      list = list.filter((p) => Number(p.category_id) === Number(selectedCategoryId));
+    }
 
-
+    // sort
     if (sortType === "low-high") list.sort((a, b) => a.price - b.price);
     if (sortType === "high-low") list.sort((a, b) => b.price - a.price);
 
     setFiltered(list);
-  }, [search, selectedCategory, sortType, products]);
+  }, [search, selectedCategoryId, sortType, products]);
 
- 
+  // --- wishlist toggle
   const toggleWishlist = async (p) => {
     if (!userId) return alert("Login required");
 
@@ -168,12 +185,11 @@ if (selectedCategory !== "all") {
       }
     } catch (err) {
       console.error(err);
+      alert("Wishlist action failed");
     }
   };
 
-  // --------------------------
-  // ADD TO CART
-  // --------------------------
+  // --- add to cart
   const handleAddToCart = async (product) => {
     try {
       if (!userId) return alert("Login required");
@@ -189,29 +205,21 @@ if (selectedCategory !== "all") {
       alert("Added to cart!");
     } catch (err) {
       console.error(err);
+      alert("Failed adding to cart");
     }
   };
 
-  // --------------------------
-  // SAVE NEW PRODUCT
-  // --------------------------
+  // --- save new product (admin)
   const handleSaveProduct = async () => {
-    if (!newProduct.name || !newProduct.price || !newProduct.image || !newProduct.category) {
+    if (!newProduct.name || !newProduct.price || !newProduct.image || !newProduct.category_id) {
       return alert("Please fill Name, Price, Image URL, and Category");
     }
 
     try {
-      // ⭐ Map category name to category_id
-      const categoryObj = categoryOptions.find(
-        (c) => c.name === newProduct.category
-      );
-
-      if (!categoryObj) return alert("Invalid category selected");
-
       const payload = {
         name: newProduct.name,
         price: Number(newProduct.price),
-        category: categoryObj.name,
+        category: categoryOptions.find((c) => c.id === Number(newProduct.category_id))?.name || "",
         subcategory: newProduct.subcategory || "",
         image: newProduct.image,
         ratingStars: Number(newProduct.rating_stars),
@@ -219,12 +227,15 @@ if (selectedCategory !== "all") {
         description: newProduct.description || "",
         keywords: newProduct.keywords || "",
         stock: Number(newProduct.stock || 0),
-        category_id: categoryObj.id, // ✅ FK-safe
+        category_id: Number(newProduct.category_id),
       };
 
       const res = await addStoreProduct(payload);
 
-      if (!res.ok) throw new Error("Backend error");
+      // some api wrappers return { ok: true } others return axios-like objects. handle both:
+      const ok = res?.ok ?? (res?.status && res.status >= 200 && res.status < 300);
+
+      if (!ok) throw new Error("Backend error");
 
       alert("Product added!");
       fetchProducts();
@@ -232,7 +243,7 @@ if (selectedCategory !== "all") {
       setNewProduct({
         name: "",
         price: 0,
-        category: "",
+        category_id: 1,
         subcategory: "",
         image: "",
         rating_stars: 4.5,
@@ -240,78 +251,81 @@ if (selectedCategory !== "all") {
         description: "",
         keywords: "",
         stock: 0,
-        category_id: 1,
       });
     } catch (err) {
       console.error("Failed to add product:", err);
-      alert("Failed to add product: " + err.message);
+      alert("Failed to add product: " + (err.message || err));
     }
   };
 
+  // --- derived UI lists
+  const categoryListForDropdown = [{ id: 0, name: "All" }, ...categoryOptions];
 
-return (
-  <Box sx={{ 
-      background: "linear-gradient(135deg, #10002eff 0%, #87c8eeff 100%)",
-    minHeight: "100vh",
-    p: 3 
-  }}>
-    {/* FILTER BAR */}
-    <Paper
-      elevation={0}
+  // --- styles reused
+  const filterPaperSx = {
+    p: 2.5,
+    position: "sticky",
+    top: 0,
+    zIndex: 10,
+    mb: 3,
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 2,
+    alignItems: "center",
+    bgcolor: "rgba(255, 255, 255, 0.9)",
+    backdropFilter: "blur(8px)",
+    borderRadius: 3,
+    boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
+  };
+
+  return (
+    <Box
       sx={{
-        p: 2.5,
-        position: "sticky",
-        top: 0,
-        zIndex: 10,
-        mb: 3,
-        display: "flex",
-        flexWrap: "wrap",
-        gap: 2,
-        alignItems: "center",
-        bgcolor: "rgba(255, 255, 255, 0.81)",
-        backdropFilter: "blur(10px)",
-        borderRadius: 3,
-        boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+        background: "linear-gradient(135deg, #10002eff 0%, #87c8eeff 100%)",
+        Height: "100vh",
+        p: { xs: 2, sm: 3 },
       }}
     >
-      <TextField
-        placeholder="Search products..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        sx={{
-          flex: 1,
-          minWidth: 300,
-          "& .MuiOutlinedInput-root": {
-            borderRadius: "50px",
-            backgroundColor: "#f8f9fa",
-            height: 48,
-            transition: "all 0.3s ease",
-            "&:hover": {
-              backgroundColor: "#fff",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
+      {/* FILTER BAR */}
+      <Paper elevation={0} sx={filterPaperSx}>
+        <TextField
+          placeholder="Search products..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          sx={{
+            flex: 1,
+            minWidth: { xs: "100%", sm: 300 },
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "50px",
+              backgroundColor: "#f8f9fa",
+              height: 48,
+              transition: "all 0.25s ease",
+              "&:hover": {
+                backgroundColor: "#fff",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+              },
+              "&.Mui-focused": {
+                backgroundColor: "#fff",
+                boxShadow: "0 4px 12px rgba(102, 126, 234, 0.12)",
+              },
             },
-            "&.Mui-focused": {
-              backgroundColor: "#fff",
-              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.2)"
-            }
-          },
-        }}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon sx={{ color: "#001574ff" }} />
-            </InputAdornment>
-          ),
-        }}
-      />
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ color: "#001574ff" }} />
+              </InputAdornment>
+            ),
+          }}
+        />
 
-      <TextField
-        select
-        label="Category"
-        value={selectedCategory}
-        onChange={(e) => setSelectedCategory(e.target.value)}
+        <TextField
+          select
+          label="Category"
+          value={selectedCategoryId}
+          onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
         sx={{ 
-          width: 200,
+          width: 150,
           "& .MuiOutlinedInput-root": {
             borderRadius: 2,
             backgroundColor: "#f8f9fa"
@@ -325,19 +339,21 @@ return (
             padding:"1px 4px",
           }
         }}
-      >
-        {categoryList.map((c) => (
-          <MenuItem key={c} value={c}>{c}</MenuItem>
-        ))}
-      </TextField>
+        >
+          {categoryListForDropdown.map((c) => (
+            <MenuItem key={c.id} value={c.id}>
+              {c.name}
+            </MenuItem>
+          ))}
+        </TextField>
 
-      <TextField
+       <TextField
         select
         label="Sort"
         value={sortType}
         onChange={(e) => setSortType(e.target.value)}
         sx={{ 
-          width: 200,
+          width: 130,
           "& .MuiOutlinedInput-root": {
             borderRadius: 2,
             backgroundColor: "#f8f9fa"
@@ -357,190 +373,201 @@ return (
         <MenuItem value="high-low">High to Low</MenuItem>
       </TextField>
 
-      {userRole === "ADMIN" && (
-        <Button 
-          variant="contained" 
-          onClick={() => setOpenModal(true)}
-          sx={{
-            fontWeight: 700,
-            bgcolor: "#05155aff",
-            height: 48,
-            px: 4,
-            borderRadius: 50,
-            textTransform: "none",
-            fontSize: "1rem",
-            boxShadow: "0 4px 12px rgba(102, 126, 234, 0.4)",
-            "&:hover": {
-              bgcolor: "#2f3f9bff",
-              boxShadow: "0 6px 20px rgba(102, 126, 234, 0.5)",
-              transform: "translateY(-2px)"
-            },
-            transition: "all 0.3s ease"
-          }}
-        >
-          + Add Product
-        </Button>
-      )}
-    </Paper>
+        {userRole === "ADMIN" && (
+          <Button
+            variant="contained"
+            onClick={() => setOpenModal(true)}
+            sx={{
+              fontWeight: 700,
+              bgcolor: "#05155aff",
+              height: 48,
+              px: 4,
+              borderRadius: 50,
+              textTransform: "none",
+              fontSize: "1rem",
+              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
+              "&:hover": {
+                bgcolor: "#2f3f9bff",
+                boxShadow: "0 6px 20px rgba(102, 126, 234, 0.45)",
+                transform: "translateY(-2px)",
+              },
+              transition: "all 0.25s ease",
+              ml: "auto",
+            }}
+          >
+            + Add Product
+          </Button>
+        )}
+      </Paper>
 
-    {/* PRODUCT GRID */}
-    <Box
-      sx={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-        gap: 3,
-      }}
-    >
-      {loading
-        ? Array.from(new Array(8)).map((_, i) => (
-            <Card key={i} sx={{ borderRadius: 3 }}>
-              <Skeleton variant="rectangular" height={200} />
-              <CardContent>
-                <Skeleton height={30} width="70%" />
-                <Skeleton height={20} width="40%" />
-              </CardContent>
-            </Card>
-          ))
-        : filtered.map((p) => (
-            <Card 
-              key={p.id} 
-              sx={{
-                borderRadius: 3,
-                overflow: "hidden",
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-                "&:hover": {
-                  transform: "translateY(-8px)",
-                  boxShadow: "0 12px 24px rgba(0,0,0,0.15)",
-                  "& .product-image": {
-                    transform: "scale(1.05)"
-                  }
-                }
-              }}
-            >
-              <Box sx={{ 
-                height: 200, 
-                overflow: "hidden", 
-                bgcolor: "#fff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                p: 2
-              }}>
-                <CardMedia
-                  component="img"
-                  image={p.image}
-                  className="product-image"
-                  sx={{ 
-                    height: "100%",
-                    width: "100%",
-                    objectFit: "contain",
-                    transition: "transform 0.3s ease"
-                  }}
-                />
-              </Box>
-              
-              <CardContent sx={{ 
-                textAlign: "center", 
-                p: 2.5,
-                bgcolor: "#f8f9fa"
-              }}>
-                <Typography 
-                  fontWeight={700} 
-                  sx={{ 
-                    mb: 1,
-                    fontSize: "1rem",
-                    lineHeight: 1.3,
-                    minHeight: 40,
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden"
+      {/* PRODUCT GRID */}
+      <Box
+        sx={{
+          display: "grid",
+          gap: 3,
+          gridTemplateColumns: {
+            xs: "repeat(2, 1fr)", // phones
+            sm: "repeat(2, 1fr)", // small tablets
+            md: "repeat(3, 1fr)", // tablets
+            lg: "repeat(4, 1fr)", // desktops
+            xl: "repeat(5, 1fr)", // wide
+          },
+        }}
+      >
+        {loading
+          ? Array.from(new Array(8)).map((_, i) => (
+              <Card key={i} sx={{ borderRadius: 3 }}>
+                <Skeleton variant="rectangular" height={180} />
+                <CardContent>
+                  <Skeleton height={28} width="70%" />
+                  <Skeleton height={20} width="40%" />
+                </CardContent>
+              </Card>
+            ))
+          : filtered.map((p) => (
+              <Card
+                key={p.id}
+                sx={{
+                  borderRadius: 3,
+                  overflow: "hidden",
+                  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
+                  "&:hover": {
+                    transform: "translateY(-8px)",
+                    boxShadow: "0 12px 24px rgba(0,0,0,0.12)",
+                    "& .product-image": {
+                      transform: "scale(1.05)",
+                    },
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    height: { xs: 140, sm: 160, md: 180 },
+                    overflow: "hidden",
+                    bgcolor: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    p: 2,
                   }}
                 >
-                  {p.name}
-                </Typography>
-                
-                <Rating value={p.rating} readOnly size="small" sx={{ mb: 1 }} />
-                
-                <Typography 
-                  sx={{ 
-                    color: "#10b981", 
-                    fontSize: "1.5rem",
-                    fontWeight: 800,
-                    mb: 2
-                  }}
-                >
-                  ₹{p.price}
-                </Typography>
-
-                <Box sx={{ display: "flex", gap: 1 }}>
-                  <Button
-                    variant="outlined"
-                    sx={{ 
-                      minWidth: 50, 
-                      width: 50, 
-                      height: 50, 
-                      p: 0, 
-                      borderRadius: 2,
-                      border: "0px ",
-                    }}
-                    onClick={() => toggleWishlist(p)}
-                  >
-                    {wishlistItems.find((x) => x.id === p.id) ? (
-                      <FavoriteIcon sx={{ fontSize: 35, color: "#f13737ff" }} />
-                    ) : (
-                      <FavoriteBorderIcon sx={{ fontSize: 35, color: "#9ca3af" }} />
-                    )}
-                  </Button>
-
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    onClick={() => handleAddToCart(p)}
+                  <CardMedia
+                    component="img"
+                    image={p.image}
+                    className="product-image"
                     sx={{
-                      fontWeight: 700,
-                      bgcolor: "#05155aff",
-                      height: 50,
-                      borderRadius: 2,
-                      textTransform: "none",
-                      fontSize: "1rem",
-                      "&:hover": {
-                        bgcolor: "#2f48d8ff",
-                        boxShadow: "0 4px 12px rgba(102, 126, 234, 0.4)"
-                      }
+                      height: "100%",
+                      width: "100%",
+                      objectFit: "contain",
+                      transition: "transform 0.3s ease",
+                    }}
+                    alt={p.name}
+                  />
+                </Box>
+
+                <CardContent sx={{ textAlign: "center", p: 2.5, bgcolor: "#f8f9fa" }}>
+                  <Typography
+                    fontWeight={700}
+                    sx={{
+                      mb: -1,
+                      fontSize: { xs: "0.9rem", sm: "1rem" },
+                      lineHeight: 1.2,
+                      minHeight: 44,
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
                     }}
                   >
-                    Add to Cart
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
-          ))}
-    </Box>
-          <Modal open={openModal} onClose={() => setOpenModal(false)}>
+                    {p.name}
+                  </Typography>
+
+                  <Rating value={p.rating} readOnly size="small" sx={{ mt:-5 }} />
+
+                  <Typography
+                    sx={{
+                      color: "#006928ff",
+                      fontSize: "22px",
+                      fontWeight: 800,
+                      mb: 2,
+                    }}
+                  >
+                    ₹{p.price}
+                  </Typography>
+
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        minWidth: { xs: 40, sm: 50 },
+                        width: { xs: 40, sm: 50 },
+                        height: { xs: 40, sm: 50 },
+                        p: 0,
+                        borderRadius: 2,
+                        border: "0px ",
+                      }}
+                      onClick={() => toggleWishlist(p)}
+                    >
+                      {wishlistItems.find((x) => x.id === p.id) ? (
+                        <FavoriteIcon sx={{ fontSize: 30, color: "#f13737ff" }} />
+                      ) : (
+                        <FavoriteBorderIcon sx={{ fontSize: 30, color: "#9ca3af" }} />
+                      )}
+                    </Button>
+
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={() => handleAddToCart(p)}
+                      sx={{
+                        fontWeight: 700,
+                        bgcolor: "#05155aff",
+                        height: { xs: 40, sm: 50 },
+                        borderRadius: 2,
+                        textTransform: "none",
+                        fontSize: "16px",
+                        "&:hover": {
+                          bgcolor: "#2f48d8ff",
+                          boxShadow: "0 4px 12px rgba(102, 126, 234, 0.28)",
+                        },
+                      }}
+                    >
+                      Add to Cart
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            ))}
+      </Box>
+
+      {/* ADD PRODUCT MODAL (ADMIN) */}
+      <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <Box
           sx={{
-            width: 420,
+            width: { xs: "92%", sm: 520 },
             background: "white",
-            p: 2,
-            borderRadius: 5,
+            p: 3,
+            borderRadius: 3,
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
+            boxShadow: 24,
+            maxHeight: "90vh",
+            overflowY: "auto",
           }}
         >
-          <Typography variant="h6">Add New Product</Typography>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Add New Product
+          </Typography>
 
           <TextField
             fullWidth
             label="Product Name"
-            sx={{ mt: 2 }}
+            sx={{ mt: 1 }}
             value={newProduct.name}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, name: e.target.value })
-            }
+            onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
           />
 
           <TextField
@@ -549,9 +576,7 @@ return (
             type="number"
             sx={{ mt: 2 }}
             value={newProduct.price}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, price: e.target.value })
-            }
+            onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
           />
 
           <TextField
@@ -559,18 +584,13 @@ return (
             select
             label="Category"
             sx={{ mt: 2 }}
-            value={newProduct.category}
-            onChange={(e) => {
-              const selected = categoryOptions.find(c => c.name === e.target.value);
-              setNewProduct({
-                ...newProduct,
-                category: e.target.value,
-                category_id: selected?.id || 1
-              });
-            }}
+            value={newProduct.category_id}
+            onChange={(e) =>
+              setNewProduct({ ...newProduct, category_id: Number(e.target.value) })
+            }
           >
             {categoryOptions.map((c) => (
-              <MenuItem key={c.key} value={c.name}>
+              <MenuItem key={c.id} value={c.id}>
                 {c.name}
               </MenuItem>
             ))}
@@ -605,9 +625,7 @@ return (
             placeholder="http://localhost:8098/product-images/201.jpg"
             sx={{ mt: 2 }}
             value={newProduct.image}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, image: e.target.value })
-            }
+            onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
           />
 
           <TextField
@@ -616,21 +634,34 @@ return (
             type="number"
             sx={{ mt: 2 }}
             value={newProduct.stock}
+            onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
+          />
+
+          <TextField
+            fullWidth
+            label="Keywords (comma separated)"
+            sx={{ mt: 2 }}
+            value={newProduct.keywords}
+            onChange={(e) => setNewProduct({ ...newProduct, keywords: e.target.value })}
+          />
+
+          <TextField
+            fullWidth
+            label="Description"
+            multiline
+            rows={3}
+            sx={{ mt: 2 }}
+            value={newProduct.description}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, stock: e.target.value })
+              setNewProduct({ ...newProduct, description: e.target.value })
             }
           />
 
-          <Button
-            variant="contained"
-            fullWidth
-            sx={{ mt: 3 }}
-            onClick={handleSaveProduct}
-          >
+          <Button variant="contained" fullWidth sx={{ mt: 3 }} onClick={handleSaveProduct}>
             Save Product
           </Button>
         </Box>
       </Modal>
-
-  </Box>
-)};
+    </Box>
+  );
+}

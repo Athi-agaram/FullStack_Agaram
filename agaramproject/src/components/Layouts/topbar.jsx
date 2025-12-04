@@ -204,8 +204,8 @@ export default function TopBar({  user, setMasterTab  }) {
     >
       <Toolbar sx={{ justifyContent: "space-between", minHeight: `${topBarHeight}px`, px: 4 }}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography sx={{ fontSize: 25, fontWeight: 700, color: "#ffffffff" }}  onClick={() => setMasterTab(null)}>
-            Agaram Technologies
+          <Typography sx={{ fontSize: 25, fontWeight: 600, color: "#ffffffff" }}  onClick={() => setMasterTab(null)}>
+            Agaram
           </Typography>
         </Box>
 

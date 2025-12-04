@@ -841,10 +841,10 @@ export default function ProductTab({ user }) {
     { field: "name", headerName: "Product", width: 170 },
     { field: "quantity", headerName: "Quantity", width: 120 },
     { field: "price", headerName: "Price", width: 110 },
-    { field: "team_name", headerName: "Team", width: 123 },
+    { field: "team_name", headerName: "Team", width: 133 },
     { field: "progress", headerName: "Progress", width: 140 },
     { field: "sale_month", headerName: "Month", width: 110 },
-    { field: "customer", headerName: "Customer", width: 150 },  
+    { field: "customer", headerName: "Customer", width: 140 },  
 
     {
       field: "actions",
@@ -882,7 +882,7 @@ export default function ProductTab({ user }) {
   ];
 
   return (
-    <Box sx={{ height:390, width: "100%" }}>
+    <Box sx={{ height:500, width: "100%" }}>
 
 
 <DataGrid

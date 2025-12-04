@@ -14,42 +14,50 @@ import {
   CircularProgress,
   Tabs,
   Tab,
-  Chip,
   Tooltip,
   Badge,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
-import { getOrdersApi, updateOrderStatusApi, sendNotificationApi } from "../../api/api";
+import { 
+  getOrdersApi, 
+  updateOrderStatusApi, 
+  sendNotificationApi,
+} from "../../api/api";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import NotificationsTab from "./NotificationsTab";
+import AssignmentReturnIcon from "@mui/icons-material/AssignmentReturn";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import ReturnExchangeDialog from "./ReturnExchange";
 
 const steps = ["PLACED", "PROCESSING", "SHIPPED", "OUT_FOR_DELIVERY", "DELIVERED"];
 
-// Username-based permission mapping
 const USER_PERMISSIONS = {
-  // Admin users - can update any step
   "admin": { canUpdateAny: true },
-  
+  "administrator": { canUpdateAny: true },
   "warehouse": { allowedStep: "PLACED" },
   "distributor": { allowedStep: "PROCESSING" },
   "agent": { allowedStep: "SHIPPED" },
   "courier": { allowedStep: "OUT_FOR_DELIVERY" },
 };
 
-// Check if username can update a specific step
 const canUserUpdateStep = (username, currentStep) => {
-  const userPerm = USER_PERMISSIONS[username?.toLowerCase()];
-  
+  if (!username || !currentStep) return false;
+  const lowerUsername = username.trim().toLowerCase();
+  const upperCurrentStep = currentStep.trim().toUpperCase();
+  const userPerm = USER_PERMISSIONS[lowerUsername];
   if (!userPerm) return false;
   if (userPerm.canUpdateAny) return true;
-  if (userPerm.allowedStep === currentStep) return true;
-  
-  return false;
+  return userPerm.allowedStep === upperCurrentStep;
 };
 
-// Determine user type based on username for messaging
 const getUserType = (username) => {
-  const userPerm = USER_PERMISSIONS[username?.toLowerCase()];
+  if (!username) return "USER";
+  const lowerUsername = username.trim().toLowerCase();
+  const userPerm = USER_PERMISSIONS[lowerUsername];
   if (!userPerm) return "USER";
   if (userPerm.canUpdateAny) return "ADMIN";
   if (userPerm.allowedStep === "PLACED") return "WAREHOUSE";
@@ -57,20 +65,6 @@ const getUserType = (username) => {
   if (userPerm.allowedStep === "SHIPPED") return "AGENT";
   if (userPerm.allowedStep === "OUT_FOR_DELIVERY") return "COURIER";
   return "USER";
-};
-
-// Generate username-based messages
-const usernameBasedMessage = (username, status) => {
-  const userType = getUserType(username);
-  
-  switch (userType) {
-    case "WAREHOUSE": return `Warehouse has confirmed and processed the order`;
-    case "DISTRIBUTOR": return `Distributor has packed and prepared the order for shipment`;
-    case "AGENT": return `Agent has dispatched the product`;
-    case "COURIER": return `Courier is out for delivery`;
-    case "ADMIN": return `Admin updated status to ${status}`;
-    default: return `${username} updated status to ${status}`;
-  }
 };
 
 export default function OrdersPage() {
@@ -82,31 +76,64 @@ export default function OrdersPage() {
   const [error, setError] = useState(null);
   const [tab, setTab] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [updating, setUpdating] = useState({});
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  const username = user?.username;
+  const [messageDialog, setMessageDialog] = useState({
+    open: false,
+    orderId: null,
+    nextStatus: null,
+    currentStatus: null,
+    message: "",
+  });
+
+  const [returnExchangeDialog, setReturnExchangeDialog] = useState({
+    open: false,
+    type: null,
+  });
+
+  const getUserFromStorage = () => {
+    try {
+      const userStr = localStorage.getItem("user");
+      if (!userStr) return null;
+      return JSON.parse(userStr);
+    } catch (e) {
+      console.error("Error parsing user from localStorage:", e);
+      return null;
+    }
+  };
+
+  const user = getUserFromStorage();
+  const username = user?.username?.trim() || "";
   const userType = getUserType(username);
-  const isAdmin = userType === "ADMIN";
 
   useEffect(() => {
+    if (!user || !user.id) {
+      setError("User not logged in. Please login first.");
+      setLoading(false);
+      return;
+    }
+    
     fetchOrders();
-    // Poll for new notifications every 30 seconds
     const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    fetchUnreadCount();
+    if (orders.length > 0) {
+      fetchUnreadCount();
+    }
   }, [orders]);
 
-  // -------------------------------------
-  // FETCH ORDERS FROM BACKEND
-  // -------------------------------------
   const fetchOrders = async () => {
+    if (!user || !user.id) {
+      setError("User not logged in");
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
-
       const res = await getOrdersApi(user.id, username);
 
       if (!res.data || res.data.length === 0) {
@@ -120,16 +147,17 @@ export default function OrdersPage() {
         id: order.order_id,
         user_id: order.user_id,
         username: order.username,
-        status: order.status,
-        created_at: order.created_at,
+        status: order.status?.trim().toUpperCase() || 'PLACED',
         total_amount: Number(order.total_amount || 0),
+        created_at: order.created_at,
         notifications: order.notifications || [],
         items: (order.items || []).map(item => ({
           id: item.product_id,
+          order_item_id: item.order_item_id || item.id,
           name: item.product_name,
           image: item.product_image,
-          price: Number(item.price),
-          qty: Number(item.qty),
+          price: Number(item.price || 0),
+          qty: Number(item.qty || 0),
         }))
       }));
 
@@ -143,58 +171,64 @@ export default function OrdersPage() {
     }
   };
 
-  // -------------------------------------
-  // FETCH UNREAD NOTIFICATION COUNT
-  // -------------------------------------
   const fetchUnreadCount = async () => {
     try {
-      // This would typically be an API call
-      // For now, we'll calculate from orders data
       let count = 0;
-      
+
       orders.forEach(order => {
-        if (order.notifications && order.notifications.length > 0) {
-          // For regular users, count all notifications
-          if (userType === "USER") {
-            count += order.notifications.length;
-          } else {
-            // For middlemen, count only their relevant notifications
-            order.notifications.forEach(notif => {
-              const notifUserType = getUserType(notif.sender_username);
-              if (shouldShowNotification(notifUserType, userType)) {
-                count++;
-              }
-            });
+        const notifs = order.notifications || [];
+        if (notifs.length === 0) return;
+
+        const latest = notifs[notifs.length - 1];
+        if (!latest) return;
+
+        const latestStatus = (latest.status || "").toUpperCase();
+
+        if (userType === "USER") {
+          if (order.username === username) count++;
+          return;
+        }
+
+        if (userType === "ADMIN") {
+          count++;
+          return;
+        }
+
+        if (userType === "WAREHOUSE") {
+          if (latestStatus === "PLACED" || latestStatus === "PROCESSING") {
+            count++;
           }
+          return;
+        }
+
+        if (userType === "DISTRIBUTOR") {
+          if (latestStatus === "PROCESSING") {
+            count++;
+          }
+          return;
+        }
+
+        if (userType === "AGENT") {
+          if (latestStatus === "SHIPPED") {
+            count++;
+          }
+          return;
+        }
+
+        if (userType === "COURIER") {
+          if (latestStatus === "OUT_FOR_DELIVERY") {
+            count++;
+          }
+          return;
         }
       });
-      
+
       setUnreadCount(count);
     } catch (e) {
       console.error("Error fetching unread count:", e);
     }
   };
 
-  // Helper function to determine if a notification should be shown
-  const shouldShowNotification = (senderType, viewerType) => {
-    // Admin sees everything
-    if (viewerType === "ADMIN") return true;
-    
-    // Regular users see all notifications for their orders
-    if (viewerType === "USER") return true;
-    
-    // Middlemen only see notifications from their previous step
-    const stepOrder = ["WAREHOUSE", "DISTRIBUTOR", "AGENT", "COURIER"];
-    const senderIndex = stepOrder.indexOf(senderType);
-    const viewerIndex = stepOrder.indexOf(viewerType);
-    
-    // Show if sender is the previous step
-    return senderIndex === viewerIndex - 1;
-  };
-
-  // -------------------------------------
-  // SEARCH
-  // -------------------------------------
   const handleSearch = (e) => {
     const q = e.target.value;
     setSearchQuery(q);
@@ -232,12 +266,8 @@ export default function OrdersPage() {
     return i === -1 ? 0 : i;
   };
 
-  // -------------------------------------
-  // USERNAME-BASED MOVE TO NEXT STATUS
-  // -------------------------------------
   const handleNextStatus = async (order) => {
     const idx = getStatusIndex(order.status);
-
     if (idx >= steps.length - 1) {
       alert("Order is already delivered!");
       return;
@@ -251,47 +281,109 @@ export default function OrdersPage() {
       return;
     }
 
+    if (updating[order.id]) {
+      console.log("Update already in progress for order:", order.id);
+      return;
+    }
+
+    const isAgentShipping = (userType === "AGENT" && nextStatus === "SHIPPED") || 
+                           (username?.toLowerCase() === "agent" && nextStatus === "SHIPPED");
+
+    if (isAgentShipping) {
+      setMessageDialog({
+        open: true,
+        orderId: order.id,
+        nextStatus: nextStatus,
+        currentStatus: order.status,
+        message: "",
+      });
+      return;
+    }
+
+    await updateOrderStatus(order.id, nextStatus, order.status, null);
+  };
+
+  const updateOrderStatus = async (orderId, nextStatus, currentStatus, customMessage) => {
+    if (updating[orderId]) {
+      console.log("Update already in progress for order:", orderId);
+      return;
+    }
+
+    setUpdating(prev => ({ ...prev, [orderId]: true }));
+    
     try {
-      const res = await updateOrderStatusApi(order.id, nextStatus, order.status, username);
+      const res = await updateOrderStatusApi(orderId, nextStatus, currentStatus, username);
 
       if (res.data?.success) {
-        // Send notification
-        const message = usernameBasedMessage(username, nextStatus);
-        await sendNotificationApi({
-          orderId: order.id,
-          username: username,
-          message: message,
-          status: nextStatus
-        });
+        if (customMessage && customMessage.trim()) {
+          await sendNotificationApi({
+            orderId: orderId,
+            username: username,
+            message: customMessage.trim(),
+            status: nextStatus
+          });
+        }
 
-        // Update local state
-        const updated = orders.map((o) =>
-          o.id === order.id ? { ...o, status: nextStatus } : o
-        );
-        setOrders(updated);
-        setFilteredOrders(updated);
-        alert(`Order #${order.id} moved to ${nextStatus}`);
+        await fetchOrders();
+        alert(`Order #${orderId} moved to ${nextStatus}`);
       } else {
         alert("Failed to update order status");
       }
     } catch (e) {
       console.error("Failed to update status", e);
-      alert("Failed to update order status: " + e.message);
+      alert("Failed to update order status: " + (e.message || e));
+    } finally {
+      setUpdating(prev => ({ ...prev, [orderId]: false }));
     }
   };
 
-  // Handle tab change and reset unread count when viewing notifications
+  const handleMessageDialogClose = () => {
+    setMessageDialog({
+      open: false,
+      orderId: null,
+      nextStatus: null,
+      currentStatus: null,
+      message: "",
+    });
+  };
+
+  const handleMessageSubmit = async () => {
+    if (!messageDialog.message.trim()) {
+      alert("Please enter a message for the customer");
+      return;
+    }
+
+    await updateOrderStatus(
+      messageDialog.orderId, 
+      messageDialog.nextStatus, 
+      messageDialog.currentStatus,
+      messageDialog.message
+    );
+    
+    handleMessageDialogClose();
+  };
+
   const handleTabChange = (e, newValue) => {
     setTab(newValue);
     if (newValue === 1) {
-      // Reset unread count when opening notifications tab
       setTimeout(() => setUnreadCount(0), 500);
     }
   };
 
-  // -------------------------------------
-  // UI RENDER
-  // -------------------------------------
+  const handleOpenReturnExchange = (type) => {
+    setReturnExchangeDialog({
+      open: true,
+      type: type,
+    });
+  };
+
+  const handleCloseReturnExchange = () => {
+    setReturnExchangeDialog({
+      open: false,
+      type: null,
+    });
+  };
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" py={10}>
@@ -303,7 +395,16 @@ export default function OrdersPage() {
   if (error) {
     return (
       <Paper sx={{ p: 4, textAlign: "center", color: "error.main" }}>
-        {error}
+        <Typography variant="h6" color="error">{error}</Typography>
+        {error.includes("not logged in") && (
+          <Button 
+            variant="contained" 
+            sx={{ mt: 2 }}
+            onClick={() => window.location.href = "/login"}
+          >
+            Go to Login
+          </Button>
+        )}
       </Paper>
     );
   }
@@ -314,9 +415,6 @@ export default function OrdersPage() {
       background: "linear-gradient(135deg, #10002eff 0%, #87c8eeff 100%)",
       minHeight: "100vh"
     }}>
-
-
-      {/* Tabs with Badge */}
       <Tabs 
         value={tab} 
         onChange={handleTabChange}
@@ -337,10 +435,90 @@ export default function OrdersPage() {
         />
       </Tabs>
 
-      {/* Tab 1: Orders */}
+      {/* Agent Message Dialog */}
+      <Dialog 
+        open={messageDialog.open} 
+        onClose={handleMessageDialogClose}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          Enter Shipment Message for Customer
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2, mt: 2 }}>
+            Please provide information about the shipment location, expected delivery time, or any other relevant details for Order #{messageDialog.orderId}
+          </Typography>
+          <TextField
+            autoFocus
+            fullWidth
+            multiline
+            rows={4}
+            label="Message to Customer"
+            placeholder="e.g., Your order is currently at Delhi warehouse and will be dispatched within 24 hours."
+            value={messageDialog.message}
+            onChange={(e) => setMessageDialog(prev => ({ ...prev, message: e.target.value }))}
+            sx={{ mt: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleMessageDialogClose} color="inherit">
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleMessageSubmit} 
+            variant="contained" 
+            color="primary"
+            disabled={!messageDialog.message.trim()}
+          >
+            Send & Update Status
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Return/Exchange Dialog */}
+      <ReturnExchangeDialog
+        open={returnExchangeDialog.open}
+        type={returnExchangeDialog.type}
+        onClose={handleCloseReturnExchange}
+        filteredOrders={filteredOrders}
+        user={user}
+        username={username}
+        formatCurrency={formatCurrency}
+        onSuccess={fetchOrders}
+      />
+
       {tab === 0 && (
         <>
-          {/* Search */}
+          <Box sx={{ mb: 3, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+            <Button
+              variant="contained"
+              startIcon={<AssignmentReturnIcon />}
+              onClick={() => handleOpenReturnExchange('RETURN')}
+              sx={{ 
+                backgroundColor: '#ba3500ff',
+                color: '#ffffffff',
+                fontWeight: 'bold',
+                '&:hover': { backgroundColor: '#ff6a00ff' }
+              }}
+            >
+              Return Order
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<SwapHorizIcon />}
+              onClick={() => handleOpenReturnExchange('EXCHANGE')}
+              sx={{ 
+                backgroundColor: '#800396ff',
+                color: '#ffffffff',
+                fontWeight: 'bold',
+                '&:hover': { backgroundColor: '#b300ffff' }
+              }}
+            >
+              Exchange Order
+            </Button>
+          </Box>
+
           <TextField
             fullWidth
             placeholder="Search by Order ID or Customer Name..."
@@ -355,7 +533,6 @@ export default function OrdersPage() {
             </Paper>
           ) : null}
 
-          {/* ORDER CARDS */}
           {filteredOrders.map((order) => {
             const total = order.items.reduce(
               (sum, it) => sum + it.price * it.qty,
@@ -377,7 +554,6 @@ export default function OrdersPage() {
                   overflow: "hidden",
                 }}
               >
-                {/* HEADER */}
                 <Box
                   sx={{
                     background: "linear-gradient(135deg, #c0dbfcff, #e2eeffff, #c8e1ffff)",
@@ -414,44 +590,37 @@ export default function OrdersPage() {
                   </Box>
                 </Box>
 
-                {/* ORDER DETAILS */}
                 <Collapse in={isExpanded} timeout="auto" unmountOnExit>
                   <Box sx={{ p: 2 }}>
                     <Typography fontWeight={600} sx={{ mb: 1 }}>
                       Status: {order.status}
                     </Typography>
 
-                    {/* STEPPER WITH TOOLTIPS */}
                     <Stepper activeStep={statusIdx} alternativeLabel sx={{ mb: 3 }}>
                       {steps.map((label, idx) => {
-                        // Get the appropriate message for each step
                         let tooltipMessage = "Not started yet";
-                        
+
+                        const latestNotification = order.notifications?.[order.notifications.length - 1];
+
                         if (idx <= statusIdx) {
-                          // Step has been completed or is current
-                          const notification = order.notifications?.find(
-                            n => getStatusIndex(n.status) === idx
-                          );
-                          
-                          if (notification) {
-                            tooltipMessage = notification.message;
-                          } else {
-                            // Default messages based on step
+                          if (latestNotification && (latestNotification.status || "").toUpperCase() === label) {
+                            tooltipMessage = latestNotification.message;
+                            } else {
                             switch (label) {
                               case "PLACED":
-                                tooltipMessage = "Warehouse has confirmed and processed the order";
+                                tooltipMessage = "Order has been placed successfully.";
                                 break;
                               case "PROCESSING":
-                                tooltipMessage = "Distributor has packed and prepared the order for shipment";
+                                tooltipMessage = "Warehouse has confirmed and processed the order.";
                                 break;
                               case "SHIPPED":
-                                tooltipMessage = "Agent has dispatched the product";
+                                tooltipMessage = "Agent is ready to ship your order.";
                                 break;
                               case "OUT_FOR_DELIVERY":
-                                tooltipMessage = "Courier is out for delivery";
+                                tooltipMessage = "Courier is out for delivery.";
                                 break;
                               case "DELIVERED":
-                                tooltipMessage = "Product has been delivered";
+                                tooltipMessage = "Your order has been delivered successfully.";
                                 break;
                               default:
                                 tooltipMessage = "Status updated";
@@ -469,19 +638,27 @@ export default function OrdersPage() {
                       })}
                     </Stepper>
 
-                    {/* USERNAME-BASED UPDATE BUTTON */}
                     {canUpdate && statusIdx < steps.length - 1 && (
                       <Button
                         variant="contained"
                         color="primary"
                         sx={{ mb: 3, fontSize: 15 }}
                         onClick={() => handleNextStatus(order)}
+                        disabled={updating[order.id]}
                       >
-                        Move to {steps[statusIdx + 1]}
+                        {updating[order.id] ? (
+                          <>
+                            <CircularProgress size={20} sx={{ mr: 1 }} color="inherit" />
+                            Updating...
+                          </>
+                        ) : (
+                          userType === "AGENT" && steps[statusIdx + 1] === "SHIPPED" 
+                            ? "Ship Order & Add Message" 
+                            : `Move to ${steps[statusIdx + 1]}`
+                        )}
                       </Button>
                     )}
 
-                    {/* ITEMS */}
                     {order.items.length === 0 ? (
                       <Typography sx={{ py: 2, fontStyle: "italic" }}>
                         No items in this order
@@ -525,7 +702,6 @@ export default function OrdersPage() {
 
                     <Divider sx={{ my: 2 }} />
 
-                    {/* TOTAL */}
                     <Box sx={{ textAlign: "right" }}>
                       <Typography fontWeight={600} variant="subtitle1">
                         Order Total: {formatCurrency(total)}
@@ -539,7 +715,6 @@ export default function OrdersPage() {
         </>
       )}
 
-      {/* Tab 2: Notifications */}
       {tab === 1 && (
         <NotificationsTab username={username} userType={userType} />
       )}

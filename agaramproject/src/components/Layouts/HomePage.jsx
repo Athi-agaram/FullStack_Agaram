@@ -1,25 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
+import { useNavigate } from "react-router-dom"; 
 import Sidebar from "./sidebar";
 import MasterPage from "../../Pages/MasterPage/MasterPage";
 import Dashboard from "../../Pages/DashboardPage/Dashboard";
 import TopBar , { topBarHeight, drawerWidthCollapsed} from "./topbar";
-import EcommercePage from "../../Pages/Ecommerce/EcommercePage";
 
 export default function HomePage() {
-  const [masterTab, setMasterTab] = useState(null);
-  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
+  // ✅ Initialize user directly from localStorage to avoid empty first render
+  const [user, setUser] = useState(() => {
+    return JSON.parse(localStorage.getItem("user")) || null;
+  });
+
+  const [masterTab, setMasterTab] = useState(null);
+
+  // ✅ Navigate to ecommerce instantly when masterTab changes
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
-      setUser(storedUser);
+    if (masterTab && masterTab.startsWith("store")) {
+      navigate("/ecommerce");
     }
-  }, []);
+  }, [masterTab, navigate]);
 
   return (
     <Box sx={{ display: "flex", height: "100%", overflow: "hidden" }}>
-
       {/* Sidebar */}
       <Box
         sx={{
@@ -35,19 +40,21 @@ export default function HomePage() {
       </Box>
 
       {/* TopBar */}
-      <Box
-        sx={{
-          position: "fixed",
-          top: 0,
-          left: drawerWidthCollapsed,
-          right: 0,
-          height: topBarHeight,
-          zIndex: 10,
-          bgcolor: "white",
-        }}
-      >
-        <TopBar user={user} setMasterTab={setMasterTab} />
-      </Box>
+      {user && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: drawerWidthCollapsed,
+            right: 0,
+            height: topBarHeight,
+            zIndex: 10,
+            bgcolor: "white",
+          }}
+        >
+          <TopBar user={user} setMasterTab={setMasterTab} />
+        </Box>
+      )}
 
       {/* Main Content */}
       <Box
@@ -56,14 +63,12 @@ export default function HomePage() {
           ml: `${drawerWidthCollapsed}px`,
           mt: `${topBarHeight}px`,
           height: `calc(100vh - ${topBarHeight}px)`,
-          overflow: "hidden",   // ⬅ FIX (prevent double scroll)
+          overflow: "hidden",
           bgcolor: "#f9fafc",
         }}
       >
-        {masterTab ? (
-          masterTab.startsWith("store")
-            ? <EcommercePage selectedStoreTab={masterTab} />
-            : <MasterPage selectedTab={masterTab} />
+        {masterTab && !masterTab.startsWith("store") ? (
+          <MasterPage selectedTab={masterTab} />
         ) : (
           <Dashboard />
         )}
