@@ -1047,6 +1047,8 @@ UPDATE storeproducts SET image = 'http://localhost:8098/product-images/201.jpg' 
 UPDATE storeproducts SET image = 'http://localhost:8098/product-images/202.jpg' WHERE id = 202;
 UPDATE storeproducts SET image = 'http://localhost:8098/product-images/203.jpg' WHERE id = 203;
 
+ALTER TABLE storeproducts
+ALTER COLUMN id INT IDENTITY(1,1);
 
 EXEC sp_rename 'storeproducts.new_id', 'id', 'COLUMN';
 
@@ -1144,6 +1146,11 @@ ALTER TABLE orders DROP CONSTRAINT DF__orders__status__30C33EC3;
 ALTER TABLE orders 
 ADD CONSTRAINT DF_orders_status_default 
 DEFAULT 'PLACED' FOR status;
+
+
+// ========================================
+// 1. DATABASE SCHEMA
+// ========================================
 
 
 -- Add notifications table
@@ -1420,3 +1427,882 @@ ORDER BY
     END;
 	select * from orders
 	delete from orders
+
+
+	-- Notifications table
+
+SELECT name 
+FROM sys.default_constraints 
+WHERE parent_object_id = OBJECT_ID('orders')
+AND parent_column_id = COLUMNPROPERTY(parent_object_id, 'status', 'ColumnId');
+
+ALTER TABLE orders DROP CONSTRAINT DF__orders__status__30C33EC3;
+select * from orders
+-- Update orders table to support new statuses
+ALTER TABLE orders 
+ADD CONSTRAINT DF_orders_status_default 
+DEFAULT 'PLACED' FOR status;
+
+
+-- Add notifications table
+CREATE TABLE notifications (
+    id INT IDENTITY PRIMARY KEY,
+    order_id INT NOT NULL,
+    sender_username VARCHAR(100) NOT NULL,
+    message TEXT NOT NULL,
+    created_at DATETIME2 DEFAULT GETDATE(),  -- use DATETIME2 instead of TIMESTAMP
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
+
+EXEC sp_rename 'notifications.sender_role', 'sender_username', 'COLUMN';
+-- Add user_permissions table to manage who can do what
+CREATE TABLE user_permissions (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    permission_type VARCHAR(50) NOT NULL,
+    allowed_step VARCHAR(50),
+    can_update_any BIT DEFAULT 0,
+    created_at DATETIME DEFAULT GETDATE()
+);
+ALTER TABLE notifications ADD status VARCHAR(64);
+
+select * from notifications
+-- Insert sample permissions
+INSERT INTO user_permissions (username, permission_type, allowed_step, can_update_any) VALUES
+-- Admins
+('administrator', 'ADMIN', NULL, 1),
+
+-- Warehouse users
+('warehouse', 'WAREHOUSE', 'PLACED', 0),
+
+-- Distributor users
+('distributor', 'DISTRIBUTOR', 'PROCESSING', 0),
+
+-- Agent users
+('agent', 'AGENT', 'SHIPPED', 0),
+
+-- Courier users
+('courier', 'COURIER', 'OUT_FOR_DELIVERY', 0);
+
+select * from users
+
+
+
+-- Check permissions
+SELECT * FROM user_permissions;
+
+-- Should show:
+-- administrator | ADMIN      | NULL         | 1
+-- warehouse     | WAREHOUSE  | PLACED       | 0
+-- distributor   | DISTRIBUTOR| PROCESSING   | 0
+-- agent         | AGENT      | SHIPPED      | 0
+-- courier       | COURIER    | OUT_FOR_DELIVERY | 0
+
+-- Check orders exist
+SELECT COUNT(*) FROM orders;
+-- Should be > 0
+
+-- Check order details
+SELECT o.id, o.user_id, u.username, o.status, o.total_amount
+FROM orders o
+JOIN users u ON o.user_id = u.id;
+
+SELECT * FROM user_permissions WHERE username = 'warehouse';
+
+
+
+
+-- ========================================
+-- STEP 1: CHECK CURRENT STATE
+-- ========================================
+
+-- Check if user_permissions table exists and has data
+SELECT * FROM user_permissions;
+
+-- Check if users exist
+SELECT id, username, role FROM users 
+WHERE username IN ('administrator', 'warehouse', 'distributor', 'agent', 'courier');
+
+-- Check orders
+SELECT 
+    o.id AS order_id, 
+    o.user_id, 
+    u.username AS customer_username,
+    o.status, 
+    o.total_amount, 
+    o.created_at
+FROM orders o
+JOIN users u ON o.user_id = u.id
+ORDER BY o.created_at DESC;
+
+-- Check notifications
+SELECT 
+    n.id,
+    n.order_id,
+    n.sender_username,
+    n.message,
+    n.status,
+    n.created_at
+FROM notifications n
+ORDER BY n.created_at DESC;
+
+-- ========================================
+-- STEP 2: ENSURE PERMISSIONS ARE SET
+-- ========================================
+
+-- Delete existing permissions (if any conflicts)
+DELETE FROM user_permissions 
+WHERE username IN ('administrator', 'warehouse', 'distributor', 'agent', 'courier');
+
+-- Insert fresh permissions
+INSERT INTO user_permissions (username, permission_type, allowed_step, can_update_any) VALUES
+('administrator', 'ADMIN', NULL, 1),
+('warehouse', 'WAREHOUSE', 'PLACED', 0),
+('distributor', 'DISTRIBUTOR', 'PROCESSING', 0),
+('agent', 'AGENT', 'SHIPPED', 0),
+('courier', 'COURIER', 'OUT_FOR_DELIVERY', 0);
+
+-- Verify permissions inserted correctly
+SELECT 
+    username,
+    permission_type,
+    allowed_step,
+    can_update_any,
+    CASE 
+        WHEN can_update_any = 1 THEN 'Can update ANY step'
+        ELSE 'Can update only: ' + ISNULL(allowed_step, 'NONE')
+    END AS permission_description
+FROM user_permissions
+ORDER BY 
+    CASE permission_type
+        WHEN 'ADMIN' THEN 1
+        WHEN 'WAREHOUSE' THEN 2
+        WHEN 'DISTRIBUTOR' THEN 3
+        WHEN 'AGENT' THEN 4
+        WHEN 'COURIER' THEN 5
+        ELSE 6
+    END;
+
+-- ========================================
+-- STEP 3: ENSURE USERS EXIST
+-- ========================================
+
+-- Check if these users exist in users table
+SELECT username FROM users 
+WHERE username IN ('administrator', 'warehouse', 'distributor', 'agent', 'courier');
+
+-- If users DON'T exist, create them:
+-- (Only run if users are missing)
+
+-- Create admin user
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'administrator')
+BEGIN
+    INSERT INTO users (username, password, role, team_id, authorized, team_name) 
+    VALUES ('administrator', 'admin123', 'ADMIN', NULL, 1, NULL);
+END
+
+-- Create warehouse user
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'warehouse')
+BEGIN
+    INSERT INTO users (username, password, role, team_id, authorized, team_name) 
+    VALUES ('warehouse', 'warehouse123', 'EMPLOYEE', NULL, 1, 'Warehouse Team');
+END
+
+-- Create distributor user
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'distributor')
+BEGIN
+    INSERT INTO users (username, password, role, team_id, authorized, team_name) 
+    VALUES ('distributor', 'distributor123', 'EMPLOYEE', NULL, 1, 'Distribution Team');
+END
+
+-- Create agent user
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'agent')
+BEGIN
+    INSERT INTO users (username, password, role, team_id, authorized, team_name) 
+    VALUES ('agent', 'agent123', 'EMPLOYEE', NULL, 1, 'Agent Team');
+END
+delete from notifications
+
+-- Create courier user
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'courier')
+BEGIN
+    INSERT INTO users (username, password, role, team_id, authorized, team_name) 
+    VALUES ('courier', 'courier123', 'EMPLOYEE', NULL, 1, 'Courier Team');
+END
+
+-- ========================================
+-- STEP 4: CREATE TEST ORDER (if needed)
+-- ========================================
+
+-- Check if you have any orders
+SELECT COUNT(*) AS order_count FROM orders;
+
+-- If no orders exist, create a test order
+-- First, get a customer user_id
+DECLARE @customerId INT;
+SELECT TOP 1 @customerId = id FROM users 
+WHERE username NOT IN ('administrator', 'warehouse', 'distributor', 'agent', 'courier');
+
+-- If customer exists, create test order
+IF @customerId IS NOT NULL
+BEGIN
+    DECLARE @orderId INT;
+    
+    INSERT INTO orders (user_id, total_amount, status, created_at) 
+    VALUES (@customerId, 2500.00, 'PLACED', GETDATE());
+    
+    SET @orderId = SCOPE_IDENTITY();
+    
+    -- Add order items (assuming you have products)
+    INSERT INTO order_items (order_id, product_id, qty, price)
+    SELECT TOP 2 @orderId, id, 2, price
+    FROM storeproducts;
+    
+    -- Create initial notification
+    INSERT INTO notifications (order_id, sender_username, message, status, created_at)
+    VALUES (@orderId, 
+            (SELECT username FROM users WHERE id = @customerId), 
+            'New order placed with test items', 
+            'PLACED', 
+            GETDATE());
+    
+    SELECT 'Test order created with ID: ' + CAST(@orderId AS VARCHAR);
+END
+ELSE
+BEGIN
+    SELECT 'No customer found to create test order';
+END
+
+-- ========================================
+-- STEP 5: VERIFY EVERYTHING
+-- ========================================
+
+-- Final verification query
+SELECT 
+    'User Permissions' AS [Check],
+    COUNT(*) AS [Count],
+    STRING_AGG(username, ', ') AS [Users]
+FROM user_permissions
+UNION ALL
+SELECT 
+    'Orders',
+    COUNT(*),
+    CAST(COUNT(*) AS VARCHAR)
+FROM orders
+UNION ALL
+SELECT 
+    'Notifications',
+    COUNT(*),
+    CAST(COUNT(*) AS VARCHAR)
+FROM notifications;
+
+-- Show which users can see what
+SELECT 
+    up.username,
+    up.permission_type,
+    CASE 
+        WHEN up.can_update_any = 1 THEN 'ALL ORDERS'
+        ELSE 'ALL ORDERS (read only except at step: ' + ISNULL(up.allowed_step, 'NONE') + ')'
+    END AS [What They See],
+    CASE 
+        WHEN up.can_update_any = 1 THEN 'ANY STEP'
+        ELSE up.allowed_step
+    END AS [Can Update]
+FROM user_permissions up
+ORDER BY 
+    CASE up.permission_type
+        WHEN 'ADMIN' THEN 1
+        WHEN 'WAREHOUSE' THEN 2
+        WHEN 'DISTRIBUTOR' THEN 3
+        WHEN 'AGENT' THEN 4
+        WHEN 'COURIER' THEN 5
+    END;
+	select * from orders
+	delete from orders
+
+    SELECT name, type_desc 
+FROM sys.tables
+WHERE name IN ('orders', 'order_items', 'storeproducts', 'users', 'notifications', 'user_permissions', 'cart');
+
+
+-- Orders table
+SELECT COLUMN_NAME, DATA_TYPE 
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE TABLE_NAME = 'orders';
+
+-- Notifications table
+SELECT COLUMN_NAME, DATA_TYPE 
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE TABLE_NAME = 'notifications';
+
+-- User permissions table
+SELECT COLUMN_NAME, DATA_TYPE 
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE TABLE_NAME = 'user_permissions';
+
+-- Users table
+SELECT COLUMN_NAME, DATA_TYPE 
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE TABLE_NAME = 'users';
+
+-- Order items table
+SELECT COLUMN_NAME, DATA_TYPE 
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE TABLE_NAME = 'order_items';
+
+-- Cart table
+SELECT COLUMN_NAME, DATA_TYPE 
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE TABLE_NAME = 'cart';
+
+-- Storeproducts table
+SELECT COLUMN_NAME, DATA_TYPE 
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE TABLE_NAME = 'storeproducts';
+
+
+SELECT * FROM user_permissions WHERE username = 'distributor';
+SELECT * FROM orders WHERE status = 'PROCESSING';
+SELECT * FROM notifications WHERE order_id = 1;
+
+---NEW
+
+-- ========================================
+-- CLEAN ORDER TRACKING SYSTEM SETUP
+-- ========================================
+
+-- Step 1: Check if tables exist
+SELECT name, type_desc 
+FROM sys.tables
+WHERE name IN ('orders', 'notifications', 'user_permissions', 'users');
+
+-- ========================================
+-- Step 2: CREATE NOTIFICATIONS TABLE (if not exists)
+-- ========================================
+
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'notifications')
+BEGIN
+    CREATE TABLE notifications (
+        id INT IDENTITY PRIMARY KEY,
+        order_id INT NOT NULL,
+        sender_username VARCHAR(100) NOT NULL,
+        message TEXT NOT NULL,
+        status VARCHAR(64),
+        created_at DATETIME2 DEFAULT GETDATE(),
+        FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+    );
+    PRINT 'Notifications table created';
+END
+ELSE
+BEGIN
+    -- If exists, ensure it has the status column
+    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                   WHERE TABLE_NAME = 'notifications' AND COLUMN_NAME = 'status')
+    BEGIN
+        ALTER TABLE notifications ADD status VARCHAR(64);
+        PRINT 'Added status column to notifications';
+    END
+END
+
+-- ========================================
+-- Step 3: CREATE USER_PERMISSIONS TABLE (if not exists)
+-- ========================================
+
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user_permissions')
+BEGIN
+    CREATE TABLE user_permissions (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        username VARCHAR(100) NOT NULL UNIQUE,
+        permission_type VARCHAR(50) NOT NULL,
+        allowed_step VARCHAR(50),
+        can_update_any BIT DEFAULT 0,
+        created_at DATETIME DEFAULT GETDATE()
+    );
+    PRINT 'User_permissions table created';
+END
+
+-- ========================================
+-- Step 4: CLEAR AND INSERT PERMISSIONS
+-- ========================================
+
+-- Delete existing permissions
+DELETE FROM user_permissions 
+WHERE username IN ('administrator', 'warehouse', 'distributor', 'agent', 'courier');
+
+-- Insert fresh permissions
+-- IMPORTANT: allowed_step means "can update orders CURRENTLY at this status"
+INSERT INTO user_permissions (username, permission_type, allowed_step, can_update_any) VALUES
+('administrator', 'ADMIN', NULL, 1),              -- Can update ANY status
+('warehouse', 'WAREHOUSE', 'PLACED', 0),          -- Can update orders at PLACED → to PROCESSING
+('distributor', 'DISTRIBUTOR', 'PROCESSING', 0),  -- Can update orders at PROCESSING → to SHIPPED
+('agent', 'AGENT', 'SHIPPED', 0),                 -- Can update orders at SHIPPED → to OUT_FOR_DELIVERY
+('courier', 'COURIER', 'OUT_FOR_DELIVERY', 0);    -- Can update orders at OUT_FOR_DELIVERY → to DELIVERED
+
+PRINT 'Permissions inserted successfully';
+
+-- ========================================
+-- Step 5: VERIFY PERMISSIONS
+-- ========================================
+
+SELECT 
+    username,
+    permission_type,
+    allowed_step,
+    can_update_any,
+    CASE 
+        WHEN can_update_any = 1 THEN '✓ Can update ANY status'
+        ELSE 'Can update orders at: ' + ISNULL(allowed_step, 'NONE') + ' status'
+    END AS permission_description
+FROM user_permissions
+ORDER BY 
+    CASE permission_type
+        WHEN 'ADMIN' THEN 1
+        WHEN 'WAREHOUSE' THEN 2
+        WHEN 'DISTRIBUTOR' THEN 3
+        WHEN 'AGENT' THEN 4
+        WHEN 'COURIER' THEN 5
+        ELSE 6
+    END;
+
+-- ========================================
+-- Step 6: ENSURE USERS EXIST
+-- ========================================
+
+-- Check existing users
+SELECT username, role FROM users 
+WHERE username IN ('administrator', 'warehouse', 'distributor', 'agent', 'courier');
+
+-- Create missing users
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'administrator')
+BEGIN
+    INSERT INTO users (username, password, role, authorized) 
+    VALUES ('administrator', 'admin123', 'ADMIN', 1);
+    PRINT 'Created administrator user';
+END
+
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'warehouse')
+BEGIN
+    INSERT INTO users (username, password, role, authorized, team_name) 
+    VALUES ('warehouse', 'warehouse123', 'EMPLOYEE', 1, 'Warehouse Team');
+    PRINT 'Created warehouse user';
+END
+
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'distributor')
+BEGIN
+    INSERT INTO users (username, password, role, authorized, team_name) 
+    VALUES ('distributor', 'distributor123', 'EMPLOYEE', 1, 'Distribution Team');
+    PRINT 'Created distributor user';
+END
+
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'agent')
+BEGIN
+    INSERT INTO users (username, password, role, authorized, team_name) 
+    VALUES ('agent', 'agent123', 'EMPLOYEE', 1, 'Agent Team');
+    PRINT 'Created agent user';
+END
+
+IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'courier')
+BEGIN
+    INSERT INTO users (username, password, role, authorized, team_name) 
+    VALUES ('courier', 'courier123', 'EMPLOYEE', 1, 'Courier Team');
+    PRINT 'Created courier user';
+END
+
+-- ========================================
+-- Step 7: CREATE TEST ORDER (Optional)
+-- ========================================
+
+-- Check if orders exist
+SELECT COUNT(*) AS total_orders FROM orders;
+
+-- If you need a test order, uncomment below:
+/*
+DECLARE @customerId INT;
+SELECT TOP 1 @customerId = id FROM users 
+WHERE role = 'CUSTOMER' OR username NOT IN ('administrator', 'warehouse', 'distributor', 'agent', 'courier');
+
+IF @customerId IS NOT NULL
+BEGIN
+    DECLARE @orderId INT;
+    
+    -- Create order
+    INSERT INTO orders (user_id, total_amount, status, created_at) 
+    VALUES (@customerId, 2500.00, 'PLACED', GETDATE());
+    
+    SET @orderId = SCOPE_IDENTITY();
+    
+    -- Add order items
+    INSERT INTO order_items (order_id, product_id, qty, price)
+    SELECT TOP 2 @orderId, id, 2, price
+    FROM storeproducts;
+    
+    -- Create initial notification
+    INSERT INTO notifications (order_id, sender_username, message, status, created_at)
+    VALUES (@orderId, 
+            (SELECT username FROM users WHERE id = @customerId), 
+            'New order placed', 
+            'PLACED', 
+            GETDATE());
+    
+    SELECT 'Test order created with ID: ' + CAST(@orderId AS VARCHAR) AS Result;
+END
+*/
+
+-- ========================================
+-- Step 8: FINAL VERIFICATION
+-- ========================================
+
+PRINT '
+=== SETUP COMPLETE ===';
+
+-- Show summary
+SELECT 
+    'Permissions' AS [Table],
+    COUNT(*) AS [Count]
+FROM user_permissions
+UNION ALL
+SELECT 
+    'Orders',
+    COUNT(*)
+FROM orders
+UNION ALL
+SELECT 
+    'Notifications',
+    COUNT(*)
+FROM notifications;
+
+-- Show who can do what
+PRINT '
+=== PERMISSION FLOW ===';
+SELECT 
+    ROW_NUMBER() OVER (ORDER BY 
+        CASE permission_type
+            WHEN 'WAREHOUSE' THEN 1
+            WHEN 'DISTRIBUTOR' THEN 2
+            WHEN 'AGENT' THEN 3
+            WHEN 'COURIER' THEN 4
+            WHEN 'ADMIN' THEN 5
+        END) AS step_order,
+    username,
+    'Orders at: ' + ISNULL(allowed_step, 'ANY') AS can_see_orders,
+    CASE 
+        WHEN can_update_any = 1 THEN 'Can move to: ANY NEXT STATUS'
+        WHEN allowed_step = 'PLACED' THEN 'Can move to: PROCESSING'
+        WHEN allowed_step = 'PROCESSING' THEN 'Can move to: SHIPPED'
+        WHEN allowed_step = 'SHIPPED' THEN 'Can move to: OUT_FOR_DELIVERY'
+        WHEN allowed_step = 'OUT_FOR_DELIVERY' THEN 'Can move to: DELIVERED'
+        ELSE 'Cannot update'
+    END AS action_allowed
+FROM user_permissions
+WHERE username != 'administrator'
+UNION ALL
+SELECT 
+    99,
+    username,
+    'ALL ORDERS',
+    'Can move to: ANY STATUS'
+FROM user_permissions
+WHERE username = 'administrator';
+
+-- ========================================
+-- TESTING QUERIES
+-- ========================================
+
+-- Test permission check for warehouse
+PRINT '
+=== TEST: Can warehouse update PLACED orders? ===';
+SELECT 
+    CASE 
+        WHEN EXISTS (
+            SELECT 1 FROM user_permissions 
+            WHERE username = 'warehouse' 
+            AND allowed_step = 'PLACED'
+        ) THEN 'YES ✓'
+        ELSE 'NO ✗'
+    END AS warehouse_can_update_placed;
+
+-- Test permission check for distributor
+PRINT '
+=== TEST: Can distributor update PROCESSING orders? ===';
+SELECT 
+    CASE 
+        WHEN EXISTS (
+            SELECT 1 FROM user_permissions 
+            WHERE username = 'distributor' 
+            AND allowed_step = 'PROCESSING'
+        ) THEN 'YES ✓'
+        ELSE 'NO ✗'
+    END AS distributor_can_update_processing;
+
+-- Show current orders and who can update them
+PRINT '
+=== CURRENT ORDERS & UPDATE PERMISSIONS ===';
+SELECT 
+    o.id AS order_id,
+    o.status,
+    CASE 
+        WHEN o.status = 'PLACED' THEN 'warehouse'
+        WHEN o.status = 'PROCESSING' THEN 'distributor'
+        WHEN o.status = 'SHIPPED' THEN 'agent'
+        WHEN o.status = 'OUT_FOR_DELIVERY' THEN 'courier'
+        WHEN o.status = 'DELIVERED' THEN 'NONE (completed)'
+        ELSE 'UNKNOWN'
+    END AS who_can_update,
+    CASE 
+        WHEN o.status = 'PLACED' THEN 'PROCESSING'
+        WHEN o.status = 'PROCESSING' THEN 'SHIPPED'
+        WHEN o.status = 'SHIPPED' THEN 'OUT_FOR_DELIVERY'
+        WHEN o.status = 'OUT_FOR_DELIVERY' THEN 'DELIVERED'
+        ELSE 'N/A'
+    END AS next_status
+FROM orders o
+WHERE o.status != 'DELIVERED'
+ORDER BY o.created_at DESC
+
+
+delete from orders
+
+-- Check what's in user_permissions
+SELECT * FROM user_permissions ORDER BY username;
+
+-- Check current orders and their status
+SELECT id, status, user_id FROM orders ORDER BY created_at DESC;
+
+-- Verify users exist
+SELECT username FROM users WHERE username IN ('warehouse', 'distributor', 'agent', 'courier');
+
+-- Test: Can distributor update PROCESSING orders?
+DECLARE @username VARCHAR(100) = 'distributor';
+DECLARE @currentStatus VARCHAR(50) = 'PROCESSING';
+
+SELECT 
+    username,
+    permission_type,
+    allowed_step,
+    can_update_any,
+    CASE 
+        WHEN can_update_any = 1 THEN 'YES - Admin can update any'
+        WHEN allowed_step = @currentStatus THEN 'YES - Step matches'
+        ELSE 'NO - Step does not match'
+    END AS can_update_result
+FROM user_permissions
+WHERE LOWER(username) = LOWER(@username);
+
+-- Check current order status
+SELECT id, status FROM orders WHERE id = 1;
+
+-- Check distributor permissions
+SELECT username, allowed_step, can_update_any 
+FROM user_permissions 
+WHERE username = 'distributor';
+
+-- Test the permission check manually
+SELECT 
+    CASE 
+        WHEN EXISTS (
+            SELECT 1 FROM user_permissions 
+            WHERE LOWER(username) = LOWER('distributor')
+            AND allowed_step = 'PROCESSING'
+        ) THEN 'YES - Distributor can update PROCESSING'
+        ELSE 'NO - Cannot update'
+    END AS permission_check;
+
+
+    select * from users
+
+
+ ------------------------------------------------------------
+
+
+ -- ============================================================
+-- Clean up specific duplicate notifications
+-- ============================================================
+
+-- First, let's see what we're dealing with - group by order_id and status
+SELECT 
+    order_id,
+    status,
+    COUNT(*) as notification_count,
+    STRING_AGG(CAST(sender_username AS VARCHAR(50)), ', ') as senders
+FROM notifications
+GROUP BY order_id, status
+HAVING COUNT(*) > 1
+ORDER BY order_id;
+
+-- ============================================================
+-- OPTION 1: Keep only SYSTEM notifications, delete others with same status
+-- This is the cleanest approach
+-- ============================================================
+
+-- Preview what will be deleted
+SELECT 
+    id,
+    order_id,
+    sender_username,
+    status,
+    created_at,
+    message
+FROM notifications
+WHERE id IN (
+    SELECT n1.id
+    FROM notifications n1
+    WHERE EXISTS (
+        SELECT 1 
+        FROM notifications n2 
+        WHERE n2.order_id = n1.order_id 
+        AND n2.status = n1.status
+        AND n2.sender_username = 'system'
+        AND n1.sender_username != 'system'
+    )
+)
+ORDER BY order_id, created_at;
+
+-- Delete non-system duplicates where system notification exists
+DELETE FROM notifications
+WHERE id IN (
+    SELECT n1.id
+    FROM notifications n1
+    WHERE EXISTS (
+        SELECT 1 
+        FROM notifications n2 
+        WHERE n2.order_id = n1.order_id 
+        AND n2.status = n1.status
+        AND n2.sender_username = 'system'
+        AND n1.sender_username != 'system'
+    )
+);
+
+-- ============================================================
+-- OPTION 2: For remaining duplicates with same sender, keep oldest
+-- ============================================================
+
+-- Preview what will be deleted
+WITH RankedNotifications AS (
+    SELECT 
+        id,
+        order_id,
+        sender_username,
+        status,
+        created_at,
+        ROW_NUMBER() OVER (
+            PARTITION BY order_id, sender_username, status
+            ORDER BY id ASC  -- Keep the first one
+        ) AS rn
+    FROM notifications
+)
+SELECT 
+    id,
+    order_id,
+    sender_username,
+    status,
+    created_at
+FROM RankedNotifications
+WHERE rn > 1
+ORDER BY order_id, created_at;
+
+-- Delete duplicates with same sender
+WITH RankedNotifications AS (
+    SELECT 
+        id,
+        ROW_NUMBER() OVER (
+            PARTITION BY order_id, sender_username, status
+            ORDER BY id ASC  -- Keep the first one
+        ) AS rn
+    FROM notifications
+)
+DELETE FROM notifications
+WHERE id IN (
+    SELECT id 
+    FROM RankedNotifications 
+    WHERE rn > 1
+);
+
+-- ============================================================
+-- Verify cleanup
+-- ============================================================
+
+-- Check for remaining duplicates
+SELECT 
+    order_id,
+    status,
+    COUNT(*) as notification_count,
+    STRING_AGG(CAST(sender_username AS VARCHAR(50)), ', ') as senders
+FROM notifications
+GROUP BY order_id, status
+HAVING COUNT(*) > 1
+ORDER BY order_id;
+
+-- View all notifications
+SELECT 
+    id,
+    order_id,
+    sender_username,
+    status,
+    created_at,
+    LEFT(message, 50) as message_preview
+FROM notifications
+ORDER BY order_id, created_at;
+
+
+
+-- Create returns_exchanges table
+CREATE TABLE returns_exchanges (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    order_id INT NOT NULL,
+    user_id INT NOT NULL,
+    username VARCHAR(100),
+    type VARCHAR(20) NOT NULL, -- 'RETURN' or 'EXCHANGE'
+    status VARCHAR(50) DEFAULT 'PENDING', -- PENDING, APPROVED, REJECTED, PROCESSING, COMPLETED, CANCELLED
+    reason TEXT,
+    admin_notes TEXT,
+    reviewed_by VARCHAR(100),
+    reviewed_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Create return_exchange_items table (tracks which items are being returned/exchanged)
+CREATE TABLE return_exchange_items (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    return_exchange_id INT NOT NULL,
+    order_item_id INT NOT NULL,
+    product_id INT NOT NULL,
+    product_name VARCHAR(255),
+    qty INT NOT NULL,
+    price DECIMAL(10,2),
+    exchange_product_id INT, -- NULL for returns, set for exchanges
+    exchange_product_name VARCHAR(255),
+    FOREIGN KEY (return_exchange_id) REFERENCES returns_exchanges(id),
+    FOREIGN KEY (product_id) REFERENCES storeproducts(id)
+);
+
+-- Create return_exchange_images table (stores uploaded images)
+CREATE TABLE return_exchange_images (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    return_exchange_id INT NOT NULL,
+    image_data TEXT NOT NULL, -- Base64 encoded image
+    uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (return_exchange_id) REFERENCES returns_exchanges(id)
+);
+
+-- Create return_exchange_notifications table
+CREATE TABLE return_exchange_notifications (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    return_exchange_id INT NOT NULL,
+    sender_username VARCHAR(100),
+    message TEXT,
+    status VARCHAR(50),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (return_exchange_id) REFERENCES returns_exchanges(id)
+);
+delete from return_exchange_notifications
+-- Add indexes for better performance
+CREATE INDEX idx_returns_exchanges_order_id ON returns_exchanges(order_id);
+CREATE INDEX idx_returns_exchanges_user_id ON returns_exchanges(user_id);
+CREATE INDEX idx_returns_exchanges_status ON returns_exchanges(status);
+CREATE INDEX idx_return_exchange_items_return_id ON return_exchange_items(return_exchange_id);
+CREATE INDEX idx_return_exchange_notifications_return_id ON return_exchange_notifications(return_exchange_id);
+
+select * from return_exchange_items
