@@ -8,7 +8,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/master")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class MasterController {
 
     @Autowired

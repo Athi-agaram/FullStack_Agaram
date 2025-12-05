@@ -26,17 +26,6 @@ import {
   addStoreProduct,
 } from "../../../api/api";
 
-/**
- * Responsive ProductGrid (uses category_id everywhere)
- *
- * Props:
- *  - cartItems, setCartItems
- *  - wishlistItems, setWishlistItems
- *  - userId
- *  - userRole
- *  - selectedCategoryFromCategoryPage  // may be number/string (category_id)
- */
-
 const categoryOptions = [
   { id: 1, key: "electronics", name: "Electronics & Gadgets" },
   { id: 2, key: "beauty", name: "Beauty & Personal Care" },
@@ -105,7 +94,7 @@ export default function ProductGrid({
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8098/api/storeproducts");
+      const res = await fetch("http://192.168.0.224:8098/api/storeproducts");
       const data = await res.json();
       const list = normalizeProducts(data);
       setProducts(list);
@@ -190,24 +179,25 @@ export default function ProductGrid({
   };
 
   // --- add to cart
-  const handleAddToCart = async (product) => {
-    try {
-      if (!userId) return alert("Login required");
+const BASE_URL = `http://${window.location.hostname}:8098/api`;
 
-      await addToCartApi({ userId, productId: product.id, qty: 1 });
+const handleAddToCart = async (product) => {
+  try {
+    if (!userId) return alert("Login required");
 
-      const updated = await fetch(`http://localhost:8098/api/cart/${userId}`).then(
-        (res) => res.json()
-      );
+    await addToCartApi({ userId, productId: product.id, qty: 1 });
 
-      setCartItems(updated);
+    const updated = await fetch(`${BASE_URL}/cart/${userId}`).then((res) => res.json());
 
-      alert("Added to cart!");
-    } catch (err) {
-      console.error(err);
-      alert("Failed adding to cart");
-    }
-  };
+    setCartItems(updated);
+
+    alert("Added to cart!");
+  } catch (err) {
+    console.error(err);
+    alert("Failed adding to cart");
+  }
+};
+
 
   // --- save new product (admin)
   const handleSaveProduct = async () => {
@@ -258,10 +248,8 @@ export default function ProductGrid({
     }
   };
 
-  // --- derived UI lists
   const categoryListForDropdown = [{ id: 0, name: "All" }, ...categoryOptions];
 
-  // --- styles reused
   const filterPaperSx = {
     p: 2.5,
     position: "sticky",
@@ -272,7 +260,7 @@ export default function ProductGrid({
     flexWrap: "wrap",
     gap: 2,
     alignItems: "center",
-    bgcolor: "rgba(255, 255, 255, 0.9)",
+    bgcolor: "rgba(255, 255, 255, 0.83)",
     backdropFilter: "blur(8px)",
     borderRadius: 3,
     boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
@@ -401,19 +389,20 @@ export default function ProductGrid({
       </Paper>
 
       {/* PRODUCT GRID */}
-      <Box
-        sx={{
-          display: "grid",
-          gap: 3,
-          gridTemplateColumns: {
-            xs: "repeat(2, 1fr)", // phones
-            sm: "repeat(2, 1fr)", // small tablets
-            md: "repeat(3, 1fr)", // tablets
-            lg: "repeat(4, 1fr)", // desktops
-            xl: "repeat(5, 1fr)", // wide
-          },
-        }}
-      >
+<Box
+  sx={{
+    display: "grid",
+    gap: 3,
+    gridTemplateColumns: {
+     xs: "repeat(1, 1fr)", // phones → 1 product per row
+     sm: "repeat(2, 1fr)", // small tablets → 2 per row
+     md: "repeat(3, 1fr)", // tablets → 3 per row
+     lg: "repeat(4, 1fr)", // desktops → 4 per row
+     xl: "repeat(5, 1fr)", // wide → 5 per row
+},
+
+  }}
+>
         {loading
           ? Array.from(new Array(8)).map((_, i) => (
               <Card key={i} sx={{ borderRadius: 3 }}>
@@ -520,18 +509,7 @@ export default function ProductGrid({
                       variant="contained"
                       fullWidth
                       onClick={() => handleAddToCart(p)}
-                      sx={{
-                        fontWeight: 700,
-                        bgcolor: "#05155aff",
-                        height: { xs: 40, sm: 50 },
-                        borderRadius: 2,
-                        textTransform: "none",
-                        fontSize: "16px",
-                        "&:hover": {
-                          bgcolor: "#2f48d8ff",
-                          boxShadow: "0 4px 12px rgba(102, 126, 234, 0.28)",
-                        },
-                      }}
+                     
                     >
                       Add to Cart
                     </Button>

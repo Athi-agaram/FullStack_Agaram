@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/returns-exchanges")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class ReturnExchangeController {
 
     @Autowired
@@ -49,13 +49,7 @@ public class ReturnExchangeController {
         }
     }
 
-    /**
-     * Get all return/exchange requests (for all team members)
-     * GET /api/returns-exchanges/all
-     * 
-     * NOTE: This endpoint returns ALL requests. Filtering by role/status
-     * should be done on the frontend to ensure team members see notifications.
-     */
+
     @GetMapping("/all")
     public ResponseEntity<?> getAllReturnExchanges() {
         try {

@@ -182,7 +182,9 @@ import axios from "axios";
 
 // ==================== BASE ====================
 const API = axios.create({
-  baseURL: "http://localhost:8098/api",
+  // baseURL: "http://localhost:8098/api",
+      baseURL: "http://192.168.0.224:8098/api",
+
 });
 // const API = axios.create({
 //   baseURL: `${window.location.origin}/agaram-project-backend-completed/api`,

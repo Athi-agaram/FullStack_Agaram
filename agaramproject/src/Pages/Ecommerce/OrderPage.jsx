@@ -490,34 +490,36 @@ export default function OrdersPage() {
 
       {tab === 0 && (
         <>
-          <Box sx={{ mb: 3, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-            <Button
-              variant="contained"
-              startIcon={<AssignmentReturnIcon />}
-              onClick={() => handleOpenReturnExchange('RETURN')}
-              sx={{ 
-                backgroundColor: '#ba3500ff',
-                color: '#ffffffff',
-                fontWeight: 'bold',
-                '&:hover': { backgroundColor: '#ff6a00ff' }
-              }}
-            >
-              Return Order
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<SwapHorizIcon />}
-              onClick={() => handleOpenReturnExchange('EXCHANGE')}
-              sx={{ 
-                backgroundColor: '#800396ff',
-                color: '#ffffffff',
-                fontWeight: 'bold',
-                '&:hover': { backgroundColor: '#b300ffff' }
-              }}
-            >
-              Exchange Order
-            </Button>
-          </Box>
+          {user.role !== "ADMIN" && (
+            <Box sx={{ mb: 3, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+              <Button
+                variant="contained"
+                startIcon={<AssignmentReturnIcon />}
+                onClick={() => handleOpenReturnExchange('RETURN')}
+                sx={{ 
+                  backgroundColor: '#d15903ff',
+                  color: '#ffffffff',
+                  fontWeight: 'bold',
+                  '&:hover': { backgroundColor: '#f16501ff' }
+                }}
+              >
+                Return Order
+              </Button>
+              <Button
+                variant="contained"
+                startIcon={<SwapHorizIcon />}
+                onClick={() => handleOpenReturnExchange('EXCHANGE')}
+                sx={{ 
+                  backgroundColor: '#009b8eff',
+                  color: '#ffffffff',
+                  fontWeight: 'bold',
+                  '&:hover': { backgroundColor: '#01beafff' }
+                }}
+              >
+                Exchange Order
+              </Button>
+            </Box>
+          )}
 
           <TextField
             fullWidth

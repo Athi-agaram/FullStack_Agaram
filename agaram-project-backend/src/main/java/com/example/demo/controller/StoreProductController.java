@@ -91,7 +91,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/storeproducts")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class StoreProductController {
 
     @Autowired

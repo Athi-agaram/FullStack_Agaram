@@ -6,7 +6,7 @@ import com.example.demo.wishlist.service.WishlistService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/wishlist")
 public class WishlistController {

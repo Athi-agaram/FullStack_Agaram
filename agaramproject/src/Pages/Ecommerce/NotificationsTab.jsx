@@ -50,17 +50,7 @@ import {
   updateReturnExchangeProgressApi,
 } from "../../api/api";
 
-/**
- * NotificationsTab.jsx
- * - Integrates Order Notifications and Return/Exchange Manager inside the same page.
- * - Modal (Dialog) is used for Return/Exchange review (you chose Option C).
- *
- * Notes:
- * - Expects the backend API functions to exist in ../../api/api (imported above).
- * - Reads current user from localStorage 'user' (same pattern as your other components).
- */
 
-/* Steps for return/exchange lifecycle (used for stepper) */
 const RETURN_EXCHANGE_STEPS = [
   "PENDING",
   "APPROVED",

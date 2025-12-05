@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api/cart")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class CartController {
 
     @Autowired

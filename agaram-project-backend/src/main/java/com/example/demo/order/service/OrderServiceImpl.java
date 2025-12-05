@@ -275,8 +275,7 @@ public class OrderServiceImpl implements OrderService {
                 break;
 
             case "SHIPPED":
-                // For SHIPPED, we'll let the Agent add a custom message via sendNotification
-                // So we DON'T create a notification here - Agent will create it
+               
                 return rows; // Exit early, no notification created
 
             case "OUT_FOR_DELIVERY":
@@ -300,8 +299,6 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        // Note: We removed the deleteOldNotificationsExceptLatest call
-        // because we want to keep all notifications for the timeline view
         
         return rows;
     }

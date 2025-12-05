@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api/orders")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class OrderController {
 
     @Autowired
