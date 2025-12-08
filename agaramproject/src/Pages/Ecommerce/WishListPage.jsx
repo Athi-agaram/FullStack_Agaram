@@ -101,7 +101,7 @@ export default function WishlistPage({
   return (
     <Box 
       sx={{ 
-        p: { xs: 2, md: 9 },
+        p: { xs: 2, md: 10.5 },
         
         background: "linear-gradient(135deg, #10002e 0%, #87c8ee 100%)",
         minHeight: "100%"

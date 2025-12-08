@@ -214,7 +214,7 @@ const handleRemove = async (cartId) => {
   // ---------------- UI ----------------
   return (
     <Box sx={{ 
-      p: 2, 
+      p: 3, 
       background: "linear-gradient(135deg, #10002eff 0%, #87c8eeff 100%)", 
       minHeight: "100%" 
     }}>
@@ -256,7 +256,7 @@ const handleRemove = async (cartId) => {
               <Box sx={{ flex: 1 }}>
                 <Typography variant="subtitle1" fontWeight={600}>{it.name}</Typography>
                 <Rating value={it.rating} readOnly size="small" />
-                <Typography fontWeight="bold" mt={1} color="primary">
+                <Typography fontWeight="bold" mt={1} color="#035700ff">
                   ₹{it.price.toFixed(2)}
                 </Typography>
                 <Box sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}>
@@ -322,7 +322,7 @@ const handleRemove = async (cartId) => {
               <Box sx={{ flex: 1 }}>
                 <Typography variant="subtitle1" fontWeight={600}>{it.name}</Typography>
                 <Rating value={it.rating} readOnly size="small" />
-                <Typography fontWeight="bold" mt={1}>₹{it.price.toFixed(2)}</Typography>
+                <Typography fontWeight="bold" mt={1} color="#035700ff">₹{it.price.toFixed(2)}</Typography>
                 <Box sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}>
                   <Button 
                     variant="contained" 
@@ -353,12 +353,12 @@ const handleRemove = async (cartId) => {
           mt: 2, 
           textAlign: "right", 
           position: "sticky", 
-          bottom: 0,
+          bottom: {xs: 70, md:0},
           background: "linear-gradient(135deg, #13283fff, #31568aff, #081e38ff)",
           borderRadius: 4,
           borderColor: "#cccccc", 
           borderWidth: 1, 
-          borderStyle: "solid"
+          borderStyle: "solid",
         }}>
           <Typography variant="h6" fontWeight="bold" mb={1} mt={1} color="#fff">
             Subtotal ({cartItems.reduce((s, it) => s + it.qty, 0)} items):

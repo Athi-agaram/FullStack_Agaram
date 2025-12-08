@@ -283,7 +283,7 @@ const handleAddToCart = async (product) => {
           onChange={(e) => setSearch(e.target.value)}
           sx={{
             flex: 1,
-            minWidth: { xs: "100%", sm: 300 },
+            minWidth: { xs: "170px", sm: 300 },
             height: 50,
             "& .MuiOutlinedInput-root": {
               borderRadius: "50px",
@@ -307,8 +307,36 @@ const handleAddToCart = async (product) => {
               </InputAdornment>
             ),
           }}
+          
         />
-
+        
+        {userRole === "ADMIN" && (
+          <Button
+            variant="contained"
+            onClick={() => setOpenModal(true)}
+            sx={{
+              fontWeight: 700,
+              bgcolor: "#05155aff",
+              height:"auto",
+              px: 4,
+              borderRadius: 50,
+              alignSelf: "center",
+              width: "auto",
+              textTransform: "none",
+              fontSize: "1rem",
+              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
+              "&:hover": {
+                bgcolor: "#2f3f9bff",
+                boxShadow: "0 6px 20px rgba(102, 126, 234, 0.45)",
+                transform: "translateY(-2px)",
+              },
+              transition: "all 0.25s ease",
+              ml: 0
+            }}
+          >
+            +
+          </Button>
+        )}
         <TextField
           select
           label="Category"
@@ -363,33 +391,6 @@ const handleAddToCart = async (product) => {
         <MenuItem value="high-low">High to Low</MenuItem>
       </TextField>
 
-        {userRole === "ADMIN" && (
-          <Button
-            variant="contained"
-            onClick={() => setOpenModal(true)}
-            sx={{
-              fontWeight: 700,
-              bgcolor: "#05155aff",
-              height: 48,
-              px: 4,
-              borderRadius: 50,
-              alignSelf: "center",
-              width: "300px",
-              textTransform: "none",
-              fontSize: "1rem",
-              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
-              "&:hover": {
-                bgcolor: "#2f3f9bff",
-                boxShadow: "0 6px 20px rgba(102, 126, 234, 0.45)",
-                transform: "translateY(-2px)",
-              },
-              transition: "all 0.25s ease",
-              ml: 1
-            }}
-          >
-            + Add Product
-          </Button>
-        )}
       </Paper>
 
       {/* PRODUCT GRID */}
@@ -545,11 +546,11 @@ const handleAddToCart = async (product) => {
             left: "50%",
             transform: "translate(-50%, -50%)",
             boxShadow: 24,
-            maxHeight: "90vh",
+            maxHeight: "70vh",
             overflowY: "auto",
           }}
         >
-          <Typography variant="h6" sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ mb: 1 ,fontWeight: 900}}>
             Add New Product
           </Typography>
 
@@ -648,7 +649,7 @@ const handleAddToCart = async (product) => {
             }
           />
 
-          <Button variant="contained" fullWidth sx={{ mt: 3 }} onClick={handleSaveProduct}>
+          <Button variant="contained" fullWidth sx={{ mt: 3,bgcolor:"#000d46ff" }} onClick={handleSaveProduct} > 
             Save Product
           </Button>
         </Box>

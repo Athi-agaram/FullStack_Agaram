@@ -134,25 +134,41 @@
 
 // export { topBarHeight, drawerWidthCollapsed };
 
-
 import * as React from "react";
-import { Box, Toolbar, Typography, IconButton, Popper, ClickAwayListener, Paper, MenuList, MenuItem, Divider, Dialog } from "@mui/material";
+import {
+  Box,
+  Toolbar,
+  Typography,
+  IconButton,
+  Popper,
+  ClickAwayListener,
+  Paper,
+  MenuList,
+  MenuItem,
+  Divider,
+  Dialog,
+  useMediaQuery,
+} from "@mui/material";
+
 import ExpandCircleDownOutlinedIcon from "@mui/icons-material/ExpandCircleDownOutlined";
 import PermIdentitySharpIcon from "@mui/icons-material/PermIdentitySharp";
 import KeySharpIcon from "@mui/icons-material/KeySharp";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
+
 import EditProfilePage from "../../Pages/TopbarPage/EditProfile";
 import ChangePasswordPage from "../../Pages/TopbarPage/ChangePassword";
+
 import { useNavigate } from "react-router-dom";
 
 const topBarHeight = 60;
 const drawerWidthCollapsed = 73;
 
-export default function TopBar({  user, setMasterTab  }) {
+export default function TopBar({ user, setMasterTab }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   const [editOpen, setEditOpen] = React.useState(false);
   const [passwordOpen, setPasswordOpen] = React.useState(false);
@@ -160,12 +176,12 @@ export default function TopBar({  user, setMasterTab  }) {
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleCloseMenu = () => setAnchorEl(null);
 
-  // ✅ Logout handler
   const handleLogout = () => {
     localStorage.clear();
     sessionStorage.clear();
     navigate("/");
   };
+
   const menuItems = [
     {
       label: "Edit Profile",
@@ -195,35 +211,87 @@ export default function TopBar({  user, setMasterTab  }) {
       sx={{
         position: "fixed",
         top: 0,
-        left: `${drawerWidthCollapsed}px`,
-        width: `calc(100% - ${drawerWidthCollapsed}px)`,
+        left: isMobile ? 0 : `${drawerWidthCollapsed}px`,
+        width: isMobile ? "100%" : `calc(100% - ${drawerWidthCollapsed}px)`,
         height: `${topBarHeight}px`,
         backgroundColor: "#011c66ff",
         zIndex: 1300,
       }}
     >
-      <Toolbar sx={{ justifyContent: "space-between", minHeight: `${topBarHeight}px`, px: 4 }}>
+      <Toolbar
+        sx={{
+          justifyContent: "space-between",
+          minHeight: `${topBarHeight}px`,
+          px: { xs: 10, md: 4 },
+        }}
+      >
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography sx={{ fontSize: 25, fontWeight: 600, color: "#ffffffff" }}  onClick={() => setMasterTab(null)}>
+          <Typography
+            sx={{
+              fontSize: { xs: 20, md: 25 },
+              fontWeight: 600,
+              color: "#fff",
+              cursor: "pointer",
+            }}
+            onClick={() => setMasterTab(null)}
+          >
             Agaram
           </Typography>
         </Box>
 
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Box sx={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
-            <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#ffffffff" }}>
-              User: {user?.username || "Administrator"}
-            </Typography>
-            <Typography sx={{ fontSize: 12, color: "#ffffffff" }}>
-              Role: {user?.role || "ADMIN"}
-            </Typography>
-          </Box>
+        {/* ------- USER INFO ------- */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: { xs: 1, md: 1 },
+            ml: { xs: 12, md: 0}
+          }}
+        >
+          <Box
+  sx={{
+    display: "flex",
+    flexDirection: "column",
+    lineHeight: 1,
+    width: { xs: "auto", md: 120 },
+    textAlign: "left",
+    whiteSpace: "nowrap",   // ⭐ Prevents text from breaking into new lines
+  }}
+>
+  <Typography
+    sx={{
+      fontSize: { xs: 12, md: 14 },
+      fontWeight: 600,
+      color: "#fff",
+    }}
+  >
+    User: {user?.username || "Administrator"}
+  </Typography>
 
-          <IconButton onClick={handleClick} sx={{ color: "#ffffffff", p: 0.5 }}>
+  <Typography
+    sx={{
+      fontSize: { xs: 11, md: 12 },
+      color: "#fff",
+      whiteSpace: "nowrap",  // ⭐ Also prevent wrapping here
+    }}
+  >
+    Role: {user?.role || "ADMIN"}
+  </Typography>
+</Box>
+
+
+          {/* ▼ ICON BUTTON */}
+          <IconButton onClick={handleClick} sx={{ color: "#fff", p: 0.5 }}>
             <ExpandCircleDownOutlinedIcon />
           </IconButton>
 
-          <Popper open={open} anchorEl={anchorEl} placement="bottom-end" style={{ zIndex: 1401, minWidth: 180 }}>
+          {/* ------- DROPDOWN MENU ------- */}
+          <Popper
+            open={open}
+            anchorEl={anchorEl}
+            placement="bottom-end"
+            style={{ zIndex: 1401, minWidth: 180 }}
+          >
             <ClickAwayListener onClickAway={handleCloseMenu}>
               <Paper elevation={3}>
                 <MenuList>
@@ -231,9 +299,17 @@ export default function TopBar({  user, setMasterTab  }) {
                     <React.Fragment key={index}>
                       <MenuItem
                         onClick={item.onClick}
-                        sx={{ fontSize: 13, color: "#424242", py: 0.6, px: 2, justifyContent: "space-between" }}
+                        sx={{
+                          fontSize: 13,
+                          color: "#424242",
+                          py: 0.6,
+                          px: 2,
+                          justifyContent: "space-between",
+                        }}
                       >
-                        <Typography sx={{ fontSize: 13, fontWeight: 600 }}>{item.label}</Typography>
+                        <Typography sx={{ fontSize: 13, fontWeight: 600 }}>
+                          {item.label}
+                        </Typography>
                         <Box sx={{ ml: 2, color: "#1565c0" }}>{item.icon}</Box>
                       </MenuItem>
                       {index < menuItems.length - 1 && <Divider sx={{ my: 0 }} />}
@@ -246,12 +322,12 @@ export default function TopBar({  user, setMasterTab  }) {
         </Box>
       </Toolbar>
 
-      {/* -------------------- Render Edit Profile -------------------- */}
+      {/* ------- EDIT PROFILE DIALOG ------- */}
       <Dialog open={editOpen} onClose={() => setEditOpen(false)} maxWidth="xs" fullWidth>
         <EditProfilePage user={user} closeDialog={() => setEditOpen(false)} />
       </Dialog>
 
-      {/* -------------------- Render Change Password -------------------- */}
+      {/* ------- CHANGE PASSWORD DIALOG ------- */}
       <Dialog open={passwordOpen} onClose={() => setPasswordOpen(false)} maxWidth="xs" fullWidth>
         <ChangePasswordPage user={user} closeDialog={() => setPasswordOpen(false)} />
       </Dialog>

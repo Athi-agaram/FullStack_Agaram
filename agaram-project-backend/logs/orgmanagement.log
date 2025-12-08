@@ -6846,3 +6846,12 @@
 2025-12-08T12:30:29.271+05:30 DEBUG 33668 --- [http-nio-8098-exec-5] o.s.jdbc.core.JdbcTemplate               : Executing SQL query [SELECT p.id AS id, p.name AS name, p.quantity AS quantity, p.price AS price, p.progress AS progress, t.team_name AS team_name, p.employee_id AS employee_id, p.sale_month AS sale_month, p.customer AS customer FROM products p LEFT JOIN teams t ON p.team_id = t.id]
 2025-12-08T12:30:34.893+05:30 DEBUG 33668 --- [http-nio-8098-exec-9] o.s.jdbc.core.JdbcTemplate               : Executing SQL query [SELECT u.id, u.username, u.role, u.team_id, u.authorized, COALESCE(t.team_name,'') AS team_name FROM users u LEFT JOIN teams t ON u.team_id = t.id]
 2025-12-08T12:30:34.904+05:30 DEBUG 33668 --- [http-nio-8098-exec-6] o.s.jdbc.core.JdbcTemplate               : Executing SQL query [SELECT u.id, u.username, u.role, u.team_id, u.authorized, COALESCE(t.team_name,'') AS team_name FROM users u LEFT JOIN teams t ON u.team_id = t.id]
+2025-12-08T12:32:05.614+05:30  INFO 33668 --- [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-12-08T12:32:05.637+05:30  INFO 33668 --- [Thread-5] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-08T12:32:05.649+05:30  INFO 33668 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-12-08T12:32:05.659+05:30  INFO 33668 --- [Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-08T12:32:05.670+05:30  INFO 33668 --- [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-12-08T12:32:05.683+05:30  INFO 33668 --- [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-12-08T12:32:06.072+05:30  INFO 33668 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Starting AgaramProjectBackendApplication using Java 21.0.8 with PID 33668 (C:\Users\athira\Downloads\fullstack_Agaram\agaram-project-backend\target\classes started by athira in C:\Users\athira\Downloads\fullstack_Agaram\agaram-project-backend)
+2025-12-08T12:32:06.072+05:30 DEBUG 33668 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : Running with Spring Boot v3.5.7, Spring v6.2.12
+2025-12-08T12:32:06.073+05:30  INFO 33668 --- [restartedMain] c.e.d.AgaramProjectBackendApplication    : No active profile set, falling back to 1 default profile: "default"

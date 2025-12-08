@@ -107,7 +107,8 @@ export default function MasterPage({ selectedTab }) {
         ml: 0,
         border: "none",
         boxShadow: "none",
-        bgcolor: "#f9fafc",
+        bgcolor: "#f9fafc"
+        
       }}
     >
       <Tabs
@@ -123,7 +124,7 @@ export default function MasterPage({ selectedTab }) {
         <Tab label="Revenue" />
       </Tabs>
 
-      <Box sx={{ mt: 2, width: "100%", overflowX: "auto" }}>
+      <Box sx={{ mt: 2, width: "100%", overflowX: "auto"}}>
         {tab === 0 && <EmployeeTab user={user} />}
         {tab === 1 && <ProductTab user={user} />}
         {tab === 2 && <RevenueTab user={user} />}

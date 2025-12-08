@@ -165,10 +165,10 @@ export default function EcommercePage() {
   return (
     <Box
       sx={{
-        height: "100vh",
+        height: {xs:"100vh",md:"100vh"},
         display: "flex",
         flexDirection: { xs: "column", md: "row" },
-        overflow: "hidden",
+        overflowY: "hidden",
       }}
     >
       <CssBaseline />
@@ -205,7 +205,7 @@ export default function EcommercePage() {
             </IconButton>
           </Box>
 
-          <List sx={{ overflowY: "auto", flex: 1, py: 2 }}>
+          <List sx={{ overflowY: "hidden", flex: 1, py: 2 }}>
             {drawerItems.map((item) => (
               <ListItem key={item.label} disablePadding>
                 <ListItemButton
@@ -400,14 +400,19 @@ export default function EcommercePage() {
         </Box>
 
         {/* Scrollable Content Area */}
-        <Box 
-          sx={{ 
-            flex: 1, 
-            overflowY: "auto",
-            bgcolor: "#f8f9fa",
-            pb: { xs: "76px", md: 0 },
-          }}
-        >
+<Box
+  sx={{
+    flex: 1,
+    overflowY: "auto",
+    pb: { xs: "76px", md: 0 },
+
+    "&::-webkit-scrollbar": {
+      width: "0px",
+    },
+
+  }}
+>
+
           {tab === 0 && (
             <CategoriesPage
               onCategorySelect={(categoryId) => {
