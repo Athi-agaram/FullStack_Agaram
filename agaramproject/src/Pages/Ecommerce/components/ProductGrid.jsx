@@ -251,10 +251,11 @@ const handleAddToCart = async (product) => {
   const categoryListForDropdown = [{ id: 0, name: "All" }, ...categoryOptions];
 
   const filterPaperSx = {
-    p: 2.5,
+    p: 1.3,
     position: "sticky",
     top: 0,
     zIndex: 10,
+    mt: 0,
     mb: 3,
     display: "flex",
     flexWrap: "wrap",
@@ -283,6 +284,7 @@ const handleAddToCart = async (product) => {
           sx={{
             flex: 1,
             minWidth: { xs: "100%", sm: 300 },
+            height: 50,
             "& .MuiOutlinedInput-root": {
               borderRadius: "50px",
               backgroundColor: "#f8f9fa",
@@ -313,7 +315,7 @@ const handleAddToCart = async (product) => {
           value={selectedCategoryId}
           onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
         sx={{ 
-          width: 150,
+          width: 160,
           "& .MuiOutlinedInput-root": {
             borderRadius: 2,
             backgroundColor: "#f8f9fa"
@@ -341,7 +343,7 @@ const handleAddToCart = async (product) => {
         value={sortType}
         onChange={(e) => setSortType(e.target.value)}
         sx={{ 
-          width: 130,
+          width: 160,
           "& .MuiOutlinedInput-root": {
             borderRadius: 2,
             backgroundColor: "#f8f9fa"
@@ -371,6 +373,8 @@ const handleAddToCart = async (product) => {
               height: 48,
               px: 4,
               borderRadius: 50,
+              alignSelf: "center",
+              width: "300px",
               textTransform: "none",
               fontSize: "1rem",
               boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
@@ -380,7 +384,7 @@ const handleAddToCart = async (product) => {
                 transform: "translateY(-2px)",
               },
               transition: "all 0.25s ease",
-              ml: "auto",
+              ml: 1
             }}
           >
             + Add Product
@@ -501,7 +505,7 @@ const handleAddToCart = async (product) => {
                       {wishlistItems.find((x) => x.id === p.id) ? (
                         <FavoriteIcon sx={{ fontSize: 30, color: "#f13737ff" }} />
                       ) : (
-                        <FavoriteBorderIcon sx={{ fontSize: 30, color: "#9ca3af" }} />
+                        <FavoriteBorderIcon sx={{ fontSize: 36, color: "#9ca3af" }} />
                       )}
                     </Button>
 
@@ -509,6 +513,15 @@ const handleAddToCart = async (product) => {
                       variant="contained"
                       fullWidth
                       onClick={() => handleAddToCart(p)}
+                        sx={{
+                          fontWeight: 700,
+                          height: { xs: 40, md: 45 },
+                        backgroundColor: "#000d46ff",
+                        color: "#fff",
+                        "&:hover": {
+                        backgroundColor: "#003570ff"
+                        },
+                       }}
                      
                     >
                       Add to Cart

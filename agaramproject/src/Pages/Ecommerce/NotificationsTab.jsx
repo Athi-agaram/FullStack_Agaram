@@ -453,7 +453,7 @@ const handleUpdateProgress = async () => {
       <Tabs
         value={tabValue}
         onChange={(e, v) => setTabValue(v)}
-        sx={{ mb: 3, backgroundColor: "#fff", borderRadius: 2, boxShadow: 1 }}
+        sx={{ mb: 2,backgroundColor: "#fff", borderRadius: 2, boxShadow: 1,position: "sticky", top: 65, zIndex: 10 }}
       >
         <Tab
           label={

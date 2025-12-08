@@ -101,22 +101,23 @@ export default function WishlistPage({
   return (
     <Box 
       sx={{ 
-        p: { xs: 2, md: 4 },
+        p: { xs: 2, md: 9 },
+        
         background: "linear-gradient(135deg, #10002e 0%, #87c8ee 100%)",
         minHeight: "100%"
       }}
     >
       <Grid container spacing={3}>
         {wishlistItems.map((item) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={item.wishlist_id}>
+          <Grid item xs={1} sm={6} md={4} lg={4} key={item.wishlist_id}>
             <Card
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                p: 1.5,
-                height: "370px",
-                width: "267px",
+                p: 3,
+                height: "380px",
+                width: "360px",
                 borderRadius: 3,
                 boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                 transition: "transform 0.2s",
